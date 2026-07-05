@@ -40,6 +40,9 @@ class UploadController
             Http::error('Datei konnte nicht gespeichert werden', 500);
         }
 
-        Http::send(['path' => '/hifi/api/uploads/' . $filename], 201);
+        $config = require __DIR__ . '/../../config/config.php';
+        $prefix = rtrim($config['app']['base_path'], '/') . '/api/uploads/';
+
+        Http::send(['path' => $prefix . $filename], 201);
     }
 }

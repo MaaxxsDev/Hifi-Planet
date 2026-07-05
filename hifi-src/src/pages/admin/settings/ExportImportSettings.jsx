@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { api } from '../../../api/client.js';
+import { api, API_BASE } from '../../../api/client.js';
 
 export default function ExportImportSettings() {
   const [importFile, setImportFile] = useState(null);
@@ -38,7 +38,7 @@ export default function ExportImportSettings() {
           herunter. Benutzerkonten und Kontaktanfragen sind bewusst <strong>nicht</strong> enthalten.
         </p>
         <a
-          href="/hifi/api/settings/export"
+          href={`${API_BASE}/settings/export`}
           className="inline-block rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
         >
           Jetzt exportieren

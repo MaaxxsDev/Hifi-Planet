@@ -1,4 +1,6 @@
-const API_BASE = '/hifi/api';
+// BASE_URL spiegelt immer den "base"-Wert aus vite.config.js wider (mit
+// abschließendem Slash, z.B. "/hifi/" lokal oder "/" auf IONOS).
+export const API_BASE = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/api`;
 
 async function request(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {

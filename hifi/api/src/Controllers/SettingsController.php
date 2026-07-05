@@ -21,7 +21,13 @@ class SettingsController
         'services' => ['id', 'icon_name', 'title', 'description', 'image_path', 'cta_label', 'cta_url', 'sort_order', 'created_at', 'updated_at'],
     ];
 
-    private const UPLOADS_URL_PREFIX = '/hifi/api/uploads/';
+    // Kein const, da abhängig von der Umgebung (base_path unterscheidet sich
+    // zwischen lokalem /hifi und der Root-Domain auf IONOS).
+    private static function uploadsUrlPrefix(): string
+    {
+        $config = require __DIR__ . '/../../config/config.php';
+        return rtrim($config['app']['base_path'], '/') . '/api/uploads/';
+    }
 
     public static function exportData(): void
     {
@@ -164,7 +170,7 @@ class SettingsController
 
     private static function collectImage(?string $path, array &$images): void
     {
-        if (!$path || isset($images[$path]) || !str_starts_with($path, self::UPLOADS_URL_PREFIX)) {
+        if (!$path || isset($images[$path]) || !str_starts_with($path, self::uploadsUrlPrefix())) {
             return;
         }
         $filename = basename($path);
@@ -190,14 +196,14 @@ class SettingsController
     private static function defaultServices(): array
     {
         return [
-            ['car', 'Car-Hifi', 'Individuelle Sound-Umbauten vom dezenten Upgrade bis zum kompromisslosen High-End-System – konfigurierbar direkt auf unserer Seite.', self::UPLOADS_URL_PREFIX . 'seed-leistung-car-hifi.jpg', 'Fahrzeug konfigurieren', '/fahrzeuge', 0],
-            ['caravan', 'Wohnmobil & Caravan', 'Sound- und Elektronik-Lösungen speziell für Reisemobile und Caravans – reversibel oder fest verbaut.', self::UPLOADS_URL_PREFIX . 'seed-leistung-wohnmobil.jpg', null, null, 1],
-            ['car-front', 'Oldtimer', 'Zeitgemäßer Klang für Klassiker – wir modernisieren die Anlage, ohne den Charakter deines Oldtimers zu verlieren.', self::UPLOADS_URL_PREFIX . 'seed-leistung-oldtimer.jpg', null, null, 2],
-            ['cog', 'CNC Zerspanen', 'Fräsen, Bohren, Schneiden und Schleifen auf einer Fläche von 1500 × 3000 mm – für Prototypen, Kleinserien und Großauflagen. Massivholz, Verbundwerkstoffe, Plattenmaterial und mehr.', self::UPLOADS_URL_PREFIX . 'seed-leistung-cnc-zerspanen.jpg', null, null, 3],
-            ['zap', 'CNC Lasertechnik', 'Präzises Laserschneiden und -gravieren für Leder, Glas, Acryl, Holz, Karton und mehr – für Einzelstücke ebenso wie Serienfertigung.', self::UPLOADS_URL_PREFIX . 'seed-leistung-cnc-laser.jpg', null, null, 4],
-            ['boxes', '3D-Druck', 'Über 20 Drucker (FDM & SLA) für individuelle Halterungen, Blenden und Kleinserien – Fertigung meist in 1–3 Tagen, auf Wunsch auch farbig.', self::UPLOADS_URL_PREFIX . 'seed-leistung-3d-druck.jpg', null, null, 5],
-            ['shield-alert', 'Alarmanlagen', 'Zuverlässiger Diebstahlschutz für dein Fahrzeug, abgestimmt auf deine Ansprüche und dein Budget.', self::UPLOADS_URL_PREFIX . 'seed-leistung-alarmanlagen.jpg', null, null, 6],
-            ['video', 'Dash Cams', 'Beweissichere Aufzeichnung fürs Auto – wir beraten dich zur passenden Kamera und übernehmen den unauffälligen Einbau.', self::UPLOADS_URL_PREFIX . 'seed-leistung-dashcam.jpg', null, null, 7],
+            ['car', 'Car-Hifi', 'Individuelle Sound-Umbauten vom dezenten Upgrade bis zum kompromisslosen High-End-System – konfigurierbar direkt auf unserer Seite.', self::uploadsUrlPrefix() . 'seed-leistung-car-hifi.jpg', 'Fahrzeug konfigurieren', '/fahrzeuge', 0],
+            ['caravan', 'Wohnmobil & Caravan', 'Sound- und Elektronik-Lösungen speziell für Reisemobile und Caravans – reversibel oder fest verbaut.', self::uploadsUrlPrefix() . 'seed-leistung-wohnmobil.jpg', null, null, 1],
+            ['car-front', 'Oldtimer', 'Zeitgemäßer Klang für Klassiker – wir modernisieren die Anlage, ohne den Charakter deines Oldtimers zu verlieren.', self::uploadsUrlPrefix() . 'seed-leistung-oldtimer.jpg', null, null, 2],
+            ['cog', 'CNC Zerspanen', 'Fräsen, Bohren, Schneiden und Schleifen auf einer Fläche von 1500 × 3000 mm – für Prototypen, Kleinserien und Großauflagen. Massivholz, Verbundwerkstoffe, Plattenmaterial und mehr.', self::uploadsUrlPrefix() . 'seed-leistung-cnc-zerspanen.jpg', null, null, 3],
+            ['zap', 'CNC Lasertechnik', 'Präzises Laserschneiden und -gravieren für Leder, Glas, Acryl, Holz, Karton und mehr – für Einzelstücke ebenso wie Serienfertigung.', self::uploadsUrlPrefix() . 'seed-leistung-cnc-laser.jpg', null, null, 4],
+            ['boxes', '3D-Druck', 'Über 20 Drucker (FDM & SLA) für individuelle Halterungen, Blenden und Kleinserien – Fertigung meist in 1–3 Tagen, auf Wunsch auch farbig.', self::uploadsUrlPrefix() . 'seed-leistung-3d-druck.jpg', null, null, 5],
+            ['shield-alert', 'Alarmanlagen', 'Zuverlässiger Diebstahlschutz für dein Fahrzeug, abgestimmt auf deine Ansprüche und dein Budget.', self::uploadsUrlPrefix() . 'seed-leistung-alarmanlagen.jpg', null, null, 6],
+            ['video', 'Dash Cams', 'Beweissichere Aufzeichnung fürs Auto – wir beraten dich zur passenden Kamera und übernehmen den unauffälligen Einbau.', self::uploadsUrlPrefix() . 'seed-leistung-dashcam.jpg', null, null, 7],
         ];
     }
 }

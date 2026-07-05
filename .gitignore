@@ -27,6 +27,10 @@
 # pro Umgebung unterschiedlich und darf nicht öffentlich einsehbar sein
 /hifi/api/config/setup.php
 
+# Wird nur im IONOS-Deploy-Now-Build-Schritt geschrieben (Root-Domain statt /hifi),
+# lokal nicht vorhanden -> Fallback in config.php greift dann
+/hifi/api/config/base_path.php
+
 # Claude-Code-Tooling (Skills/lokale Einstellungen) - gehört nicht zum Website-Projekt
 /hifi/.claude/
 /hifi/.agents/
