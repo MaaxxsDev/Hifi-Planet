@@ -7,6 +7,18 @@ export default defineConfig({
   build: {
     outDir: '../hifi',
     emptyOutDir: false,
+    rollupOptions: {
+      output: {
+        // Ohne das erzeugt lucide-react/dynamic pro Icon eine eigene Chunk-Datei
+        // (~1600 Stück) - auf Shared-Hosting scheitert das Hochladen/Entpacken
+        // so vieler winziger Dateien. Hier alle Icons in eine Datei bündeln.
+        manualChunks(id) {
+          if (id.includes('lucide-react')) {
+            return 'lucide-icons';
+          }
+        },
+      },
+    },
   },
   server: {
     proxy: {
