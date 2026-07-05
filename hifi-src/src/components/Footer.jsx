@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import DynamicIcon from './DynamicIcon.jsx';
 import { useCookieConsent } from '../context/CookieConsentContext.jsx';
 
@@ -22,9 +22,18 @@ function isOpenNow() {
 export default function Footer() {
   const open = isOpenNow();
   const { openSettings } = useCookieConsent();
+  // Auf der Startseite blendet sich unten eine fixierte CTA-Leiste ein, die
+  // sonst die letzte Footer-Zeile (Impressum-Links) verdeckt - deshalb dort
+  // zusätzlichen Platz für sie freihalten.
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
 
   return (
-    <footer className="border-t border-slate-200 bg-slate-50 py-10 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+    <footer
+      className={`border-t border-slate-200 bg-slate-50 py-10 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 ${
+        isHome ? 'pb-24' : ''
+      }`}
+    >
       <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-3 sm:px-6">
         <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-3 flex items-center gap-2">
