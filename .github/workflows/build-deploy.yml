@@ -38,12 +38,19 @@ jobs:
           npm run build
 
       - name: Publish build output to deploy branch
-        working-directory: hifi
         run: |
           # Sicherheitsnetz: diese Dateien sind umgebungsspezifisch und dürfen
           # niemals in irgendeinen Branch gelangen, auch nicht versehentlich.
-          rm -f api/config/db.php api/config/setup.php
+          rm -f hifi/api/config/db.php hifi/api/config/setup.php
 
+          # In ein frisches, vom ausgecheckten Repo getrenntes Verzeichnis kopieren,
+          # damit der Ordner "hifi/" (mit Prefix!) im deploy-Branch landet - das muss
+          # zur bestehenden Plesk-Konfiguration (Dokumentenstamm .../hifi) passen.
+          rm -rf /tmp/deploy-out
+          mkdir -p /tmp/deploy-out/hifi
+          cp -r hifi/. /tmp/deploy-out/hifi/
+
+          cd /tmp/deploy-out
           git init -q -b deploy
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
