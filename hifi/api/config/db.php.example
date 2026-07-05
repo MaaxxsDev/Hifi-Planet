@@ -1,0 +1,12 @@
+<?php
+
+// Kopiere diese Datei zu db.php und trage die Zugangsdaten der jeweiligen Umgebung ein.
+// db.php selbst ist bewusst nicht Teil des Repos (siehe .gitignore) und wird zusätzlich
+// vom Admin-Panel (Einstellungen -> Datenbank) automatisch neu geschrieben.
+return array (
+  'host' => '127.0.0.1',
+  'name' => 'hifi_shop',
+  'user' => 'root',
+  'pass' => '',
+  'charset' => 'utf8mb4',
+);

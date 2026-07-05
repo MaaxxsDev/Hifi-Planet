@@ -1,0 +1,37 @@
+# Dieses Repo lebt im XAMPP htdocs-Ordner zusammen mit anderen, projektfremden
+# Verzeichnissen (Standard-XAMPP-Dateien, andere lokale Seiten). Nur die beiden
+# HifiPlanet-Ordner (hifi/ und hifi-src/) sollen versioniert werden.
+/*
+!/hifi/
+!/hifi-src/
+!/.gitignore
+
+# Von Composer/NPM regenerierbare Abhängigkeiten
+/hifi/api/vendor/
+/hifi-src/node_modules/
+
+# Vite-Build-Output (wird per "npm run build" in hifi-src erzeugt und landet laut
+# vite.config.js direkt in hifi/). Da emptyOutDir:false ist, sammeln sich hier über
+# viele Builds hinweg tausende alte, umbenannte Chunk-Dateien an (u.a. durch das
+# Code-Splitting der ~1600 Lucide-Icons im IconPicker) - das gehört nicht ins Repo.
+/hifi/assets/
+/hifi/index.html
+/hifi/favicon.png
+/hifi/robots.txt
+
+# Umgebungsspezifische DB-Zugangsdaten (wird vom Admin-Panel automatisch neu geschrieben,
+# unterscheidet sich zwischen Dev-/Live-Umgebung und gehört daher nicht ins Repo)
+/hifi/api/config/db.php
+
+# Claude-Code-Tooling (Skills/lokale Einstellungen) - gehört nicht zum Website-Projekt
+/hifi/.claude/
+/hifi/.agents/
+/hifi/skills-lock.json
+/hifi-src/.claude/
+/hifi-src/.agents/
+/hifi-src/skills-lock.json
+
+# Von XAMPP/Editoren erzeugte Laufzeit-/Cache-Dateien
+*.log
+Thumbs.db
+.DS_Store

@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteBase /hifi/
+
+# API-Requests an den PHP-Front-Controller weiterleiten
+RewriteCond %{REQUEST_URI} ^/hifi/api/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^api/(.*)$ api/public/index.php [QSA,L]
+
+# Dynamische sitemap.xml (DB-generiert)
+RewriteRule ^sitemap\.xml$ api/public/sitemap.php [L]
+
+# Alles andere: SPA-Fallback auf index.html (React Router übernimmt das Routing)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [QSA,L]
