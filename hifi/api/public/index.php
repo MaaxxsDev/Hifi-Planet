@@ -1,5 +1,11 @@
 <?php
 
+// Fängt versehentliche Ausgaben vor den header()-Aufrufen ab (z.B. PHP-
+// Warnungen/Notices oder ein BOM in einer Datei) - ohne das würde eine solche
+// Ausgabe den Content-Type-Header verhindern ("headers already sent"), das
+// Frontend bekäme dann keine gültige JSON-Antwort mehr, sondern still null.
+ob_start();
+
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Controllers\AdminUserController;
@@ -163,6 +169,9 @@ $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $apiBase = rtrim($config['app']['base_path'], '/') . '/api';
 $route = '/' . ltrim(substr($path, strlen($apiBase)), '/');
 
+// Alles, was bis hierhin versehentlich ausgegeben wurde, verwerfen - danach
+// kann der Content-Type-Header noch garantiert gesetzt werden.
+ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 
 try {

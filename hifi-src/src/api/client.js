@@ -9,11 +9,25 @@ async function request(path, options = {}) {
     ...options,
   });
 
-  const isJson = res.headers.get('content-type')?.includes('application/json');
-  const data = isJson ? await res.json() : null;
+  // Bewusst unabhängig vom Content-Type-Header versucht: der Header kann durch
+  // eine versehentliche Server-Ausgabe vor den PHP-header()-Aufrufen verloren
+  // gehen, obwohl der Body trotzdem gültiges JSON enthält. Ohne das würde ein
+  // eigentlich erfolgreicher Request still `null` liefern statt die echten Daten.
+  const rawText = await res.text();
+  let data = null;
+  if (rawText) {
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      // Antwort war kein gültiges JSON - unten anhand von res.ok/rawText behandelt.
+    }
+  }
 
   if (!res.ok) {
     throw new Error(data?.error || `Fehler ${res.status}`);
+  }
+  if (data === null && rawText) {
+    throw new Error('Unerwartete Server-Antwort (kein gültiges JSON)');
   }
 
   return data;
