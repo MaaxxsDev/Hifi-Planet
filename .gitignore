@@ -23,6 +23,10 @@
 # unterscheidet sich zwischen Dev-/Live-Umgebung und gehört daher nicht ins Repo)
 /hifi/api/config/db.php
 
+# Einmalpasswort für den Ersteinrichtungs-Assistenten (siehe setup.php.example) -
+# pro Umgebung unterschiedlich und darf nicht öffentlich einsehbar sein
+/hifi/api/config/setup.php
+
 # Claude-Code-Tooling (Skills/lokale Einstellungen) - gehört nicht zum Website-Projekt
 /hifi/.claude/
 /hifi/.agents/

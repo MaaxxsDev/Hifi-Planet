@@ -17,6 +17,7 @@ use App\Controllers\ProductController;
 use App\Controllers\SchemaController;
 use App\Controllers\ServiceController;
 use App\Controllers\SettingsController;
+use App\Controllers\SetupController;
 use App\Controllers\TwoFactorController;
 use App\Controllers\UploadController;
 use App\Middleware\AuthMiddleware;
@@ -148,6 +149,15 @@ $router->post('/settings/database', $perm('settings.manage', fn($p) => DatabaseC
 
 $router->get('/maintenance', fn($p) => MaintenanceController::status());
 $router->post('/maintenance', $perm('settings.manage', fn($p) => MaintenanceController::update()));
+
+// Ersteinrichtungs-Assistent (/setup) - bewusst ohne Login, da es ja noch keinen
+// Admin gibt. Jeder schreibende Endpunkt prüft selbst, ob wirklich noch kein
+// Admin-Account existiert (siehe SetupController::requireUnlocked).
+$router->get('/setup/status', fn($p) => SetupController::status());
+$router->post('/setup/verify-password', fn($p) => SetupController::verifyPassword());
+$router->post('/setup/database', fn($p) => SetupController::saveDatabase());
+$router->post('/setup/migrate', fn($p) => SetupController::migrateSchema());
+$router->post('/setup/admin', fn($p) => SetupController::createAdmin());
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $apiBase = $config['app']['base_path'] . '/api';

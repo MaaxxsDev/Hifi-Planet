@@ -1,0 +1,11 @@
+<?php
+
+// Kopiere diese Datei zu setup.php und trage ein eigenes, nur dir bekanntes
+// Einmalpasswort ein - am besten BEVOR du die Seite auf einen neuen Server hochlädst.
+// Damit kannst du beim allerersten Aufruf der Seite die Ersteinrichtung
+// (Datenbank-Zugangsdaten, Datenbankstruktur, erster Admin-Account) über einen
+// geführten Assistenten unter /setup durchführen.
+//
+// Sobald der erste Admin-Account angelegt wurde, sperrt sich der Assistent
+// automatisch selbst - das Passwort funktioniert dann nicht mehr.
+return 'CHANGE-ME-BEFORE-UPLOAD';

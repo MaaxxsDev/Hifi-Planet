@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import SetupGate from './components/SetupGate.jsx';
 import PublicLayout from './components/PublicLayout.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
@@ -14,6 +15,7 @@ import ContactPage from './pages/public/ContactPage.jsx';
 import Impressum from './pages/public/Impressum.jsx';
 import Datenschutz from './pages/public/Datenschutz.jsx';
 import AGB from './pages/public/AGB.jsx';
+import SetupWizard from './pages/public/SetupWizard.jsx';
 
 import Login from './pages/admin/Login.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
@@ -37,7 +39,10 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <SetupGate>
       <Routes>
+      <Route path="/setup" element={<SetupWizard />} />
+
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/fahrzeuge" element={<VehicleSelect />} />
@@ -78,6 +83,7 @@ export default function App() {
         </Route>
       </Route>
       </Routes>
+      </SetupGate>
     </>
   );
 }
