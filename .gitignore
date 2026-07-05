@@ -5,6 +5,7 @@
 !/hifi/
 !/hifi-src/
 !/.gitignore
+!/.github/
 
 # Von Composer/NPM regenerierbare Abhängigkeiten
 /hifi/api/vendor/
