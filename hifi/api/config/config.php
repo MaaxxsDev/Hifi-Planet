@@ -3,7 +3,11 @@
 return [
     // Ausgelagert, damit das Admin-Panel (Einstellungen -> Datenbank) diese Datei
     // gezielt neu schreiben kann, ohne den Rest dieser Konfiguration anzufassen.
-    'db' => require __DIR__ . '/db.php',
+    // Existiert db.php noch nicht (frischer Server vor der Ersteinrichtung), wird
+    // hier bewusst NICHT fatal abgebrochen, damit /setup überhaupt erreichbar ist.
+    'db' => is_file(__DIR__ . '/db.php')
+        ? require __DIR__ . '/db.php'
+        : ['host' => '', 'name' => '', 'user' => '', 'pass' => '', 'charset' => 'utf8mb4'],
     // Einmalpasswort für den Ersteinrichtungs-Assistenten unter /setup (siehe setup.php.example).
     // Liegt in einer eigenen, nicht versionierten Datei, genau wie db.php.
     'setup_password' => is_file(__DIR__ . '/setup.php') ? require __DIR__ . '/setup.php' : null,

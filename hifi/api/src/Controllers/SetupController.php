@@ -20,9 +20,17 @@ class SetupController
         return ($pw !== null && $pw !== '') ? $pw : null;
     }
 
+    private static function currentDbConfig(): array
+    {
+        $path = __DIR__ . '/../../config/db.php';
+        return is_file($path)
+            ? require $path
+            : ['host' => '', 'name' => '', 'user' => '', 'pass' => '', 'charset' => 'utf8mb4'];
+    }
+
     private static function tryConnect(?array $overrideConfig = null): ?PDO
     {
-        $db = $overrideConfig ?? require __DIR__ . '/../../config/db.php';
+        $db = $overrideConfig ?? self::currentDbConfig();
         try {
             $dsn = "mysql:host={$db['host']};dbname={$db['name']};charset=" . ($db['charset'] ?? 'utf8mb4');
             return new PDO($dsn, $db['user'], $db['pass'], [
