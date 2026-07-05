@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle.jsx';
+import DynamicIcon from './DynamicIcon.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
@@ -17,10 +20,30 @@ export default function Navbar() {
           <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link>
           <Link to="/leistungen" className="hover:text-brand-500">Leistungen</Link>
           <Link to="/kontakt" className="hover:text-brand-500">Kontakt</Link>
+          {user && (
+            <Link
+              to="/admin"
+              aria-label="Zum Admin-Panel"
+              title="Zum Admin-Panel"
+              className="rounded-full p-2 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              <DynamicIcon name="layout-dashboard" className="h-5 w-5" />
+            </Link>
+          )}
           <ThemeToggle />
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
+          {user && (
+            <Link
+              to="/admin"
+              aria-label="Zum Admin-Panel"
+              title="Zum Admin-Panel"
+              className="rounded-full p-2 text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              <DynamicIcon name="layout-dashboard" className="h-5 w-5" />
+            </Link>
+          )}
           <ThemeToggle />
           <button
             onClick={() => setOpen((o) => !o)}
