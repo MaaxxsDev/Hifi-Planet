@@ -41,7 +41,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 
 session_name($config['app']['session_name']);
 session_set_cookie_params([
-    'path' => $config['app']['base_path'] . '/',
+    'path' => rtrim($config['app']['base_path'], '/') . '/',
     'httponly' => true,
     'samesite' => 'Lax',
 ]);
@@ -160,7 +160,7 @@ $router->post('/setup/migrate', fn($p) => SetupController::migrateSchema());
 $router->post('/setup/admin', fn($p) => SetupController::createAdmin());
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$apiBase = $config['app']['base_path'] . '/api';
+$apiBase = rtrim($config['app']['base_path'], '/') . '/api';
 $route = '/' . ltrim(substr($path, strlen($apiBase)), '/');
 
 header('Content-Type: application/json; charset=utf-8');

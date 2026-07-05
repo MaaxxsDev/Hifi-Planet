@@ -24,10 +24,9 @@ return [
         'to_email' => 'kontakt@example.com',
     ],
     'app' => [
-        // Muss zum Vite "base" passen und wird für Session-Cookie-Pfad und Upload-URLs
-        // genutzt. Lokal (XAMPP) ist das /hifi, im IONOS-Deploy-Now-Build wird beim
-        // Bauen eine base_path.php mit '/' geschrieben (siehe .github Workflow).
-        'base_path' => is_file(__DIR__ . '/base_path.php') ? require __DIR__ . '/base_path.php' : '/hifi',
+        // Läuft überall (lokal wie live) unter der Domain-Wurzel. Muss zum Vite
+        // "base" passen und wird für Session-Cookie-Pfad und Upload-URLs genutzt.
+        'base_path' => '/',
         'session_name' => 'hifi_admin_session',
         // Öffentliche Domain der Seite (für sitemap.xml, robots.txt, Canonical-URLs). Ohne abschließenden Slash.
         'site_url' => 'https://hifi-planet.de',
