@@ -97,14 +97,14 @@ export default function Packages() {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2">
-        <h1 className="mb-4 text-xl font-bold text-slate-900 dark:text-white">Pakete</h1>
+        <h1 className="mb-4 text-xl font-bold text-neutral-900 dark:text-white">Pakete</h1>
 
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Filtern:</label>
+          <label className="text-sm font-medium text-neutral-600 dark:text-neutral-300">Filtern:</label>
           <select
             value={brandFilter}
             onChange={(e) => handleBrandFilterChange(e.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           >
             <option value="all">Alle Marken</option>
             {brandOptions.map((b) => <option key={b.id} value={String(b.id)}>{b.name}</option>)}
@@ -112,7 +112,7 @@ export default function Packages() {
           <select
             value={modelFilter}
             onChange={(e) => setModelFilter(e.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           >
             <option value="all">Alle Modelle</option>
             {modelOptions.map((m) => <option key={m.id} value={String(m.id)}>{m.brand_name} {m.name}</option>)}
@@ -122,12 +122,12 @@ export default function Packages() {
               Filter zurücksetzen
             </button>
           )}
-          <span className="text-sm text-slate-400">{filteredPackages.length} von {packages.length}</span>
+          <span className="text-sm text-neutral-400">{filteredPackages.length} von {packages.length}</span>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+            <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
               <tr>
                 <th className="px-4 py-2">Marke / Modell</th>
                 <th className="px-4 py-2">Paket</th>
@@ -135,12 +135,12 @@ export default function Packages() {
                 <th className="px-4 py-2 text-right">Aktionen</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
               {filteredPackages.map((pkg) => (
-                <tr key={pkg.id} className="bg-white dark:bg-slate-950">
+                <tr key={pkg.id} className="bg-white dark:bg-neutral-950">
                   <td className="px-4 py-2">{pkg.brand_name} {pkg.model_name}</td>
-                  <td className="px-4 py-2 font-medium text-slate-800 dark:text-slate-100">{pkg.name}</td>
-                  <td className="px-4 py-2 text-slate-500 dark:text-slate-400">
+                  <td className="px-4 py-2 font-medium text-neutral-800 dark:text-neutral-100">{pkg.name}</td>
+                  <td className="px-4 py-2 text-neutral-500 dark:text-neutral-400">
                     {pkg.markup_type === 'fixed' && `+${pkg.markup_value} €`}
                     {pkg.markup_type === 'percent' && `+${pkg.markup_value} %`}
                     {(!pkg.markup_type || pkg.markup_type === 'none') && '–'}
@@ -154,7 +154,7 @@ export default function Packages() {
                 </tr>
               ))}
               {filteredPackages.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-6 text-center text-slate-400">
+                <tr><td colSpan={4} className="px-4 py-6 text-center text-neutral-400">
                   {packages.length === 0 ? 'Noch keine Pakete angelegt.' : 'Keine Pakete für diesen Filter.'}
                 </td></tr>
               )}
@@ -163,46 +163,46 @@ export default function Packages() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="h-fit space-y-4 rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="font-bold text-slate-900 dark:text-white">{editingId ? 'Paket bearbeiten' : 'Neues Paket'}</h2>
+      <form onSubmit={handleSubmit} className="h-fit space-y-4 rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="font-bold text-neutral-900 dark:text-white">{editingId ? 'Paket bearbeiten' : 'Neues Paket'}</h2>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Modell *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Modell *</label>
           <select
             required
             value={form.car_model_id}
             onChange={(e) => setForm({ ...form, car_model_id: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           >
             <option value="">Bitte wählen…</option>
             {models.map((m) => <option key={m.id} value={m.id}>{m.brand_name} {m.name}</option>)}
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Paketname *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Paketname *</label>
           <input
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Beschreibung</label>
-          <p className="mb-1 text-xs text-slate-500 dark:text-slate-400">Jede Zeile erscheint als eigener Stichpunkt zusammen mit den Bauteilen.</p>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Beschreibung</label>
+          <p className="mb-1 text-xs text-neutral-500 dark:text-neutral-400">Jede Zeile erscheint als eigener Stichpunkt zusammen mit den Bauteilen.</p>
           <textarea
             rows={3}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Aufschlag</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Aufschlag</label>
           <div className="flex gap-2">
             <select
               value={form.markup_type}
               onChange={(e) => setForm({ ...form, markup_type: e.target.value })}
-              className="w-40 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="w-40 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
             >
               <option value="none">Kein Aufschlag</option>
               <option value="fixed">Fester Betrag (€)</option>
@@ -215,18 +215,18 @@ export default function Packages() {
               disabled={form.markup_type === 'none'}
               value={form.markup_value}
               onChange={(e) => setForm({ ...form, markup_value: e.target.value })}
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Wird auf die Summe der Bauteilpreise aufgeschlagen und ergibt den Gesamtpreis für den Kunden.</p>
+          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Wird auf die Summe der Bauteilpreise aufgeschlagen und ergibt den Gesamtpreis für den Kunden.</p>
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Sortierung</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Sortierung</label>
           <input
             type="number"
             value={form.sort_order}
             onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
 
@@ -237,7 +237,7 @@ export default function Packages() {
             {editingId ? 'Speichern' : 'Anlegen'}
           </button>
           {editingId && (
-            <button type="button" onClick={resetForm} className="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-700">
+            <button type="button" onClick={resetForm} className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700">
               Abbrechen
             </button>
           )}

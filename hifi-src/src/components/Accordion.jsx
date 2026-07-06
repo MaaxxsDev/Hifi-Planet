@@ -5,7 +5,7 @@ export default function Accordion({ items }) {
   const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white dark:divide-slate-800 dark:border-slate-800 dark:bg-slate-900">
+    <div className="divide-y divide-neutral-200 rounded-xl border border-neutral-200 bg-white dark:divide-neutral-800 dark:border-neutral-800 dark:bg-neutral-900">
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         return (
@@ -15,7 +15,7 @@ export default function Accordion({ items }) {
               className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
               aria-expanded={isOpen}
             >
-              <span className="font-medium text-slate-900 dark:text-white">{item.question}</span>
+              <span className="font-medium text-neutral-900 dark:text-white">{item.question}</span>
               <motion.svg
                 animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
@@ -24,7 +24,7 @@ export default function Accordion({ items }) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                className="h-5 w-5 shrink-0 text-slate-500"
+                className="h-5 w-5 shrink-0 text-neutral-500"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
               </motion.svg>
@@ -38,7 +38,7 @@ export default function Accordion({ items }) {
                   transition={{ duration: 0.25, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <p className="px-5 pb-4 text-sm text-slate-600 dark:text-slate-300">{item.answer}</p>
+                  <p className="px-5 pb-4 text-sm text-neutral-600 dark:text-neutral-300">{item.answer}</p>
                 </motion.div>
               )}
             </AnimatePresence>

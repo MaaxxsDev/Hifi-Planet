@@ -40,12 +40,12 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">Willkommen, {user?.username}!</h1>
-      <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+      <h1 className="mb-1 text-xl font-bold text-neutral-900 dark:text-white">Willkommen, {user?.username}!</h1>
+      <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
         Hier siehst du auf einen Blick, wie viel in deinem Shop hinterlegt ist. Klicke auf eine Kachel, um dorthin zu gelangen.
       </p>
       {cards.length === 0 ? (
-        <p className="text-slate-500 dark:text-slate-400">
+        <p className="text-neutral-500 dark:text-neutral-400">
           Für deinen Account sind noch keine Bereiche freigeschaltet. Bitte wende dich an einen Administrator.
         </p>
       ) : (
@@ -57,15 +57,15 @@ export default function Dashboard() {
               className={`rounded-xl border p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
                 card.highlight && card.value > 0
                   ? 'border-brand-300 bg-brand-50 dark:border-brand-900 dark:bg-brand-900/20'
-                  : 'border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900'
+                  : 'border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900'
               }`}
             >
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-400">
                 <Icon path={ICONS[card.icon]} />
               </div>
-              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{card.label}</p>
+              <p className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">{card.label}</p>
               <p className="mt-1 text-3xl font-extrabold text-brand-600 dark:text-brand-400">{card.value ?? '…'}</p>
-              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{card.hint}</p>
+              <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">{card.hint}</p>
             </Link>
           ))}
         </div>

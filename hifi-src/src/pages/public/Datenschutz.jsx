@@ -10,11 +10,11 @@ export default function Datenschutz() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Datenschutzerklärung</h1>
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Datenschutzerklärung</h1>
 
-      <div className="space-y-8 text-sm text-slate-600 dark:text-slate-300">
+      <div className="space-y-8 text-sm text-neutral-600 dark:text-neutral-300">
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">1. Verantwortlicher</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">1. Verantwortlicher</h2>
           <p>
             Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:
             <br />
@@ -28,7 +28,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">2. Ihre Rechte als betroffene Person</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">2. Ihre Rechte als betroffene Person</h2>
           <p className="mb-2">Sie haben jederzeit das Recht,</p>
           <ul className="list-disc space-y-1 pl-5">
             <li>Auskunft über Ihre bei uns gespeicherten personenbezogenen Daten zu erhalten (Art. 15 DSGVO),</li>
@@ -47,7 +47,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">3. Hosting und Server-Logfiles</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">3. Hosting und Server-Logfiles</h2>
           <p>
             Beim Aufruf dieser Website erhebt der Webserver automatisch Daten in sogenannten Server-Logfiles, die
             Ihr Browser übermittelt. Dazu gehören: IP-Adresse, Datum und Uhrzeit der Anfrage, aufgerufene Seite,
@@ -60,7 +60,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">4. Kontaktformular</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">4. Kontaktformular</h2>
           <p>
             Wenn Sie uns über das Kontaktformular eine Anfrage zukommen lassen, werden Ihre Angaben aus dem
             Formular (Name, E-Mail-Adresse, optional Telefonnummer, Nachricht sowie ggf. der Kontext Ihrer Anfrage
@@ -75,7 +75,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">5. Cookies und lokale Speicherung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">5. Cookies und lokale Speicherung</h2>
           <p className="mb-2">
             Diese Website verwendet technisch notwendige Cookies bzw. Speichertechnologien, die für den Betrieb der
             Seite erforderlich sind und ohne die einzelne Funktionen nicht funktionieren würden. Dazu gehören:
@@ -100,7 +100,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">6. Google Maps</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">6. Google Maps</h2>
           <p>
             Auf unserer Kontaktseite und im Footer binden wir Kartenmaterial des Dienstes „Google Maps" ein, um
             Ihnen die Anfahrt zu unserem Standort zu erleichtern. Anbieter ist Google Ireland Limited, Gordon
@@ -122,7 +122,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">7. YouTube</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">7. YouTube</h2>
           <p>
             Auf unserer Startseite binden wir ein Video des Anbieters YouTube (Google Ireland Limited, Gordon
             House, Barrow Street, Dublin 4, Irland) im „erweiterten Datenschutzmodus" ein (Domain
@@ -145,7 +145,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">8. Empfänger der Daten</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">8. Empfänger der Daten</h2>
           <p>
             Ihre Daten werden grundsätzlich nur innerhalb unseres Unternehmens verarbeitet. Eine Weitergabe an
             Dritte erfolgt nur, soweit dies zur Bearbeitung Ihrer Anfrage erforderlich ist (z. B. an unseren
@@ -155,7 +155,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">9. Speicherdauer</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">9. Speicherdauer</h2>
           <p>
             Sofern in dieser Erklärung keine speziellere Speicherdauer genannt wurde, verbleiben Ihre
             personenbezogenen Daten bei uns, bis der Zweck für die Datenspeicherung entfällt. Gesetzliche
@@ -165,7 +165,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">10. SSL-/TLS-Verschlüsselung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">10. SSL-/TLS-Verschlüsselung</h2>
           <p>
             Diese Seite nutzt aus Sicherheitsgründen eine SSL-/TLS-Verschlüsselung zur Übertragung Ihrer Daten. Eine
             verschlüsselte Verbindung erkennen Sie an dem Schloss-Symbol in der Adresszeile Ihres Browsers.
@@ -173,7 +173,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">11. Änderung dieser Datenschutzerklärung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">11. Änderung dieser Datenschutzerklärung</h2>
           <p>
             Wir passen diese Datenschutzerklärung an, sobald sich die von uns eingesetzten Datenverarbeitungen
             ändern. Es gilt jeweils die zum Zeitpunkt Ihres Besuchs aktuelle, auf dieser Seite veröffentlichte

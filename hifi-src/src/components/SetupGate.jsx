@@ -33,7 +33,7 @@ export default function SetupGate({ children }) {
   }, [location.pathname]);
 
   if (state.pathname !== location.pathname || state.needsSetup === null) {
-    return <div className="min-h-screen bg-white dark:bg-slate-950" />;
+    return <div className="min-h-screen bg-white dark:bg-neutral-950" />;
   }
 
   if (state.needsSetup && location.pathname !== '/setup') {

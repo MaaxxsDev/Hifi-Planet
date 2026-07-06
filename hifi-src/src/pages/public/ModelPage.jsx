@@ -40,7 +40,7 @@ export default function ModelPage() {
   }
 
   if (!data) {
-    return <p className="mx-auto max-w-6xl px-4 py-12 text-slate-500 sm:px-6">Lädt…</p>;
+    return <p className="mx-auto max-w-6xl px-4 py-12 text-neutral-500 sm:px-6">Lädt…</p>;
   }
 
   const { model, packages } = data;
@@ -59,30 +59,30 @@ export default function ModelPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       {maintenance.vehicles.enabled && maintenance.bypass && <MaintenanceBypassBanner inline />}
-      <p className="mb-1 text-sm text-slate-500 dark:text-slate-400">
+      <p className="mb-1 text-sm text-neutral-500 dark:text-neutral-400">
         <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link> /{' '}
         <Link to={`/fahrzeuge/${brandSlug}`} className="hover:text-brand-500">{model.brand_name}</Link> / {model.name}
       </p>
-      <h1 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
         {model.brand_name} {model.name} – Sound-Pakete
       </h1>
 
       {packages.length === 0 && (
-        <p className="text-slate-500 dark:text-slate-400">Für dieses Modell sind noch keine Pakete hinterlegt.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">Für dieses Modell sind noch keine Pakete hinterlegt.</p>
       )}
 
       <div className="space-y-6">
         {packages.map((pkg) => (
-          <div key={pkg.id} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div key={pkg.id} className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
             <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{pkg.name}</h2>
+              <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{pkg.name}</h2>
               <div className="text-right">
-                <p className="text-xs uppercase tracking-wide text-slate-400">Gesamtpreis (ca.)</p>
+                <p className="text-xs uppercase tracking-wide text-neutral-400">Gesamtpreis (ca.)</p>
                 <p className="text-xl font-extrabold text-brand-600 dark:text-brand-400">{formatPrice(pkg.total_price)}</p>
               </div>
             </div>
 
-            <ul className="mb-5 list-disc space-y-1 pl-5 text-sm text-slate-700 dark:text-slate-300">
+            <ul className="mb-5 list-disc space-y-1 pl-5 text-sm text-neutral-700 dark:text-neutral-300">
               {pkg.products.map((product) => (
                 <li key={product.id}>
                   {product.name_override || product.scraped_name || 'Produkt wird geladen…'}

@@ -68,19 +68,19 @@ export default function MaintenanceSettings() {
   ];
 
   if (loading) {
-    return <p className="text-sm text-slate-400">Lädt…</p>;
+    return <p className="text-sm text-neutral-400">Lädt…</p>;
   }
 
   return (
     <form onSubmit={handleSave} className="max-w-2xl space-y-6">
-      <p className="text-sm text-slate-500 dark:text-slate-400">
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">
         Ist "Gesamte Seite" aktiv, gewinnt das immer – die beiden anderen Schalter spielen dann keine Rolle mehr.
       </p>
 
       {sections.map((section) => (
-        <section key={section.key} className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+        <section key={section.key} className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
           <div className="mb-1 flex items-center justify-between gap-3">
-            <h2 className="font-semibold text-slate-900 dark:text-white">{section.title}</h2>
+            <h2 className="font-semibold text-neutral-900 dark:text-white">{section.title}</h2>
             <label className="relative inline-flex cursor-pointer items-center">
               <input
                 type="checkbox"
@@ -88,12 +88,12 @@ export default function MaintenanceSettings() {
                 onChange={(e) => update(section.key, 'enabled', e.target.checked)}
                 className="peer sr-only"
               />
-              <div className="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-brand-500 dark:bg-slate-700" />
+              <div className="h-6 w-11 rounded-full bg-neutral-200 transition peer-checked:bg-brand-500 dark:bg-neutral-700" />
               <div className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-5" />
             </label>
           </div>
-          <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">{section.hint}</p>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          <p className="mb-3 text-sm text-neutral-500 dark:text-neutral-400">{section.hint}</p>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
             Eigene Nachricht (optional)
           </label>
           <textarea
@@ -101,7 +101,7 @@ export default function MaintenanceSettings() {
             value={status[section.key].message}
             onChange={(e) => update(section.key, 'message', e.target.value)}
             placeholder="z. B. Wir aktualisieren gerade unser Angebot. Schau bald wieder vorbei!"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </section>
       ))}

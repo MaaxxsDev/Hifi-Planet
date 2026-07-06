@@ -107,8 +107,8 @@ export default function SetupWizard() {
   };
 
   const inputClass =
-    'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900';
-  const labelClass = 'mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300';
+    'w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900';
+  const labelClass = 'mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300';
 
   const steps = [
     { key: 'database', label: 'Datenbank' },
@@ -118,16 +118,16 @@ export default function SetupWizard() {
   const currentStepIndex = steps.findIndex((s) => s.key === phase);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-50 px-4 py-12 dark:bg-slate-950">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-neutral-50 px-4 py-12 dark:bg-neutral-950">
       <img src={logo} alt="HifiPlanet" className="h-16 w-auto sm:h-20" />
 
-      <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        {phase === 'loading' && <p className="text-center text-sm text-slate-400">Lädt…</p>}
+      <div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+        {phase === 'loading' && <p className="text-center text-sm text-neutral-400">Lädt…</p>}
 
         {phase === 'locked' && (
           <div className="text-center">
-            <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Bereits eingerichtet</h1>
-            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Bereits eingerichtet</h1>
+            <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
               Diese Seite wurde bereits vollständig eingerichtet. Der Assistent ist deshalb gesperrt.
             </p>
             <Link to="/admin/login" className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-400">
@@ -146,12 +146,12 @@ export default function SetupWizard() {
                       ? 'bg-green-500 text-white'
                       : i === currentStepIndex
                         ? 'bg-brand-500 text-white'
-                        : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400'
+                        : 'bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-400'
                   }`}
                 >
                   {i < currentStepIndex ? '✓' : i + 1}
                 </span>
-                {i < steps.length - 1 && <span className="h-px w-6 bg-slate-300 dark:bg-slate-700" />}
+                {i < steps.length - 1 && <span className="h-px w-6 bg-neutral-300 dark:bg-neutral-700" />}
               </div>
             ))}
           </div>
@@ -159,8 +159,8 @@ export default function SetupWizard() {
 
         {phase === 'password' && (
           <form onSubmit={handlePassword}>
-            <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Ersteinrichtung</h1>
-            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Ersteinrichtung</h1>
+            <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
               Gib das Einmalpasswort ein, das in <code>config/setup.php</code> hinterlegt ist.
             </p>
             <div className="mb-4">
@@ -187,8 +187,8 @@ export default function SetupWizard() {
 
         {phase === 'database' && (
           <form onSubmit={handleDatabase}>
-            <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Datenbank-Zugangsdaten</h1>
-            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Datenbank-Zugangsdaten</h1>
+            <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
               Trage die Zugangsdaten der Datenbank auf diesem Server ein. Die Verbindung wird vor dem Speichern
               getestet.
             </p>
@@ -249,12 +249,12 @@ export default function SetupWizard() {
 
         {phase === 'schema' && (
           <div>
-            <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Datenbankstruktur</h1>
-            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Datenbankstruktur</h1>
+            <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
               Die Datenbankverbindung funktioniert. Jetzt legen wir die benötigten Tabellen an.
             </p>
             {migrateActions && (
-              <ul className="mb-4 space-y-1 rounded-md bg-slate-50 p-3 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              <ul className="mb-4 space-y-1 rounded-md bg-neutral-50 p-3 text-sm text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
                 {migrateActions.map((a, i) => (
                   <li key={i}>{a}</li>
                 ))}
@@ -274,8 +274,8 @@ export default function SetupWizard() {
 
         {phase === 'admin' && (
           <form onSubmit={handleAdmin}>
-            <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Erster Admin-Account</h1>
-            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Erster Admin-Account</h1>
+            <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
               Lege den ersten Super-Admin-Account an, mit dem du dich anschließend einloggen kannst.
             </p>
             <div className="mb-3">
@@ -323,8 +323,8 @@ export default function SetupWizard() {
 
         {phase === 'done' && (
           <div className="text-center">
-            <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Fertig!</h1>
-            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Fertig!</h1>
+            <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
               Die Ersteinrichtung ist abgeschlossen. Du kannst dich jetzt mit deinem neuen Admin-Account anmelden.
             </p>
             <Link

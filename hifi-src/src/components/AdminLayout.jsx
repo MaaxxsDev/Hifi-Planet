@@ -84,7 +84,7 @@ export default function AdminLayout() {
     `flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
       isActive
         ? 'bg-brand-500 text-white'
-        : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+        : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'
     }`;
 
   const NavLinks = ({ onNavigate }) => (
@@ -92,7 +92,7 @@ export default function AdminLayout() {
       {navGroups.map((group, i) => (
         <div key={i}>
           {group.title && (
-            <p className="mb-1.5 px-3 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            <p className="mb-1.5 px-3 text-xs font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
               {group.title}
             </p>
           )}
@@ -115,25 +115,25 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <aside className="hidden w-60 shrink-0 border-r border-slate-200 p-4 dark:border-slate-800 sm:block">
+    <div className="flex min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
+      <aside className="hidden w-60 shrink-0 border-r border-neutral-200 p-4 dark:border-neutral-800 sm:block">
         <div className="mb-6 flex items-center gap-2 px-3">
           <span className="rounded-lg px-2 py-1 dark:bg-white">
             <img src={logo} alt="HifiPlanet" className="h-7 w-auto" />
           </span>
-          <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Admin</span>
+          <span className="text-sm font-semibold text-neutral-500 dark:text-neutral-400">Admin</span>
         </div>
         <NavLinks />
       </aside>
 
       <div className="flex-1">
-        <header className="border-b border-slate-200 dark:border-slate-800">
+        <header className="border-b border-neutral-200 dark:border-neutral-800">
           <div className="flex items-center justify-between px-4 py-3 sm:px-6">
             <div className="flex items-center gap-2 sm:hidden">
               <button
                 onClick={() => setMobileOpen((o) => !o)}
                 aria-label="Menü öffnen"
-                className="rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -143,21 +143,21 @@ export default function AdminLayout() {
                 <img src={logo} alt="HifiPlanet" className="h-6 w-auto" />
               </span>
             </div>
-            <p className="hidden text-sm text-slate-500 dark:text-slate-400 sm:block">
+            <p className="hidden text-sm text-neutral-500 dark:text-neutral-400 sm:block">
               Angemeldet als {user?.username}{user?.is_super_admin ? ' · Super-Admin' : ''}
             </p>
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <button
                 onClick={handleLogout}
-                className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
               >
                 Abmelden
               </button>
             </div>
           </div>
           {mobileOpen && (
-            <div className="border-t border-slate-200 px-4 py-3 dark:border-slate-800 sm:hidden">
+            <div className="border-t border-neutral-200 px-4 py-3 dark:border-neutral-800 sm:hidden">
               <NavLinks onNavigate={() => setMobileOpen(false)} />
             </div>
           )}

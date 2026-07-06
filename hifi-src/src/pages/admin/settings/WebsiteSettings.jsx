@@ -46,14 +46,14 @@ export default function WebsiteSettings() {
   };
 
   if (loading) {
-    return <p className="text-sm text-slate-400">Lädt…</p>;
+    return <p className="text-sm text-neutral-400">Lädt…</p>;
   }
 
   return (
     <form onSubmit={handleSave} className="max-w-2xl space-y-6">
-      <section className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="mb-1 font-semibold text-slate-900 dark:text-white">Startseiten-Bild</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Startseiten-Bild</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Das große Hero-Bild ganz oben auf der Startseite. Ohne eigenes Bild wird das Standardbild verwendet.
         </p>
         <ImageUploadField
@@ -63,41 +63,41 @@ export default function WebsiteSettings() {
         />
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="mb-1 font-semibold text-slate-900 dark:text-white">Kontaktdaten</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Kontaktdaten</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Wird im Header, Footer und auf der Kontaktseite angezeigt.
         </p>
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Telefon</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Telefon</label>
             <input
               value={form.phone}
               onChange={(e) => update('phone', e.target.value)}
               placeholder="09373 20 62 390"
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
               WhatsApp Business Nummer
             </label>
             <input
               value={form.whatsapp}
               onChange={(e) => update('whatsapp', e.target.value)}
               placeholder="z. B. 09373 20 62 390"
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
             />
-            <p className="mt-1 text-xs text-slate-400">Leer lassen, um den WhatsApp-Link im Header auszublenden.</p>
+            <p className="mt-1 text-xs text-neutral-400">Leer lassen, um den WhatsApp-Link im Header auszublenden.</p>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">E-Mail</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">E-Mail</label>
             <input
               type="email"
               value={form.contact_email}
               onChange={(e) => update('contact_email', e.target.value)}
               placeholder="info@hifi-planet-amorbach.de"
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
         </div>

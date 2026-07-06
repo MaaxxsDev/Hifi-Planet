@@ -37,21 +37,21 @@ export default function BrandPage() {
   }
 
   if (!data) {
-    return <p className="mx-auto max-w-6xl px-4 py-12 text-slate-500 sm:px-6">Lädt…</p>;
+    return <p className="mx-auto max-w-6xl px-4 py-12 text-neutral-500 sm:px-6">Lädt…</p>;
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       {maintenance.vehicles.enabled && maintenance.bypass && <MaintenanceBypassBanner inline />}
-      <p className="mb-1 text-sm text-slate-500 dark:text-slate-400">
+      <p className="mb-1 text-sm text-neutral-500 dark:text-neutral-400">
         <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link> / {data.brand.name}
       </p>
-      <h1 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
         {data.brand.name} – Modell wählen
       </h1>
 
       {data.models.length === 0 && (
-        <p className="text-slate-500 dark:text-slate-400">Für diese Marke sind noch keine Modelle hinterlegt.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">Für diese Marke sind noch keine Modelle hinterlegt.</p>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -59,7 +59,7 @@ export default function BrandPage() {
           <Link
             key={model.id}
             to={`/fahrzeuge/${brandSlug}/${model.slug}`}
-            className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-8 text-center font-semibold text-slate-800 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-500 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
+            className="flex items-center justify-center rounded-xl border border-neutral-200 bg-white px-6 py-8 text-center font-semibold text-neutral-800 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-500 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100"
           >
             {model.name}
           </Link>

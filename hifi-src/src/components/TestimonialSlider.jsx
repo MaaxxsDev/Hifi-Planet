@@ -123,10 +123,10 @@ export default function TestimonialSlider({ testimonials }) {
       <div ref={trackRef} className="marquee-track flex w-max gap-5">
         {track.map((t, i) => (
           <div key={`${t.name}-${i}`} className="w-64 shrink-0 sm:w-72 lg:w-80">
-            <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+            <div className="flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
               <StarRating className="mb-3 h-4 w-4" />
-              <p className="mb-4 flex-1 text-sm text-slate-600 dark:text-slate-300">„{t.text}"</p>
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">{t.name}</p>
+              <p className="mb-4 flex-1 text-sm text-neutral-600 dark:text-neutral-300">„{t.text}"</p>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-white">{t.name}</p>
             </div>
           </div>
         ))}

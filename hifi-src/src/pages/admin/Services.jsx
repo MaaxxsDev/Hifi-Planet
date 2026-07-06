@@ -72,14 +72,14 @@ export default function Services() {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2">
-        <h1 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">Leistungen</h1>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+        <h1 className="mb-1 text-xl font-bold text-neutral-900 dark:text-white">Leistungen</h1>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Diese Karten erscheinen auf der öffentlichen Leistungen-Seite. Die 8 mitgelieferten Einträge sind die
           Standard-Einstellung – du kannst sie bearbeiten, löschen und beliebig neue hinzufügen.
         </p>
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+            <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
               <tr>
                 <th className="px-4 py-2">Icon</th>
                 <th className="px-4 py-2">Titel</th>
@@ -87,15 +87,15 @@ export default function Services() {
                 <th className="px-4 py-2 text-right">Aktionen</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
               {services.map((s) => (
-                <tr key={s.id} className="bg-white dark:bg-slate-950">
+                <tr key={s.id} className="bg-white dark:bg-neutral-950">
                   <td className="px-4 py-2">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-400">
                       <DynamicIcon name={s.icon_name} className="h-5 w-5" />
                     </div>
                   </td>
-                  <td className="px-4 py-2 font-medium text-slate-800 dark:text-slate-100">{s.title}</td>
+                  <td className="px-4 py-2 font-medium text-neutral-800 dark:text-neutral-100">{s.title}</td>
                   <td className="px-4 py-2">{s.sort_order}</td>
                   <td className="px-4 py-2 text-right">
                     <button onClick={() => startEdit(s)} className="mr-3 text-brand-600 hover:underline">Bearbeiten</button>
@@ -104,70 +104,70 @@ export default function Services() {
                 </tr>
               ))}
               {services.length === 0 && (
-                <tr><td colSpan={4} className="px-4 py-6 text-center text-slate-400">Noch keine Leistungen angelegt.</td></tr>
+                <tr><td colSpan={4} className="px-4 py-6 text-center text-neutral-400">Noch keine Leistungen angelegt.</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="h-fit space-y-4 rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="font-bold text-slate-900 dark:text-white">{editingId ? 'Leistung bearbeiten' : 'Neue Leistung'}</h2>
+      <form onSubmit={handleSubmit} className="h-fit space-y-4 rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="font-bold text-neutral-900 dark:text-white">{editingId ? 'Leistung bearbeiten' : 'Neue Leistung'}</h2>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Icon *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Icon *</label>
           <IconPicker value={form.icon_name} onChange={(name) => setForm({ ...form, icon_name: name })} />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Name *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
           <input
             required
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Beschreibung *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Beschreibung *</label>
           <textarea
             required
             rows={4}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
 
         <ImageUploadField value={form.image_path} onChange={(path) => setForm({ ...form, image_path: path })} label="Bild" />
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Button-Text (optional)</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Button-Text (optional)</label>
           <input
             value={form.cta_label}
             onChange={(e) => setForm({ ...form, cta_label: e.target.value })}
             placeholder="z. B. Fahrzeug konfigurieren"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Button-Link (optional)</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Button-Link (optional)</label>
           <input
             value={form.cta_url}
             onChange={(e) => setForm({ ...form, cta_url: e.target.value })}
             placeholder="z. B. /fahrzeuge"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Sortierung</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Sortierung</label>
           <input
             type="number"
             value={form.sort_order}
             onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
 
@@ -178,7 +178,7 @@ export default function Services() {
             {editingId ? 'Speichern' : 'Anlegen'}
           </button>
           {editingId && (
-            <button type="button" onClick={resetForm} className="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-700">
+            <button type="button" onClick={resetForm} className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700">
               Abbrechen
             </button>
           )}

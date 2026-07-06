@@ -31,9 +31,9 @@ export default function ExportImportSettings() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <section className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="mb-1 font-semibold text-slate-900 dark:text-white">Daten exportieren</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Daten exportieren</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Lädt eine Datei mit allen Marken, Modellen, Paketen, Produkten, Upgrades und Leistungen (inkl. Bilder)
           herunter. Benutzerkonten und Kontaktanfragen sind bewusst <strong>nicht</strong> enthalten.
         </p>
@@ -45,9 +45,9 @@ export default function ExportImportSettings() {
         </a>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="mb-1 font-semibold text-slate-900 dark:text-white">Daten importieren</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Daten importieren</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Lädt eine zuvor exportierte Datei auf diesen Server. <strong>Ersetzt dabei alle</strong> aktuellen
           Marken, Modelle, Pakete, Produkte, Upgrades und Leistungen auf diesem Server – das kann nicht
           rückgängig gemacht werden. Kontaktanfragen und Benutzerkonten bleiben unangetastet.
@@ -59,12 +59,12 @@ export default function ExportImportSettings() {
             onChange={(e) => setImportFile(e.target.files?.[0] || null)}
             className="text-sm"
           />
-          <label className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+          <label className="flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
             <input
               type="checkbox"
               checked={importConfirmed}
               onChange={(e) => setImportConfirmed(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
             />
             Mir ist bewusst, dass dies alle aktuellen Marken, Modelle, Pakete, Produkte, Upgrades und
             Leistungen auf diesem Server unwiderruflich ersetzt.

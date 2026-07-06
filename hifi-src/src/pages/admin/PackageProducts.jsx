@@ -62,26 +62,26 @@ export default function PackageProducts() {
       <p className="mb-2 text-sm">
         <Link to="/admin/packages" className="text-brand-600 hover:underline">← Zurück zu den Paketen</Link>
       </p>
-      <h1 className="mb-4 text-xl font-bold text-slate-900 dark:text-white">Produkte im Paket</h1>
+      <h1 className="mb-4 text-xl font-bold text-neutral-900 dark:text-white">Produkte im Paket</h1>
 
-      <form onSubmit={handleAdd} className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+      <form onSubmit={handleAdd} className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex-1 min-w-[240px]">
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">audio4cars.de Produkt-URL *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">audio4cars.de Produkt-URL *</label>
           <input
             required
             type="url"
             placeholder="https://www.audio4cars.de/produkt/..."
             value={sourceUrl}
             onChange={(e) => setSourceUrl(e.target.value)}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div className="w-56">
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Name überschreiben (optional)</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Name überschreiben (optional)</label>
           <input
             value={nameOverride}
             onChange={(e) => setNameOverride(e.target.value)}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <button disabled={busy} type="submit" className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60">
@@ -91,9 +91,9 @@ export default function PackageProducts() {
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+          <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
             <tr>
               <th className="px-4 py-2">Produkt</th>
               <th className="px-4 py-2">Preis</th>
@@ -102,11 +102,11 @@ export default function PackageProducts() {
               <th className="px-4 py-2 text-right">Aktionen</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
             {products.map((p) => (
-              <tr key={p.id} className="bg-white dark:bg-slate-950">
+              <tr key={p.id} className="bg-white dark:bg-neutral-950">
                 <td className="px-4 py-2">
-                  <a href={p.source_url} target="_blank" rel="noreferrer" className="font-medium text-slate-800 hover:underline dark:text-slate-100">
+                  <a href={p.source_url} target="_blank" rel="noreferrer" className="font-medium text-neutral-800 hover:underline dark:text-neutral-100">
                     {p.name_override || p.scraped_name || p.source_url}
                   </a>
                   {p.scrape_status === 'error' && <p className="text-xs text-red-500">{p.scrape_error}</p>}
@@ -117,7 +117,7 @@ export default function PackageProducts() {
                     {p.scrape_status}
                   </span>
                 </td>
-                <td className="px-4 py-2 text-slate-500 dark:text-slate-400">
+                <td className="px-4 py-2 text-neutral-500 dark:text-neutral-400">
                   {p.price_updated_at ? new Date(p.price_updated_at.replace(' ', 'T')).toLocaleString('de-DE') : '–'}
                 </td>
                 <td className="px-4 py-2 text-right">
@@ -129,7 +129,7 @@ export default function PackageProducts() {
               </tr>
             ))}
             {products.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-6 text-center text-slate-400">Noch keine Produkte im Paket.</td></tr>
+              <tr><td colSpan={5} className="px-4 py-6 text-center text-neutral-400">Noch keine Produkte im Paket.</td></tr>
             )}
           </tbody>
         </table>

@@ -59,25 +59,25 @@ export default function PackageUpgrades() {
         <p className="mb-2 text-sm">
           <Link to="/admin/packages" className="text-brand-600 hover:underline">← Zurück zu den Paketen</Link>
         </p>
-        <h1 className="mb-1 text-xl font-bold text-slate-900 dark:text-white">Optionale Upgrades</h1>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+        <h1 className="mb-1 text-xl font-bold text-neutral-900 dark:text-white">Optionale Upgrades</h1>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Diese Upgrades erscheinen nicht in der öffentlichen Paketübersicht, sondern erst als Auswahl im Kontaktformular.
         </p>
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+            <thead className="bg-neutral-50 text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
               <tr>
                 <th className="px-4 py-2">Name</th>
                 <th className="px-4 py-2">Preis</th>
                 <th className="px-4 py-2 text-right">Aktionen</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
               {upgrades.map((u) => (
-                <tr key={u.id} className="bg-white dark:bg-slate-950">
+                <tr key={u.id} className="bg-white dark:bg-neutral-950">
                   <td className="px-4 py-2">
-                    <p className="font-medium text-slate-800 dark:text-slate-100">{u.name}</p>
-                    {u.description && <p className="text-xs text-slate-500 dark:text-slate-400">{u.description}</p>}
+                    <p className="font-medium text-neutral-800 dark:text-neutral-100">{u.name}</p>
+                    {u.description && <p className="text-xs text-neutral-500 dark:text-neutral-400">{u.description}</p>}
                   </td>
                   <td className="px-4 py-2">{formatPrice(u.price)}</td>
                   <td className="px-4 py-2 text-right">
@@ -87,35 +87,35 @@ export default function PackageUpgrades() {
                 </tr>
               ))}
               {upgrades.length === 0 && (
-                <tr><td colSpan={3} className="px-4 py-6 text-center text-slate-400">Noch keine Upgrades hinterlegt.</td></tr>
+                <tr><td colSpan={3} className="px-4 py-6 text-center text-neutral-400">Noch keine Upgrades hinterlegt.</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="h-fit space-y-4 rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="font-bold text-slate-900 dark:text-white">{editingId ? 'Upgrade bearbeiten' : 'Neues Upgrade'}</h2>
+      <form onSubmit={handleSubmit} className="h-fit space-y-4 rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="font-bold text-neutral-900 dark:text-white">{editingId ? 'Upgrade bearbeiten' : 'Neues Upgrade'}</h2>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Name *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
           <input
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Beschreibung</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Beschreibung</label>
           <textarea
             rows={2}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Preis (€) *</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Preis (€) *</label>
           <input
             required
             type="number"
@@ -123,16 +123,16 @@ export default function PackageUpgrades() {
             min="0"
             value={form.price}
             onChange={(e) => setForm({ ...form, price: e.target.value })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Sortierung</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Sortierung</label>
           <input
             type="number"
             value={form.sort_order}
             onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
 
@@ -143,7 +143,7 @@ export default function PackageUpgrades() {
             {editingId ? 'Speichern' : 'Anlegen'}
           </button>
           {editingId && (
-            <button type="button" onClick={resetForm} className="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-700">
+            <button type="button" onClick={resetForm} className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700">
               Abbrechen
             </button>
           )}

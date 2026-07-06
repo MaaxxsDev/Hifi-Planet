@@ -25,11 +25,11 @@ export default function ImageUploadField({ value, onChange, label = 'Bild' }) {
 
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</label>
       <div className="flex items-center gap-3">
         {value && <img src={value} alt="" className="h-12 w-12 rounded-md object-cover" />}
         <input type="file" accept="image/png,image/jpeg,image/webp" onChange={handleFile} className="text-sm" />
-        {uploading && <span className="text-sm text-slate-500">Lädt hoch…</span>}
+        {uploading && <span className="text-sm text-neutral-500">Lädt hoch…</span>}
       </div>
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>

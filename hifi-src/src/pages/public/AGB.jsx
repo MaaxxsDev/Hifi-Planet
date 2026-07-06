@@ -9,13 +9,13 @@ export default function AGB() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
         Allgemeine Geschäftsbedingungen
       </h1>
 
-      <div className="space-y-8 text-sm text-slate-600 dark:text-slate-300">
+      <div className="space-y-8 text-sm text-neutral-600 dark:text-neutral-300">
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">1. Geltungsbereich</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">1. Geltungsbereich</h2>
           <p>
             Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Beratungs-, Werkstatt- und
             Umbauleistungen, die die Hifi Planet e.K., Boxbrunner Str. 20a, 63916 Amorbach („wir", „HifiPlanet")
@@ -24,7 +24,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">2. Anfragen über die Website</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">2. Anfragen über die Website</h2>
           <p>
             Über das Kontaktformular können Sie unverbindlich eine Beratung oder ein Angebot zu einem einzelnen
             Produkt oder einem ganzen Paket anfragen. Die auf der Website angezeigten Preise sind, soweit sie von
@@ -35,7 +35,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">3. Vertragsschluss</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">3. Vertragsschluss</h2>
           <p>
             Ein verbindlicher Vertrag über Beratung, Material und Einbauleistungen kommt erst zustande, wenn wir
             Ihnen nach persönlicher oder schriftlicher Abstimmung ein konkretes Angebot unterbreitet haben und Sie
@@ -45,7 +45,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">4. Preise und Zahlung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">4. Preise und Zahlung</h2>
           <p>
             Es gelten die im jeweiligen Einzelangebot genannten Preise inklusive der zum Zeitpunkt der
             Rechnungsstellung gesetzlich geltenden Umsatzsteuer. Sofern nichts anderes vereinbart ist, ist die
@@ -54,7 +54,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">5. Termine und Fahrzeugübergabe</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">5. Termine und Fahrzeugübergabe</h2>
           <p>
             Vereinbarte Termine zur Fahrzeugübergabe sind von beiden Seiten einzuhalten. Verschiebungen sind
             möglichst frühzeitig mitzuteilen. Für Gegenstände, die sich zum Zeitpunkt der Übergabe im Fahrzeug
@@ -63,7 +63,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">6. Gewährleistung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">6. Gewährleistung</h2>
           <p>
             Es gelten die gesetzlichen Gewährleistungsrechte. Mängel sind uns unverzüglich nach Feststellung
             anzuzeigen, damit wir Ihnen Nacherfüllung anbieten können. Für Verschleißteile sowie für Schäden, die
@@ -73,14 +73,14 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">7. Eigentumsvorbehalt</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">7. Eigentumsvorbehalt</h2>
           <p>
             Verbautes Material und gelieferte Ware bleiben bis zur vollständigen Bezahlung unser Eigentum.
           </p>
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">8. Haftung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">8. Haftung</h2>
           <p>
             Wir haften unbeschränkt bei Vorsatz und grober Fahrlässigkeit sowie nach Maßgabe des
             Produkthaftungsgesetzes. Bei leichter Fahrlässigkeit haften wir nur bei Verletzung einer wesentlichen
@@ -91,7 +91,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">9. Widerrufsrecht</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">9. Widerrufsrecht</h2>
           <p>
             Ein gesetzliches Widerrufsrecht für Verbraucher besteht bei Verträgen, die außerhalb von
             Geschäftsräumen oder im Fernabsatz geschlossen werden. Da der eigentliche Werkvertrag über Beratung und
@@ -103,7 +103,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">10. Anwendbares Recht und Gerichtsstand</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">10. Anwendbares Recht und Gerichtsstand</h2>
           <p>
             Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts. Ist der Kunde
             Kaufmann, juristische Person des öffentlichen Rechts oder öffentlich-rechtliches Sondervermögen, ist
@@ -112,7 +112,7 @@ export default function AGB() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">11. Schlussbestimmungen</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">11. Schlussbestimmungen</h2>
           <p>
             Sollte eine Bestimmung dieser AGB unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen
             Bestimmungen hiervon unberührt.

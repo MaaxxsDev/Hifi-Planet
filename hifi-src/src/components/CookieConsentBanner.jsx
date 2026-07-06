@@ -12,11 +12,11 @@ function SettingsModal({ onClose }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white p-6 dark:bg-slate-900"
+        className="w-full max-w-md rounded-xl bg-white p-6 dark:bg-neutral-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">Cookie-Einstellungen</h2>
-        <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">
+        <h2 className="mb-1 text-lg font-bold text-neutral-900 dark:text-white">Cookie-Einstellungen</h2>
+        <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-300">
           Lege fest, welche Kategorien du zulassen möchtest. Mehr dazu in unserer{' '}
           <Link to="/datenschutz" className="underline hover:text-brand-500" onClick={onClose}>
             Datenschutzerklärung
@@ -24,20 +24,20 @@ function SettingsModal({ onClose }) {
           .
         </p>
         <div className="space-y-3">
-          <div className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+          <div className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
             <div>
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Notwendig</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">Notwendig</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 Für den Betrieb der Website erforderlich (z. B. Login-Session, Theme- und Cookie-Einstellung).
                 Kann nicht deaktiviert werden.
               </p>
             </div>
             <input type="checkbox" checked disabled className="mt-1 h-4 w-4 shrink-0" />
           </div>
-          <div className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+          <div className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
             <div>
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Externe Medien</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">Externe Medien</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 Google Maps und YouTube-Videos. Beim Laden werden Daten (u. a. deine IP-Adresse) an Google
                 übertragen.
               </p>
@@ -54,7 +54,7 @@ function SettingsModal({ onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-700"
+            className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700"
           >
             Abbrechen
           </button>
@@ -77,9 +77,9 @@ export default function CookieConsentBanner() {
   return (
     <>
       {!decided && (
-        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 p-4 shadow-lg backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 sm:p-5">
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white/95 p-4 shadow-lg backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95 sm:p-5">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-slate-600 dark:text-slate-300">
+            <p className="text-sm text-neutral-600 dark:text-neutral-300">
               Wir verwenden nur technisch notwendige Cookies. Für Google Maps und YouTube-Videos benötigen wir
               zusätzlich deine Zustimmung, da dabei Daten an Google übertragen werden. Mehr dazu in unserer{' '}
               <Link to="/datenschutz" className="underline hover:text-brand-500">
@@ -91,14 +91,14 @@ export default function CookieConsentBanner() {
               <button
                 type="button"
                 onClick={openSettings}
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700"
+                className="rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700"
               >
                 Einstellungen
               </button>
               <button
                 type="button"
                 onClick={rejectNonEssential}
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-700"
+                className="rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700"
               >
                 Nur notwendige
               </button>

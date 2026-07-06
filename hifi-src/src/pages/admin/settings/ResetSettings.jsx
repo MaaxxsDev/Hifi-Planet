@@ -55,9 +55,9 @@ export default function ResetSettings() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <section className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="mb-1 font-semibold text-slate-900 dark:text-white">Nur Leistungen zurücksetzen</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Nur Leistungen zurücksetzen</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Löscht alle aktuellen Leistungen-Karten und stellt die 8 mitgelieferten Standard-Leistungen wieder her.
           Marken, Modelle und Pakete bleiben unangetastet.
         </p>
@@ -68,12 +68,12 @@ export default function ResetSettings() {
         >
           {servicesBusy ? 'Setze zurück…' : 'Leistungen auf Standard zurücksetzen'}
         </button>
-        {servicesMessage && <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">{servicesMessage}</p>}
+        {servicesMessage && <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">{servicesMessage}</p>}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="mb-1 font-semibold text-slate-900 dark:text-white">Nur Fahrzeugkatalog leeren</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Nur Fahrzeugkatalog leeren</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Löscht alle Marken, Modelle, Pakete, Produkte und Upgrades unwiderruflich. Leistungen, Kontaktanfragen
           und Benutzerkonten bleiben erhalten.
         </p>
@@ -84,12 +84,12 @@ export default function ResetSettings() {
         >
           {catalogBusy ? 'Leere…' : 'Fahrzeugkatalog leeren'}
         </button>
-        {catalogMessage && <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">{catalogMessage}</p>}
+        {catalogMessage && <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">{catalogMessage}</p>}
       </section>
 
       <section className="rounded-xl border border-red-300 bg-red-50/40 p-6 dark:border-red-900 dark:bg-red-900/10">
         <h2 className="mb-1 font-semibold text-red-700 dark:text-red-300">Alles zurücksetzen</h2>
-        <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-300">
           Kombiniert beides: Fahrzeugkatalog wird komplett geleert <strong>und</strong> Leistungen werden auf
           Standard zurückgesetzt. Kontaktanfragen und Benutzerkonten bleiben erhalten. Nicht rückgängig zu machen.
         </p>
@@ -100,7 +100,7 @@ export default function ResetSettings() {
         >
           {allBusy ? 'Setze zurück…' : 'Wirklich alles zurücksetzen'}
         </button>
-        {allMessage && <p className="mt-3 text-sm text-slate-700 dark:text-slate-300">{allMessage}</p>}
+        {allMessage && <p className="mt-3 text-sm text-neutral-700 dark:text-neutral-300">{allMessage}</p>}
       </section>
     </div>
   );

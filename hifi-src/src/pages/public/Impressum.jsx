@@ -9,11 +9,11 @@ export default function Impressum() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Impressum</h1>
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Impressum</h1>
 
-      <div className="space-y-8 text-sm text-slate-600 dark:text-slate-300">
+      <div className="space-y-8 text-sm text-neutral-600 dark:text-neutral-300">
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Angaben gemäß § 5 DDG</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Angaben gemäß § 5 DDG</h2>
           <p>
             Hifi Planet e.K.
             <br />
@@ -26,7 +26,7 @@ export default function Impressum() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Kontakt</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Kontakt</h2>
           <p>
             Telefon: <a href="tel:+4993732062390" className="hover:text-brand-500">09373 20 62 390</a>
             <br />
@@ -35,19 +35,19 @@ export default function Impressum() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Umsatzsteuer-ID</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Umsatzsteuer-ID</h2>
           <p>
             Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: DE 275084766
           </p>
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Zuständige Kammer</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Zuständige Kammer</h2>
           <p>IHK Aschaffenburg</p>
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
           <p>
             Christopher Horndasch
             <br />
@@ -56,7 +56,7 @@ export default function Impressum() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Verbraucherstreitbeilegung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Verbraucherstreitbeilegung</h2>
           <p>
             Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer
             Verbraucherschlichtungsstelle im Sinne des Verbraucherstreitbeilegungsgesetzes (VSBG) teilzunehmen.
@@ -64,7 +64,7 @@ export default function Impressum() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Haftung für Inhalte</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Haftung für Inhalte</h2>
           <p>
             Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den
             allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch nicht
@@ -78,7 +78,7 @@ export default function Impressum() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Haftung für Links</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Haftung für Links</h2>
           <p>
             Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben.
             Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der
@@ -90,7 +90,7 @@ export default function Impressum() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">Urheberrecht</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">Urheberrecht</h2>
           <p>
             Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen
             Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der

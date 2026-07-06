@@ -9,9 +9,9 @@ export default function ExternalEmbed({ name, description, className = '', child
 
   return (
     <div
-      className={`flex flex-col items-center justify-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-900/40 ${className}`}
+      className={`flex flex-col items-center justify-center gap-3 rounded-xl border border-neutral-200 bg-neutral-50 p-6 text-center dark:border-neutral-800 dark:bg-neutral-900/40 ${className}`}
     >
-      <p className="text-sm text-slate-600 dark:text-slate-300">
+      <p className="text-sm text-neutral-600 dark:text-neutral-300">
         {description || `${name} wird erst nach deiner Zustimmung geladen, da dabei Daten an Google übertragen werden.`}
       </p>
       <div className="flex flex-wrap justify-center gap-2">
@@ -25,7 +25,7 @@ export default function ExternalEmbed({ name, description, className = '', child
         <button
           type="button"
           onClick={openSettings}
-          className="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-700"
+          className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700"
         >
           Cookie-Einstellungen
         </button>

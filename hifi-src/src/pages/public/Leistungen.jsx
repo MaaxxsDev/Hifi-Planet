@@ -30,8 +30,8 @@ export default function Leistungen() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       {maintenance.services.enabled && maintenance.bypass && <MaintenanceBypassBanner inline />}
-      <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Unsere Leistungen</h1>
-      <p className="mb-10 max-w-2xl text-slate-600 dark:text-slate-300">
+      <h1 className="mb-2 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Unsere Leistungen</h1>
+      <p className="mb-10 max-w-2xl text-neutral-600 dark:text-neutral-300">
         Von individuellen Sound-Umbauten bis zur eigenen CNC- und 3D-Druck-Fertigung – alles aus einer Hand
         in unserer Werkstatt in Amorbach.
       </p>
@@ -42,19 +42,19 @@ export default function Leistungen() {
             key={service.id}
             index={i % 3}
             shine
-            className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+            className="overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
           >
             <div className="relative aspect-[4/3]">
               {service.image_path && (
                 <img src={service.image_path} alt={service.title} className="h-full w-full object-cover" loading="lazy" />
               )}
-              <div className="absolute -bottom-5 left-5 flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 text-white shadow-lg ring-4 ring-white dark:ring-slate-900">
+              <div className="absolute -bottom-5 left-5 flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 text-white shadow-lg ring-4 ring-white dark:ring-neutral-900">
                 <DynamicIcon name={service.icon_name} className="h-6 w-6" />
               </div>
             </div>
             <div className="p-6 pt-8">
-              <h2 className="mb-2 font-semibold text-slate-900 dark:text-white">{service.title}</h2>
-              <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">{service.description}</p>
+              <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">{service.title}</h2>
+              <p className="mb-3 text-sm text-neutral-600 dark:text-neutral-300">{service.description}</p>
               {service.cta_label && service.cta_url && (
                 <Link to={service.cta_url} className="text-sm font-semibold text-brand-600 hover:underline dark:text-brand-400">
                   {service.cta_label} →
@@ -65,9 +65,9 @@ export default function Leistungen() {
         ))}
       </div>
 
-      <div className="mt-12 rounded-xl border border-slate-200 bg-slate-50 p-8 text-center dark:border-slate-800 dark:bg-slate-900/40">
-        <h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Dein Projekt ist nicht dabei?</h2>
-        <p className="mb-5 text-slate-600 dark:text-slate-300">Sprich uns einfach an – wir finden gemeinsam die passende Lösung.</p>
+      <div className="mt-12 rounded-xl border border-neutral-200 bg-neutral-50 p-8 text-center dark:border-neutral-800 dark:bg-neutral-900/40">
+        <h2 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Dein Projekt ist nicht dabei?</h2>
+        <p className="mb-5 text-neutral-600 dark:text-neutral-300">Sprich uns einfach an – wir finden gemeinsam die passende Lösung.</p>
         <Link to="/kontakt" className="inline-block rounded-md bg-brand-500 px-6 py-3 text-sm font-semibold text-white hover:bg-brand-600">
           Kontakt aufnehmen
         </Link>

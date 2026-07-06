@@ -42,7 +42,7 @@ export default function PublicLayout() {
   }, []);
 
   if (status === null || authLoading) {
-    return <div className="min-h-screen bg-white dark:bg-slate-950" />;
+    return <div className="min-h-screen bg-white dark:bg-neutral-950" />;
   }
 
   const bypass = hasPermission('maintenance.bypass');
@@ -55,7 +55,7 @@ export default function PublicLayout() {
   return (
     <MaintenanceProvider value={{ ...status, bypass }}>
       <SiteSettingsProvider value={siteSettings}>
-        <div className="flex min-h-screen flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+        <div className="flex min-h-screen flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
           {bypass && status.global.enabled && <MaintenanceBypassBanner />}
           <ScrollProgress />
           <Navbar />

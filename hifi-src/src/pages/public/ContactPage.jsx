@@ -81,14 +81,14 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <h1 className="mb-8 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">Kontakt aufnehmen</h1>
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Kontakt aufnehmen</h1>
 
       <div className="grid gap-10 md:grid-cols-5">
         <div className="md:col-span-3">
           {status === 'sent' ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900">
-              <h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Danke für deine Anfrage!</h2>
-              <p className="text-slate-600 dark:text-slate-300">Wir melden uns so schnell wie möglich bei dir.</p>
+            <div className="rounded-xl border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-900">
+              <h2 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Danke für deine Anfrage!</h2>
+              <p className="text-neutral-600 dark:text-neutral-300">Wir melden uns so schnell wie möglich bei dir.</p>
             </div>
           ) : (
             <>
@@ -111,20 +111,20 @@ export default function ContactPage() {
               )}
 
               {upgrades.length > 0 && (
-                <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-                  <p className="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Optionale Upgrades</p>
+                <div className="mb-6 rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+                  <p className="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">Optionale Upgrades</p>
                   <div className="space-y-2">
                     {upgrades.map((u) => (
-                      <label key={u.id} className="flex cursor-pointer items-start gap-3 rounded-md border border-slate-200 p-3 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+                      <label key={u.id} className="flex cursor-pointer items-start gap-3 rounded-md border border-neutral-200 p-3 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">
                         <input
                           type="checkbox"
                           checked={selectedUpgradeIds.includes(u.id)}
                           onChange={() => toggleUpgrade(u.id)}
-                          className="mt-0.5 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                          className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
                         />
                         <span className="flex-1">
-                          <span className="block font-medium text-slate-800 dark:text-slate-100">{u.name}</span>
-                          {u.description && <span className="block text-slate-500 dark:text-slate-400">{u.description}</span>}
+                          <span className="block font-medium text-neutral-800 dark:text-neutral-100">{u.name}</span>
+                          {u.description && <span className="block text-neutral-500 dark:text-neutral-400">{u.description}</span>}
                         </span>
                         <span className="font-semibold text-brand-600 dark:text-brand-400">+{formatPrice(u.price)}</span>
                       </label>
@@ -135,37 +135,37 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Name *</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
                   <input
                     name="name"
                     required
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">E-Mail *</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">E-Mail *</label>
                   <input
                     type="email"
                     name="email"
                     required
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Telefon</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Telefon</label>
                   <input
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
                     Fahrgestellnummer (FIN)
                   </label>
                   <input
@@ -173,17 +173,17 @@ export default function ContactPage() {
                     value={form.vin}
                     onChange={handleChange}
                     placeholder="Optional – hilft uns bei der genauen Einschätzung deines Fahrzeugs"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Nachricht</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Nachricht</label>
                   <textarea
                     name="message"
                     rows={4}
                     value={form.message}
                     onChange={handleChange}
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                    className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   />
                 </div>
 
@@ -202,32 +202,32 @@ export default function ContactPage() {
         </div>
 
         <div className="md:col-span-2">
-          <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-            <h2 className="mb-4 font-semibold text-slate-900 dark:text-white">HifiPlanet Amorbach</h2>
-            <dl className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+          <div className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+            <h2 className="mb-4 font-semibold text-neutral-900 dark:text-white">HifiPlanet Amorbach</h2>
+            <dl className="space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
               <div>
-                <dt className="font-medium text-slate-800 dark:text-slate-100">Adresse</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">Adresse</dt>
                 <dd>Boxbrunner Str. 20a, 63916 Amorbach</dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-800 dark:text-slate-100">Telefon</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">Telefon</dt>
                 <dd><a href={`tel:${digitsOnly(phone)}`} className="hover:text-brand-500">{phone}</a></dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-800 dark:text-slate-100">E-Mail</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">E-Mail</dt>
                 <dd><a href={`mailto:${contactEmail}`} className="hover:text-brand-500">{contactEmail}</a></dd>
               </div>
               <div>
-                <dt className="font-medium text-slate-800 dark:text-slate-100">Öffnungszeiten</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">Öffnungszeiten</dt>
                 <dd>Mo–Fr: 9:00–18:00 Uhr</dd>
                 <dd>Sa: 10:00–13:00 Uhr</dd>
               </div>
             </dl>
           </div>
 
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
-            <h2 className="mb-4 font-semibold text-slate-900 dark:text-white">Anfahrt</h2>
-            <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
+          <div className="mt-6 rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+            <h2 className="mb-4 font-semibold text-neutral-900 dark:text-white">Anfahrt</h2>
+            <div className="overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700">
               <ExternalEmbed name="Die Google-Maps-Karte" className="h-[220px] w-full">
                 <iframe
                   title="HifiPlanet Amorbach – Standort"

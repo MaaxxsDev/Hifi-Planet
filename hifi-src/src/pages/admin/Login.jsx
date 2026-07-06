@@ -50,30 +50,30 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-50 px-4 dark:bg-slate-950">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-neutral-50 px-4 dark:bg-neutral-950">
       <img src={logo} alt="HifiPlanet" className="h-16 w-auto sm:h-20" />
       {step === 'credentials' ? (
-        <form onSubmit={handleCredentials} className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <h1 className="mb-6 text-xl font-bold text-slate-900 dark:text-white">Admin-Login</h1>
+        <form onSubmit={handleCredentials} className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <h1 className="mb-6 text-xl font-bold text-neutral-900 dark:text-white">Admin-Login</h1>
 
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Benutzername</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Benutzername</label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               autoFocus
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
           <div className="mb-6">
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Passwort</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Passwort</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
 
@@ -88,15 +88,15 @@ export default function Login() {
           </button>
         </form>
       ) : (
-        <form onSubmit={handleCode} className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <h1 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">Bestätigungscode</h1>
-          <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
+        <form onSubmit={handleCode} className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+          <h1 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Bestätigungscode</h1>
+          <p className="mb-6 text-sm text-neutral-500 dark:text-neutral-400">
             Öffne die Google Authenticator App und gib den 6-stelligen Code ein. Alternativ kannst du auch
             einen deiner Wiederherstellungscodes verwenden.
           </p>
 
           <div className="mb-6">
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Code</label>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Code</label>
             <input
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -104,7 +104,7 @@ export default function Login() {
               autoFocus
               inputMode="numeric"
               placeholder="123456"
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-center text-lg tracking-widest focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-center text-lg tracking-widest focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
 
@@ -120,7 +120,7 @@ export default function Login() {
           <button
             type="button"
             onClick={() => { setStep('credentials'); setCode(''); setError(''); }}
-            className="mt-3 w-full text-sm text-slate-500 hover:underline dark:text-slate-400"
+            className="mt-3 w-full text-sm text-neutral-500 hover:underline dark:text-neutral-400"
           >
             Zurück zum Login
           </button>

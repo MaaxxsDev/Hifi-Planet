@@ -106,10 +106,10 @@ export default function Home() {
     <div>
       <motion.div
         style={{ opacity: ctaOpacity, pointerEvents: ctaPointerEvents, y: ctaY }}
-        className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur dark:border-slate-800 dark:bg-slate-950/95 sm:px-6"
+        className="fixed inset-x-0 bottom-0 z-20 border-t border-neutral-200 bg-white/95 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/95 sm:px-6"
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-          <p className="hidden text-sm font-medium text-slate-600 dark:text-slate-300 sm:block">
+          <p className="hidden text-sm font-medium text-neutral-600 dark:text-neutral-300 sm:block">
             Bereit für deinen Sound-Umbau?
           </p>
           <div className="flex w-full gap-3 sm:w-auto">
@@ -121,7 +121,7 @@ export default function Home() {
             </Link>
             <Link
               to="/kontakt"
-              className="flex-1 rounded-md border border-slate-300 px-5 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 sm:flex-none"
+              className="flex-1 rounded-md border border-neutral-300 px-5 py-2.5 text-center text-sm font-semibold text-neutral-700 transition hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800 sm:flex-none"
             >
               Kontakt aufnehmen
             </Link>
@@ -136,7 +136,7 @@ export default function Home() {
           alt="Individueller Subwoofer-Einbau mit LED-Beleuchtung im Kofferraum"
           className="absolute inset-0 h-full w-full scale-110 object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-neutral-950/40" />
 
         <motion.div
           style={{ y: heroTextY, opacity: heroOpacity }}
@@ -153,7 +153,7 @@ export default function Home() {
             <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
               Audiophil aus Prinzip
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-base text-slate-200 sm:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-neutral-200 sm:text-lg">
               Dein Car-Hifi Spezialist für individuelle Sound-Umbauten. Wähle dein Fahrzeug,
               entdecke passende Pakete und frag unverbindlich an – wir kümmern uns um den Rest.
             </p>
@@ -175,25 +175,25 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section className="border-b border-slate-200 bg-brand-500 py-8 dark:border-slate-800">
+      <section className="border-b border-neutral-200 bg-neutral-950 py-8 dark:border-neutral-800">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-4 text-center sm:grid-cols-4 sm:px-6">
           {stats.map((stat, i) => (
             <Reveal key={stat.label} index={i}>
-              <p className="text-2xl font-extrabold text-white sm:text-3xl">{stat.value}</p>
-              <p className="text-sm text-brand-50">{stat.label}</p>
+              <p className="text-2xl font-extrabold text-brand-400 sm:text-3xl">{stat.value}</p>
+              <p className="text-sm text-neutral-400">{stat.label}</p>
             </Reveal>
           ))}
         </div>
       </section>
 
-      <section className="border-b border-slate-200 py-8 dark:border-slate-800">
+      <section className="border-b border-neutral-200 py-8 dark:border-neutral-800">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <p className="mb-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <p className="mb-4 text-center text-xs font-semibold uppercase tracking-wide text-neutral-400">
             Marken, mit denen wir arbeiten
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {brands.map((brand, i) => (
-              <Reveal key={brand} index={i} className="text-lg font-bold text-slate-400 dark:text-slate-600">
+              <Reveal key={brand} index={i} className="text-lg font-bold text-neutral-400 dark:text-neutral-600">
                 {brand}
               </Reveal>
             ))}
@@ -203,24 +203,24 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <Reveal>
-          <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 dark:text-white">So funktioniert's</h2>
+          <h2 className="mb-8 text-center text-2xl font-bold text-neutral-900 dark:text-white">So funktioniert's</h2>
         </Reveal>
         <div className="grid gap-6 sm:grid-cols-3">
           {steps.map((step, i) => (
-            <Reveal key={step.title} index={i} className="rounded-xl border border-slate-200 bg-white p-6 text-center dark:border-slate-800 dark:bg-slate-900">
+            <Reveal key={step.title} index={i} className="rounded-xl border border-neutral-200 bg-white p-6 text-center dark:border-neutral-800 dark:bg-neutral-900">
               <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-lg font-bold text-white">
                 {i + 1}
               </div>
-              <h3 className="mb-1 font-semibold text-slate-900 dark:text-white">{step.title}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">{step.text}</p>
+              <h3 className="mb-1 font-semibold text-neutral-900 dark:text-white">{step.title}</h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-300">{step.text}</p>
             </Reveal>
           ))}
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-red-700 via-red-800 to-slate-950 py-20 sm:py-28">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-red-500/30 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-red-500/20 blur-3xl" />
+      <section className="relative overflow-hidden bg-neutral-950 py-20 sm:py-28">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-500/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-500/15 blur-3xl" />
 
         <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
           <Reveal direction="left" className="text-center lg:text-left">
@@ -231,10 +231,10 @@ export default function Home() {
               HifiPlanet auf YouTube
             </div>
             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Sieh dir unsere Umbauten in Aktion an</h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-red-50/90 lg:mx-0">
+            <p className="mx-auto mt-4 max-w-xl text-lg text-neutral-300 lg:mx-0">
               Umbauten, Soundchecks und Verstärker-Tests aus unserer Werkstatt – „Den besten Sound gibt es nicht ab Werk!"
             </p>
-            <ul className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2 text-sm text-red-50/90 sm:flex-row sm:flex-wrap sm:justify-center lg:mx-0 lg:justify-start">
+            <ul className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2 text-sm text-neutral-300 sm:flex-row sm:flex-wrap sm:justify-center lg:mx-0 lg:justify-start">
               {['Umbauten Schritt für Schritt', 'Soundchecks & Vergleiche', 'Verstärker- & Komponenten-Tests'].map((item) => (
                 <li key={item} className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 flex-none">
@@ -248,7 +248,7 @@ export default function Home() {
               href={YOUTUBE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-red-700 shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-red-50"
+              className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/40 transition hover:-translate-y-0.5 hover:bg-brand-400"
             >
               Zum YouTube-Kanal
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
@@ -274,7 +274,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-slate-50 py-16 dark:border-slate-800 dark:bg-slate-900/40">
+      <section className="border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
         <div className="mx-auto max-w-6xl space-y-16 overflow-hidden px-4 sm:px-6">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <Reveal direction="left" shine className="rounded-xl shadow-lg">
@@ -282,8 +282,8 @@ export default function Home() {
             </Reveal>
             <Reveal direction="right" index={1}>
               <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-brand-600 dark:text-brand-400">Handwerk</p>
-              <h2 className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">Präzisionsarbeit in jedem Detail</h2>
-              <p className="text-slate-600 dark:text-slate-300">
+              <h2 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white">Präzisionsarbeit in jedem Detail</h2>
+              <p className="text-neutral-600 dark:text-neutral-300">
                 Ob eigens gefertigte Subwoofer-Gehäuse, integrierte Beleuchtung oder unsichtbar verlegte Kabelwege –
                 dank eigener CNC-, Laser- und 3D-Druck-Fertigung entstehen bei uns Lösungen, die es von der Stange nicht gibt.
               </p>
@@ -293,8 +293,8 @@ export default function Home() {
           <div className="grid items-center gap-8 md:grid-cols-2">
             <Reveal direction="left" className="order-2 md:order-1">
               <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-brand-600 dark:text-brand-400">Beratung</p>
-              <h2 className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">Von der ersten Idee bis zum letzten Schliff</h2>
-              <p className="text-slate-600 dark:text-slate-300">
+              <h2 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white">Von der ersten Idee bis zum letzten Schliff</h2>
+              <p className="text-neutral-600 dark:text-neutral-300">
                 Jedes Fahrzeug und jeder Anspruch ist anders. Deshalb beraten wir dich persönlich und unverbindlich –
                 vom dezenten Upgrade bis zum kompromisslosen High-End-System.
               </p>
@@ -308,28 +308,28 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <Reveal className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Einblicke in unsere Umbauten</h2>
-          <p className="mt-2 text-slate-600 dark:text-slate-300">
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Einblicke in unsere Umbauten</h2>
+          <p className="mt-2 text-neutral-600 dark:text-neutral-300">
             Vom unauffälligen Sound-Upgrade bis zum aufwendigen Komplettumbau – Handarbeit aus unserer Werkstatt in Amorbach.
           </p>
         </Reveal>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {gallery.map((img, i) => (
-            <Reveal key={img.src} index={i % 3} shine className="aspect-square overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
+            <Reveal key={img.src} index={i % 3} shine className="aspect-square overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
               <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover transition duration-300 hover:scale-105" />
             </Reveal>
           ))}
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-slate-50 py-16 dark:border-slate-800 dark:bg-slate-900/40">
+      <section className="border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal className="mb-10 text-center">
             <div className="mb-2 flex items-center justify-center gap-2">
               <StarRating className="h-6 w-6" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">5,0 von 181 Kunden bewertet</h2>
-            <p className="mt-1 text-slate-600 dark:text-slate-300">Das sagen unsere Kunden über uns.</p>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">5,0 von 181 Kunden bewertet</h2>
+            <p className="mt-1 text-neutral-600 dark:text-neutral-300">Das sagen unsere Kunden über uns.</p>
             <a
               href="https://www.google.com/maps/search/?api=1&query=Hifi+Planet+Amorbach+Boxbrunner+Stra%C3%9Fe+20a"
               target="_blank"
@@ -351,14 +351,14 @@ export default function Home() {
             <img src={heroHighlight} alt="Hochwertige Endstufe und Subwoofer, Studioaufnahme" className="h-full w-full object-cover" loading="lazy" />
           </Reveal>
           <Reveal direction="right" index={1} className="text-center md:text-left">
-            <h2 className="mb-3 text-2xl font-bold text-slate-900 dark:text-white">Mehr als nur Car-Hifi</h2>
-            <p className="mx-auto mb-8 max-w-2xl text-slate-600 dark:text-slate-300 md:mx-0">
+            <h2 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white">Mehr als nur Car-Hifi</h2>
+            <p className="mx-auto mb-8 max-w-2xl text-neutral-600 dark:text-neutral-300 md:mx-0">
               Neben individuellen Sound-Umbauten bieten wir CNC-Zerspanung, Lasertechnik, 3D-Druck und mehr –
               alles aus einer Hand in unserer eigenen Werkstatt.
             </p>
             <Link
               to="/leistungen"
-              className="inline-block rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="inline-block rounded-md border border-neutral-300 px-6 py-3 text-sm font-semibold text-neutral-700 transition hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
             >
               Alle Leistungen entdecken
             </Link>
@@ -366,10 +366,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-t border-slate-200 py-16 dark:border-slate-800">
+      <section className="border-t border-neutral-200 py-16 dark:border-neutral-800">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Reveal className="mb-8 text-center">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Häufig gestellte Fragen</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Häufig gestellte Fragen</h2>
           </Reveal>
           <Reveal index={1}>
             <Accordion items={faqs} />
