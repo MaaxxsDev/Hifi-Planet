@@ -1,12 +1,14 @@
 import { useTheme } from '../context/ThemeContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 export default function ThemeToggle({ overHero = false }) {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <button
       onClick={toggleTheme}
-      aria-label="Theme umschalten"
+      aria-label={t('themeToggle.label')}
       className={`rounded-full p-2 transition ${
         overHero ? 'text-white hover:bg-white/10' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'
       }`}

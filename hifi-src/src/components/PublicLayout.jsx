@@ -8,6 +8,7 @@ import MaintenanceBypassBanner from './MaintenanceBypassBanner.jsx';
 import CookieConsentBanner from './CookieConsentBanner.jsx';
 import { MaintenanceProvider } from '../context/MaintenanceContext.jsx';
 import { SiteSettingsProvider } from '../context/SiteSettingsContext.jsx';
+import { LanguageProvider } from '../context/LanguageContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../api/client.js';
 
@@ -49,23 +50,29 @@ export default function PublicLayout() {
   const isLegalPage = LEGAL_PATHS.includes(location.pathname);
 
   if (status.global.enabled && !bypass && !isLegalPage) {
-    return <MaintenanceNotice message={status.global.message} fullScreen />;
+    return (
+      <LanguageProvider>
+        <MaintenanceNotice message={status.global.message} fullScreen />
+      </LanguageProvider>
+    );
   }
 
   return (
-    <MaintenanceProvider value={{ ...status, bypass }}>
-      <SiteSettingsProvider value={siteSettings}>
-        <div className="page-texture flex min-h-screen flex-col text-neutral-900 dark:text-neutral-100">
-          {bypass && status.global.enabled && <MaintenanceBypassBanner />}
-          <ScrollProgress />
-          <Navbar />
-          <main className="flex-1">
-            <Outlet />
-          </main>
-          <Footer />
-          <CookieConsentBanner />
-        </div>
-      </SiteSettingsProvider>
-    </MaintenanceProvider>
+    <LanguageProvider>
+      <MaintenanceProvider value={{ ...status, bypass }}>
+        <SiteSettingsProvider value={siteSettings}>
+          <div className="page-texture flex min-h-screen flex-col text-neutral-900 dark:text-neutral-100">
+            {bypass && status.global.enabled && <MaintenanceBypassBanner />}
+            <ScrollProgress />
+            <Navbar />
+            <main className="flex-1">
+              <Outlet />
+            </main>
+            <Footer />
+            <CookieConsentBanner />
+          </div>
+        </SiteSettingsProvider>
+      </MaintenanceProvider>
+    </LanguageProvider>
   );
 }

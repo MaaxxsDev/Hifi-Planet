@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCookieConsent } from '../context/CookieConsentContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 function SettingsModal({ onClose }) {
   const { consent, saveCustom } = useCookieConsent();
   const [external, setExternal] = useState(consent.external);
+  const { t } = useLanguage();
 
   return (
     <div
@@ -15,31 +17,29 @@ function SettingsModal({ onClose }) {
         className="w-full max-w-md rounded-xl bg-white p-6 dark:bg-neutral-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-1 text-lg font-bold text-neutral-900 dark:text-white">Cookie-Einstellungen</h2>
+        <h2 className="mb-1 text-lg font-bold text-neutral-900 dark:text-white">{t('cookieConsent.modalTitle')}</h2>
         <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-300">
-          Lege fest, welche Kategorien du zulassen möchtest. Mehr dazu in unserer{' '}
+          {t('cookieConsent.modalIntro')}{' '}
           <Link to="/datenschutz" className="underline hover:text-brand-500" onClick={onClose}>
-            Datenschutzerklärung
+            {t('cookieConsent.privacyPolicy')}
           </Link>
           .
         </p>
         <div className="space-y-3">
           <div className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
             <div>
-              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">Notwendig</p>
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{t('cookieConsent.necessaryTitle')}</p>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Für den Betrieb der Website erforderlich (z. B. Login-Session, Theme- und Cookie-Einstellung).
-                Kann nicht deaktiviert werden.
+                {t('cookieConsent.necessaryDesc')}
               </p>
             </div>
             <input type="checkbox" checked disabled className="mt-1 h-4 w-4 shrink-0" />
           </div>
           <div className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
             <div>
-              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">Externe Medien</p>
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{t('cookieConsent.externalTitle')}</p>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                Google Maps und YouTube-Videos. Beim Laden werden Daten (u. a. deine IP-Adresse) an Google
-                übertragen.
+                {t('cookieConsent.externalDesc')}
               </p>
             </div>
             <input
@@ -56,14 +56,14 @@ function SettingsModal({ onClose }) {
             onClick={onClose}
             className="rounded-md border border-neutral-300 px-4 py-2 text-sm dark:border-neutral-700"
           >
-            Abbrechen
+            {t('cookieConsent.cancel')}
           </button>
           <button
             type="button"
             onClick={() => saveCustom({ external })}
             className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
           >
-            Auswahl speichern
+            {t('cookieConsent.saveSelection')}
           </button>
         </div>
       </div>
@@ -73,6 +73,7 @@ function SettingsModal({ onClose }) {
 
 export default function CookieConsentBanner() {
   const { decided, settingsOpen, acceptAll, rejectNonEssential, openSettings, closeSettings } = useCookieConsent();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -80,10 +81,9 @@ export default function CookieConsentBanner() {
         <div className="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white/95 p-4 shadow-lg backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/95 sm:p-5">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-neutral-600 dark:text-neutral-300">
-              Wir verwenden nur technisch notwendige Cookies. Für Google Maps und YouTube-Videos benötigen wir
-              zusätzlich deine Zustimmung, da dabei Daten an Google übertragen werden. Mehr dazu in unserer{' '}
+              {t('cookieConsent.bannerText')} {t('cookieConsent.moreInfo')}{' '}
               <Link to="/datenschutz" className="underline hover:text-brand-500">
-                Datenschutzerklärung
+                {t('cookieConsent.privacyPolicy')}
               </Link>
               .
             </p>
@@ -93,21 +93,21 @@ export default function CookieConsentBanner() {
                 onClick={openSettings}
                 className="rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700"
               >
-                Einstellungen
+                {t('cookieConsent.settings')}
               </button>
               <button
                 type="button"
                 onClick={rejectNonEssential}
                 className="rounded-md border border-neutral-300 px-3 py-2 text-sm dark:border-neutral-700"
               >
-                Nur notwendige
+                {t('cookieConsent.onlyNecessary')}
               </button>
               <button
                 type="button"
                 onClick={acceptAll}
                 className="rounded-md bg-brand-500 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-600"
               >
-                Alle akzeptieren
+                {t('cookieConsent.acceptAll')}
               </button>
             </div>
           </div>

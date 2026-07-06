@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function GalleryOverview() {
   const [brands, setBrands] = useState(null);
   const [error, setError] = useState('');
+  const { t } = useLanguage();
 
   usePageMeta({
-    title: 'Bildergalerie',
-    description: 'Einblicke in unsere Car-Hifi Umbauten – nach Marke sortiert. Wähle eine Marke und entdecke die Projekte.',
+    title: t('galleryOverview.metaTitle'),
+    description: t('galleryOverview.metaDescription'),
     path: '/galerie',
   });
 
@@ -19,15 +21,15 @@ export default function GalleryOverview() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="mb-2 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Bildergalerie</h1>
+      <h1 className="mb-2 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">{t('galleryOverview.title')}</h1>
       <p className="mb-8 text-neutral-600 dark:text-neutral-300">
-        Wähle eine Marke und entdecke unsere Umbauten im Detail.
+        {t('galleryOverview.intro')}
       </p>
 
       {error && <p className="text-red-600">{error}</p>}
-      {!brands && !error && <p className="text-neutral-500 dark:text-neutral-400">Lädt…</p>}
+      {!brands && !error && <p className="text-neutral-500 dark:text-neutral-400">{t('galleryOverview.loading')}</p>}
       {brands && brands.length === 0 && (
-        <p className="text-neutral-500 dark:text-neutral-400">Es sind noch keine Galerie-Marken hinterlegt.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('galleryOverview.empty')}</p>
       )}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">

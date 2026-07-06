@@ -4,9 +4,7 @@ import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
 import ExternalEmbed from '../../components/ExternalEmbed.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
-
-const formatPrice = (value) =>
-  new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 const digitsOnly = (value) => (value || '').replace(/[^\d+]/g, '');
 
@@ -15,6 +13,9 @@ const SHOP_ADDRESS_ENCODED = encodeURIComponent('Boxbrunner Str. 20a, 63916 Amor
 export default function ContactPage() {
   const [params] = useSearchParams();
   const { phone, contact_email: contactEmail } = useSiteSettings();
+  const { t, language } = useLanguage();
+  const formatPrice = (value) =>
+    new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
   const [form, setForm] = useState({ name: '', email: '', phone: '', vin: '', message: '' });
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
@@ -41,8 +42,8 @@ export default function ContactPage() {
     .reduce((sum, u) => sum + Number(u.price), 0);
 
   usePageMeta({
-    title: 'Kontakt',
-    description: 'Kontaktiere HifiPlanet in Amorbach für dein individuelles Car-Hifi Projekt – wir beraten dich gerne unverbindlich.',
+    title: t('contactPage.metaTitle'),
+    description: t('contactPage.metaDescription'),
     path: '/kontakt',
   });
 
@@ -81,30 +82,30 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Kontakt aufnehmen</h1>
+      <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">{t('contactPage.title')}</h1>
 
       <div className="grid gap-10 md:grid-cols-5">
         <div className="md:col-span-3">
           {status === 'sent' ? (
             <div className="rounded-xl border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-900">
-              <h2 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">Danke für deine Anfrage!</h2>
-              <p className="text-neutral-600 dark:text-neutral-300">Wir melden uns so schnell wie möglich bei dir.</p>
+              <h2 className="mb-2 text-xl font-bold text-neutral-900 dark:text-white">{t('contactPage.sentTitle')}</h2>
+              <p className="text-neutral-600 dark:text-neutral-300">{t('contactPage.sentText')}</p>
             </div>
           ) : (
             <>
               {hasContext && (
                 <div className="mb-6 rounded-lg border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800 dark:border-brand-900 dark:bg-brand-900/20 dark:text-brand-200">
-                  <p className="font-semibold">Deine Anfrage bezieht sich auf:</p>
+                  <p className="font-semibold">{t('contactPage.contextIntro')}</p>
                   <ul className="mt-1 space-y-0.5">
-                    {context.brand && <li>Marke: {context.brand}</li>}
-                    {context.model && <li>Modell: {context.model}</li>}
-                    {context.package && <li>Paket: {context.package}</li>}
-                    {context.product && <li>Produkt: {context.product}</li>}
+                    {context.brand && <li>{t('contactPage.contextBrand')}: {context.brand}</li>}
+                    {context.model && <li>{t('contactPage.contextModel')}: {context.model}</li>}
+                    {context.package && <li>{t('contactPage.contextPackage')}: {context.package}</li>}
+                    {context.product && <li>{t('contactPage.contextProduct')}: {context.product}</li>}
                   </ul>
                   {packageTotal != null && (
                     <p className="mt-2 font-semibold">
-                      Paketpreis: {formatPrice(packageTotal)}
-                      {upgradesTotal > 0 && <> + {formatPrice(upgradesTotal)} Upgrades = {formatPrice(packageTotal + upgradesTotal)}</>}
+                      {t('contactPage.packagePrice')}: {formatPrice(packageTotal)}
+                      {upgradesTotal > 0 && <> + {formatPrice(upgradesTotal)} {t('contactPage.upgrades')} = {formatPrice(packageTotal + upgradesTotal)}</>}
                     </p>
                   )}
                 </div>
@@ -112,7 +113,7 @@ export default function ContactPage() {
 
               {upgrades.length > 0 && (
                 <div className="mb-6 rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-                  <p className="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">Optionale Upgrades</p>
+                  <p className="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">{t('contactPage.optionalUpgrades')}</p>
                   <div className="space-y-2">
                     {upgrades.map((u) => (
                       <label key={u.id} className="flex cursor-pointer items-start gap-3 rounded-md border border-neutral-200 p-3 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800">
@@ -135,7 +136,7 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('contactPage.nameLabel')}</label>
                   <input
                     name="name"
                     required
@@ -145,7 +146,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">E-Mail *</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('contactPage.emailLabel')}</label>
                   <input
                     type="email"
                     name="email"
@@ -156,7 +157,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Telefon</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('contactPage.phoneLabel')}</label>
                   <input
                     name="phone"
                     value={form.phone}
@@ -166,18 +167,18 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                    Fahrgestellnummer (FIN)
+                    {t('contactPage.vinLabel')}
                   </label>
                   <input
                     name="vin"
                     value={form.vin}
                     onChange={handleChange}
-                    placeholder="Optional – hilft uns bei der genauen Einschätzung deines Fahrzeugs"
+                    placeholder={t('contactPage.vinPlaceholder')}
                     className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Nachricht</label>
+                  <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">{t('contactPage.messageLabel')}</label>
                   <textarea
                     name="message"
                     rows={4}
@@ -194,7 +195,7 @@ export default function ContactPage() {
                   disabled={status === 'sending'}
                   className="w-full rounded-md bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60"
                 >
-                  {status === 'sending' ? 'Wird gesendet…' : 'Anfrage senden'}
+                  {status === 'sending' ? t('contactPage.sending') : t('contactPage.submit')}
                 </button>
               </form>
             </>
@@ -203,32 +204,32 @@ export default function ContactPage() {
 
         <div className="md:col-span-2">
           <div className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-            <h2 className="mb-4 font-semibold text-neutral-900 dark:text-white">HifiPlanet Amorbach</h2>
+            <h2 className="mb-4 font-semibold text-neutral-900 dark:text-white">{t('contactPage.cardTitle')}</h2>
             <dl className="space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
               <div>
-                <dt className="font-medium text-neutral-800 dark:text-neutral-100">Adresse</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.address')}</dt>
                 <dd>Boxbrunner Str. 20a, 63916 Amorbach</dd>
               </div>
               <div>
-                <dt className="font-medium text-neutral-800 dark:text-neutral-100">Telefon</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.phone')}</dt>
                 <dd><a href={`tel:${digitsOnly(phone)}`} className="hover:text-brand-500">{phone}</a></dd>
               </div>
               <div>
-                <dt className="font-medium text-neutral-800 dark:text-neutral-100">E-Mail</dt>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.email')}</dt>
                 <dd><a href={`mailto:${contactEmail}`} className="hover:text-brand-500">{contactEmail}</a></dd>
               </div>
               <div>
-                <dt className="font-medium text-neutral-800 dark:text-neutral-100">Öffnungszeiten</dt>
-                <dd>Mo–Fr: 9:00–18:00 Uhr</dd>
-                <dd>Sa: 10:00–13:00 Uhr</dd>
+                <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.hours')}</dt>
+                <dd>{t('contactPage.hoursWeek')}</dd>
+                <dd>{t('contactPage.hoursSat')}</dd>
               </div>
             </dl>
           </div>
 
           <div className="mt-6 rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-            <h2 className="mb-4 font-semibold text-neutral-900 dark:text-white">Anfahrt</h2>
+            <h2 className="mb-4 font-semibold text-neutral-900 dark:text-white">{t('contactPage.directionsTitle')}</h2>
             <div className="overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700">
-              <ExternalEmbed name="Die Google-Maps-Karte" className="h-[220px] w-full">
+              <ExternalEmbed name={t('contactPage.mapEmbedName')} className="h-[220px] w-full">
                 <iframe
                   title="HifiPlanet Amorbach – Standort"
                   src={`https://www.google.com/maps?q=${SHOP_ADDRESS_ENCODED}&output=embed`}
@@ -246,7 +247,7 @@ export default function ContactPage() {
               rel="noopener noreferrer"
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600"
             >
-              Route planen
+              {t('contactPage.routePlan')}
             </a>
           </div>
         </div>

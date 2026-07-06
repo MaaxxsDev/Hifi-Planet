@@ -5,15 +5,17 @@ import usePageMeta from '../../hooks/usePageMeta.js';
 import MaintenanceNotice from '../../components/MaintenanceNotice.jsx';
 import MaintenanceBypassBanner from '../../components/MaintenanceBypassBanner.jsx';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function VehicleSelect() {
   const [brands, setBrands] = useState([]);
   const [error, setError] = useState('');
   const maintenance = useMaintenance();
+  const { t } = useLanguage();
 
   usePageMeta({
-    title: 'Fahrzeug auswählen',
-    description: 'Wähle deine Fahrzeugmarke und dein Modell und entdecke passende Car-Hifi Sound-Pakete von HifiPlanet.',
+    title: t('vehicleSelect.metaTitle'),
+    description: t('vehicleSelect.metaDescription'),
     path: '/fahrzeuge',
   });
 
@@ -29,15 +31,15 @@ export default function VehicleSelect() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       {maintenance.vehicles.enabled && maintenance.bypass && <MaintenanceBypassBanner inline />}
-      <h1 className="mb-2 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">Fahrzeug auswählen</h1>
+      <h1 className="mb-2 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">{t('vehicleSelect.title')}</h1>
       <p className="mb-8 text-neutral-600 dark:text-neutral-300">
-        Wähle zuerst deine Marke, dann dein Modell – wir zeigen dir direkt die passenden Sound-Pakete.
+        {t('vehicleSelect.intro')}
       </p>
 
       {error && <p className="text-red-600">{error}</p>}
 
       {brands.length === 0 && !error && (
-        <p className="text-neutral-500 dark:text-neutral-400">Es sind noch keine Marken hinterlegt.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('vehicleSelect.empty')}</p>
       )}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">

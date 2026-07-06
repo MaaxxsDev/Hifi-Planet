@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 export default function Lightbox({ photos, index, onClose, onNavigate }) {
+  const { t } = useLanguage();
   useEffect(() => {
     if (index == null) return undefined;
     const handleKey = (e) => {
@@ -21,7 +23,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }) {
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4" onClick={onClose}>
       <button
         onClick={(e) => { stop(e); onClose(); }}
-        aria-label="Schließen"
+        aria-label={t('lightbox.close')}
         className="absolute right-4 top-4 rounded-full p-2 text-white/80 hover:bg-white/10 hover:text-white"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-7 w-7">
@@ -32,7 +34,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }) {
       {photos.length > 1 && (
         <button
           onClick={(e) => { stop(e); onNavigate(-1); }}
-          aria-label="Vorheriges Bild"
+          aria-label={t('lightbox.previous')}
           className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-white/80 hover:bg-white/10 hover:text-white sm:left-4"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-8 w-8">
@@ -51,7 +53,7 @@ export default function Lightbox({ photos, index, onClose, onNavigate }) {
       {photos.length > 1 && (
         <button
           onClick={(e) => { stop(e); onNavigate(1); }}
-          aria-label="Nächstes Bild"
+          aria-label={t('lightbox.next')}
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-white/80 hover:bg-white/10 hover:text-white sm:right-4"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-8 w-8">

@@ -5,12 +5,14 @@ import usePageMeta from '../../hooks/usePageMeta.js';
 import MaintenanceNotice from '../../components/MaintenanceNotice.jsx';
 import MaintenanceBypassBanner from '../../components/MaintenanceBypassBanner.jsx';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function BrandPage() {
   const { brandSlug } = useParams();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const maintenance = useMaintenance();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (maintenance.vehicles.enabled && !maintenance.bypass) return;
@@ -21,10 +23,8 @@ export default function BrandPage() {
   }, [brandSlug, maintenance.vehicles.enabled, maintenance.bypass]);
 
   usePageMeta({
-    title: data ? `${data.brand.name} Modelle` : 'Modell auswählen',
-    description: data
-      ? `Wähle dein ${data.brand.name} Modell und entdecke passende Car-Hifi Sound-Pakete von HifiPlanet.`
-      : undefined,
+    title: data ? `${data.brand.name} ${t('brandPage.titleSuffix')}` : t('brandPage.metaTitleFallback'),
+    description: data ? t('brandPage.metaDescription')(data.brand.name) : undefined,
     path: `/fahrzeuge/${brandSlug}`,
   });
 
@@ -37,21 +37,21 @@ export default function BrandPage() {
   }
 
   if (!data) {
-    return <p className="mx-auto max-w-6xl px-4 py-12 text-neutral-500 sm:px-6">Lädt…</p>;
+    return <p className="mx-auto max-w-6xl px-4 py-12 text-neutral-500 sm:px-6">{t('brandPage.loading')}</p>;
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       {maintenance.vehicles.enabled && maintenance.bypass && <MaintenanceBypassBanner inline />}
       <p className="mb-1 text-sm text-neutral-500 dark:text-neutral-400">
-        <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link> / {data.brand.name}
+        <Link to="/fahrzeuge" className="hover:text-brand-500">{t('brandPage.breadcrumbVehicles')}</Link> / {data.brand.name}
       </p>
       <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
-        {data.brand.name} – Modell wählen
+        {data.brand.name} – {t('brandPage.titleSuffix')}
       </h1>
 
       {data.models.length === 0 && (
-        <p className="text-neutral-500 dark:text-neutral-400">Für diese Marke sind noch keine Modelle hinterlegt.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('brandPage.empty')}</p>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">

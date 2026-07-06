@@ -4,12 +4,14 @@ import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
 import Reveal from '../../components/Reveal.jsx';
 import Lightbox from '../../components/Lightbox.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function GalleryProjectPage() {
   const { brandSlug, projectSlug } = useParams();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [openIndex, setOpenIndex] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     api
@@ -19,8 +21,8 @@ export default function GalleryProjectPage() {
   }, [brandSlug, projectSlug]);
 
   usePageMeta({
-    title: data ? `${data.project.name} – ${data.project.brand_name}` : 'Bildergalerie',
-    description: data ? `Fotos unseres ${data.project.name} Umbaus.` : undefined,
+    title: data ? `${data.project.name} – ${data.project.brand_name}` : t('galleryProjectPage.metaTitleFallback'),
+    description: data ? t('galleryProjectPage.metaDescription')(data.project.name) : undefined,
     path: `/galerie/${brandSlug}/${projectSlug}`,
   });
 
@@ -36,19 +38,19 @@ export default function GalleryProjectPage() {
   }
 
   if (!data) {
-    return <p className="mx-auto max-w-6xl px-4 py-12 text-neutral-500 sm:px-6">Lädt…</p>;
+    return <p className="mx-auto max-w-6xl px-4 py-12 text-neutral-500 sm:px-6">{t('galleryProjectPage.loading')}</p>;
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <p className="mb-1 text-sm text-neutral-500 dark:text-neutral-400">
-        <Link to="/galerie" className="hover:text-brand-500">Galerie</Link> /{' '}
+        <Link to="/galerie" className="hover:text-brand-500">{t('galleryProjectPage.breadcrumbGallery')}</Link> /{' '}
         <Link to={`/galerie/${brandSlug}`} className="hover:text-brand-500">{data.project.brand_name}</Link> / {data.project.name}
       </p>
       <h1 className="mb-8 text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">{data.project.name}</h1>
 
       {data.photos.length === 0 && (
-        <p className="text-neutral-500 dark:text-neutral-400">Für dieses Projekt sind noch keine Fotos hinterlegt.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('galleryProjectPage.empty')}</p>
       )}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -57,7 +59,7 @@ export default function GalleryProjectPage() {
             <button
               onClick={() => setOpenIndex(i)}
               className="block h-full w-full"
-              aria-label={photo.caption || 'Bild vergrößern'}
+              aria-label={photo.caption || t('galleryProjectPage.enlargeImage')}
             >
               <img
                 src={photo.image_path}
