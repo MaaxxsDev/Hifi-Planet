@@ -11,26 +11,37 @@ const SHOP_URL = 'https://www.audio4cars.de/';
 
 const digitsOnly = (value) => (value || '').replace(/[^\d+]/g, '');
 
+const ITEM_DELAY_MS = 70;
+const FLY_DURATION_MS = 500;
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const { user } = useAuth();
   const { phone, whatsapp } = useSiteSettings();
+  const totalItems = whatsapp ? 8 : 7;
 
   useEffect(() => {
-    if (!open) {
-      setMenuVisible(false);
-      return;
+    if (open) {
+      setMounted(true);
+      const id = requestAnimationFrame(() => setMenuVisible(true));
+      return () => cancelAnimationFrame(id);
     }
-    const id = requestAnimationFrame(() => setMenuVisible(true));
-    return () => cancelAnimationFrame(id);
-  }, [open]);
+    setMenuVisible(false);
+    const closeDuration = FLY_DURATION_MS + (totalItems - 1) * ITEM_DELAY_MS;
+    const id = setTimeout(() => setMounted(false), closeDuration);
+    return () => clearTimeout(id);
+  }, [open, totalItems]);
 
   const flyIn = () => `transition-all duration-500 ease-out ${menuVisible ? 'opacity-100' : 'opacity-0'}`;
-  const flyInStyle = (index) => ({
-    transitionDelay: `${index * 70}ms`,
-    transform: menuVisible ? 'translateY(0)' : 'translateY(-140px)',
-  });
+  const flyInStyle = (index) => {
+    const delayIndex = menuVisible ? index : totalItems - 1 - index;
+    return {
+      transitionDelay: `${delayIndex * ITEM_DELAY_MS}ms`,
+      transform: menuVisible ? 'translateY(0)' : 'translateY(-140px)',
+    };
+  };
 
   const AdminIcon = user && (
     <Link
@@ -74,16 +85,7 @@ export default function Navbar() {
       </div>
 
       <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-3 sm:px-6">
-        <div className="flex items-center justify-self-start gap-1">
-          {AdminIcon}
-          <ThemeToggle />
-        </div>
-
-        <Link to="/" className="flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white">
-          <img src={logo} alt="HifiPlanet" className="h-11 w-auto sm:h-14" />
-        </Link>
-
-        <div className="flex items-center justify-self-end">
+        <div className="flex items-center justify-self-start">
           <nav className="hidden items-center gap-6 text-sm font-medium text-neutral-600 dark:text-neutral-300 md:flex">
             <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link>
             <Link to="/leistungen" className="hover:text-brand-500">Leistungen</Link>
@@ -101,9 +103,18 @@ export default function Navbar() {
             </svg>
           </button>
         </div>
+
+        <Link to="/" className="flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white">
+          <img src={logo} alt="HifiPlanet" className="h-14 w-auto sm:h-16" />
+        </Link>
+
+        <div className="flex items-center justify-self-end gap-1">
+          {AdminIcon}
+          <ThemeToggle />
+        </div>
       </div>
 
-      {open &&
+      {mounted &&
         createPortal(
           <div
             className="fixed inset-0 z-[100] flex flex-col items-end justify-center gap-5 overflow-y-auto px-8 py-24 text-right backdrop-blur-xl md:hidden"
