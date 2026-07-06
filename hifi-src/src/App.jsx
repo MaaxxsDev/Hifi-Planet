@@ -37,6 +37,7 @@ import AdminUsers from './pages/admin/AdminUsers.jsx';
 import PermissionGroups from './pages/admin/PermissionGroups.jsx';
 import SettingsLayout from './pages/admin/settings/SettingsLayout.jsx';
 import WebsiteSettings from './pages/admin/settings/WebsiteSettings.jsx';
+import EmailSettings from './pages/admin/settings/EmailSettings.jsx';
 import DatabaseSettings from './pages/admin/settings/DatabaseSettings.jsx';
 import ExportImportSettings from './pages/admin/settings/ExportImportSettings.jsx';
 import MaintenanceSettings from './pages/admin/settings/MaintenanceSettings.jsx';
@@ -89,6 +90,7 @@ export default function App() {
           >
             <Route index element={<Navigate to="website" replace />} />
             <Route path="website" element={<WebsiteSettings />} />
+            <Route path="email" element={<EmailSettings />} />
             <Route path="database" element={<DatabaseSettings />} />
             <Route path="export-import" element={<ExportImportSettings />} />
             <Route path="maintenance" element={<MaintenanceSettings />} />

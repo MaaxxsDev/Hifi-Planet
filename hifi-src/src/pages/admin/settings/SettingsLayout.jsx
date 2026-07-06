@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 
 const tabs = [
   { to: '/admin/settings/website', label: 'Website' },
+  { to: '/admin/settings/email', label: 'E-Mail' },
   { to: '/admin/settings/database', label: 'Datenbank' },
   { to: '/admin/settings/export-import', label: 'Export & Import' },
   { to: '/admin/settings/maintenance', label: 'Wartungsmodus' },

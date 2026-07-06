@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Config\Database;
 use App\Support\Http;
-use PHPMailer\PHPMailer\PHPMailer;
+use App\Support\Mailer;
 
 class ContactController
 {
@@ -43,7 +43,9 @@ class ContactController
         ]);
 
         $id = (int) $db->lastInsertId();
-        self::sendNotificationMail($body, $name, $email, $selectedUpgrades);
+        $vars = self::templateVars($body, $name, $email, $selectedUpgrades);
+        self::sendOwnerNotification($vars);
+        self::sendCustomerConfirmation($vars, $email);
 
         Http::send(['ok' => true, 'id' => $id], 201);
     }
@@ -105,51 +107,65 @@ class ContactController
         Http::send(['ok' => true]);
     }
 
-    private static function sendNotificationMail(array $body, string $name, string $email, array $selectedUpgrades = []): void
+    /**
+     * Baut die Platzhalter-Werte fuer beide Vorlagen (Kundenbestaetigung + Shop-Benachrichtigung)
+     * einmal zentral, statt sie in jeder Mail-Methode einzeln zusammenzusetzen.
+     */
+    private static function templateVars(array $body, string $name, string $email, array $selectedUpgrades): array
     {
-        $config = require __DIR__ . '/../../config/config.php';
-        $mailConfig = $config['mail'];
+        $upgradesText = '-';
+        if ($selectedUpgrades) {
+            $upgradesText = implode("\n", array_map(
+                fn($u) => sprintf('- %s (%.2f €)', $u['name'], $u['price']),
+                $selectedUpgrades
+            ));
+        }
 
-        if (empty($mailConfig['host'])) {
+        return [
+            'name' => $name,
+            'email' => $email,
+            'phone' => $body['phone'] ?? null,
+            'vin' => $body['vin'] ?? null,
+            'message' => $body['message'] ?? null,
+            'brand' => $body['brand_name'] ?? null,
+            'model' => $body['model_name'] ?? null,
+            'package' => $body['package_name'] ?? null,
+            'product' => $body['product_name'] ?? null,
+            'upgrades' => $upgradesText,
+        ];
+    }
+
+    private static function sendOwnerNotification(array $vars): void
+    {
+        $config = Mailer::resolveConfig();
+        if (empty($config['host']) || empty($config['notify_email'])) {
             return;
         }
 
         try {
-            $mail = new PHPMailer(true);
-            $mail->isSMTP();
-            $mail->Host = $mailConfig['host'];
-            $mail->Port = $mailConfig['port'];
-            $mail->SMTPAuth = true;
-            $mail->Username = $mailConfig['username'];
-            $mail->Password = $mailConfig['password'];
-            $mail->SMTPSecure = $mailConfig['encryption'];
-            $mail->CharSet = 'UTF-8';
+            $mail = Mailer::build($config);
+            $mail->addAddress($config['notify_email']);
+            $mail->addReplyTo($vars['email'], $vars['name']);
+            $mail->Subject = Mailer::render($config['owner_subject'], $vars);
+            $mail->Body = Mailer::render($config['owner_body'], $vars);
+            $mail->send();
+        } catch (\Throwable $e) {
+            // Mailversand ist best effort – die Anfrage ist bereits in der DB gespeichert.
+        }
+    }
 
-            $mail->setFrom($mailConfig['from_email'], $mailConfig['from_name']);
-            $mail->addAddress($mailConfig['to_email']);
-            $mail->addReplyTo($email, $name);
+    private static function sendCustomerConfirmation(array $vars, string $email): void
+    {
+        $config = Mailer::resolveConfig();
+        if (empty($config['host'])) {
+            return;
+        }
 
-            $context = trim(sprintf(
-                "Marke: %s\nModell: %s\nPaket: %s\nProdukt: %s",
-                $body['brand_name'] ?? '-',
-                $body['model_name'] ?? '-',
-                $body['package_name'] ?? '-',
-                $body['product_name'] ?? '-'
-            ));
-
-            $upgradesText = '-';
-            if ($selectedUpgrades) {
-                $upgradesText = implode("\n", array_map(
-                    fn($u) => sprintf('- %s (%.2f €)', $u['name'], $u['price']),
-                    $selectedUpgrades
-                ));
-            }
-
-            $mail->Subject = 'Neue Kontaktanfrage von ' . $name;
-            $mail->Body = "Name: {$name}\nE-Mail: {$email}\nTelefon: " . ($body['phone'] ?? '-')
-                . "\nFahrgestellnummer (FIN): " . ($body['vin'] ?? '-') . "\n\n"
-                . $context . "\n\nGewünschte Upgrades:\n" . $upgradesText . "\n\nNachricht:\n" . ($body['message'] ?? '-');
-
+        try {
+            $mail = Mailer::build($config);
+            $mail->addAddress($email, $vars['name']);
+            $mail->Subject = Mailer::render($config['customer_subject'], $vars);
+            $mail->Body = Mailer::render($config['customer_body'], $vars);
             $mail->send();
         } catch (\Throwable $e) {
             // Mailversand ist best effort – die Anfrage ist bereits in der DB gespeichert.

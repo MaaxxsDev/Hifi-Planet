@@ -16,6 +16,7 @@ use App\Controllers\DatabaseConfigController;
 use App\Controllers\GalleryBrandController;
 use App\Controllers\GalleryPhotoController;
 use App\Controllers\GalleryProjectController;
+use App\Controllers\MailSettingsController;
 use App\Controllers\MaintenanceController;
 use App\Controllers\ModelController;
 use App\Controllers\PackageController;
@@ -173,6 +174,10 @@ $router->post('/settings/schema-migrate', $perm('settings.manage', fn($p) => Sch
 
 $router->get('/settings/database', $perm('settings.manage', fn($p) => DatabaseConfigController::show()));
 $router->post('/settings/database', $perm('settings.manage', fn($p) => DatabaseConfigController::update()));
+
+$router->get('/settings/mail', $perm('settings.manage', fn($p) => MailSettingsController::show()));
+$router->post('/settings/mail', $perm('settings.manage', fn($p) => MailSettingsController::update()));
+$router->post('/settings/mail/test', $perm('settings.manage', fn($p) => MailSettingsController::test()));
 
 $router->get('/maintenance', fn($p) => MaintenanceController::status());
 $router->post('/maintenance', $perm('settings.manage', fn($p) => MaintenanceController::update()));
