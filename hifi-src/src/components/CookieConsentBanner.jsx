@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext.jsx';
 function SettingsModal({ onClose }) {
   const { consent, saveCustom } = useCookieConsent();
   const [external, setExternal] = useState(consent.external);
+  const [analytics, setAnalytics] = useState(consent.analytics);
   const { t } = useLanguage();
 
   return (
@@ -49,6 +50,20 @@ function SettingsModal({ onClose }) {
               className="mt-1 h-4 w-4 shrink-0"
             />
           </div>
+          <div className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
+            <div>
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">{t('cookieConsent.analyticsTitle')}</p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                {t('cookieConsent.analyticsDesc')}
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              checked={analytics}
+              onChange={(e) => setAnalytics(e.target.checked)}
+              className="mt-1 h-4 w-4 shrink-0"
+            />
+          </div>
         </div>
         <div className="mt-5 flex justify-end gap-2">
           <button
@@ -60,7 +75,7 @@ function SettingsModal({ onClose }) {
           </button>
           <button
             type="button"
-            onClick={() => saveCustom({ external })}
+            onClick={() => saveCustom({ external, analytics })}
             className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
           >
             {t('cookieConsent.saveSelection')}

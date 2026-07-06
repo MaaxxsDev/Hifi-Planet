@@ -36,7 +36,7 @@ export default {
     cookieSettings: 'Cookie-Einstellungen',
   },
   cookieConsent: {
-    bannerText: 'Wir verwenden nur technisch notwendige Cookies. Für Google Maps und YouTube-Videos benötigen wir zusätzlich deine Zustimmung, da dabei Daten an Google übertragen werden.',
+    bannerText: 'Wir verwenden nur technisch notwendige Cookies. Für Google Maps, YouTube-Videos und Statistik-Cookies benötigen wir zusätzlich deine Zustimmung, da dabei Daten an Google übertragen werden.',
     moreInfo: 'Mehr dazu in unserer',
     privacyPolicy: 'Datenschutzerklärung',
     settings: 'Einstellungen',
@@ -48,6 +48,8 @@ export default {
     necessaryDesc: 'Für den Betrieb der Website erforderlich (z. B. Login-Session, Theme- und Cookie-Einstellung). Kann nicht deaktiviert werden.',
     externalTitle: 'Externe Medien',
     externalDesc: 'Google Maps und YouTube-Videos. Beim Laden werden Daten (u. a. deine IP-Adresse) an Google übertragen.',
+    analyticsTitle: 'Statistik',
+    analyticsDesc: 'Google Analytics hilft uns zu verstehen, wie die Website genutzt wird. Dabei werden Daten an Google übertragen.',
     cancel: 'Abbrechen',
     saveSelection: 'Auswahl speichern',
   },

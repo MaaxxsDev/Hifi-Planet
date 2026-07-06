@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../../../api/client.js';
 import ImageUploadField from '../../../components/ImageUploadField.jsx';
 
-const emptyForm = { phone: '', whatsapp: '', contact_email: '', hero_image_path: '' };
+const emptyForm = { phone: '', whatsapp: '', contact_email: '', hero_image_path: '', ga_measurement_id: '' };
 
 export default function WebsiteSettings() {
   const [form, setForm] = useState(emptyForm);
@@ -20,6 +20,7 @@ export default function WebsiteSettings() {
           whatsapp: res.whatsapp || '',
           contact_email: res.contact_email || '',
           hero_image_path: res.hero_image_path || '',
+          ga_measurement_id: res.ga_measurement_id || '',
         })
       )
       .finally(() => setLoading(false));
@@ -100,6 +101,23 @@ export default function WebsiteSettings() {
               className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
             />
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Google Analytics</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Wird erst geladen, nachdem ein Besucher der Statistik-Kategorie im Cookie-Banner zugestimmt hat. Leer
+          lassen, um Google Analytics zu deaktivieren.
+        </p>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Measurement-ID</label>
+          <input
+            value={form.ga_measurement_id}
+            onChange={(e) => update('ga_measurement_id', e.target.value)}
+            placeholder="G-XXXXXXXXXX"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          />
         </div>
       </section>
 

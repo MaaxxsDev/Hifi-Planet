@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 
 const STORAGE_KEY = 'hifiplanet-cookie-consent';
 
-const defaultConsent = { necessary: true, external: false };
+const defaultConsent = { necessary: true, external: false, analytics: false };
 
 const CookieConsentContext = createContext({
   consent: defaultConsent,
@@ -25,7 +25,7 @@ export function CookieConsentProvider({ children }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        setConsent({ necessary: true, external: !!parsed.external });
+        setConsent({ necessary: true, external: !!parsed.external, analytics: !!parsed.analytics });
         setDecided(true);
       }
     } catch {
@@ -40,9 +40,12 @@ export function CookieConsentProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...next, decidedAt: new Date().toISOString() }));
   }, []);
 
-  const acceptAll = useCallback(() => persist({ necessary: true, external: true }), [persist]);
-  const rejectNonEssential = useCallback(() => persist({ necessary: true, external: false }), [persist]);
-  const saveCustom = useCallback((partial) => persist({ necessary: true, external: !!partial.external }), [persist]);
+  const acceptAll = useCallback(() => persist({ necessary: true, external: true, analytics: true }), [persist]);
+  const rejectNonEssential = useCallback(() => persist({ necessary: true, external: false, analytics: false }), [persist]);
+  const saveCustom = useCallback(
+    (partial) => persist({ necessary: true, external: !!partial.external, analytics: !!partial.analytics }),
+    [persist]
+  );
   const openSettings = useCallback(() => setSettingsOpen(true), []);
   const closeSettings = useCallback(() => setSettingsOpen(false), []);
 

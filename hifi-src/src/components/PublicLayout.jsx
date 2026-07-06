@@ -6,6 +6,7 @@ import ScrollProgress from './ScrollProgress.jsx';
 import MaintenanceNotice from './MaintenanceNotice.jsx';
 import MaintenanceBypassBanner from './MaintenanceBypassBanner.jsx';
 import CookieConsentBanner from './CookieConsentBanner.jsx';
+import GoogleAnalytics from './GoogleAnalytics.jsx';
 import { MaintenanceProvider } from '../context/MaintenanceContext.jsx';
 import { SiteSettingsProvider } from '../context/SiteSettingsContext.jsx';
 import { LanguageProvider } from '../context/LanguageContext.jsx';
@@ -23,6 +24,7 @@ const DEFAULT_SITE_SETTINGS = {
   whatsapp: null,
   contact_email: 'info@hifi-planet-amorbach.de',
   hero_image_path: null,
+  ga_measurement_id: null,
 };
 
 // Das Impressum (und die anderen rechtlichen Pflichtseiten) müssen laut § 5 DDG
@@ -71,6 +73,7 @@ export default function PublicLayout() {
             </main>
             <Footer />
             <CookieConsentBanner />
+            <GoogleAnalytics />
           </div>
         </SiteSettingsProvider>
       </MaintenanceProvider>

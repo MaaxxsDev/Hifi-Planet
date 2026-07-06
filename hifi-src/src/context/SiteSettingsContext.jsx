@@ -7,6 +7,7 @@ const SiteSettingsContext = createContext({
   whatsapp: null,
   contact_email: 'info@hifi-planet-amorbach.de',
   hero_image_path: null,
+  ga_measurement_id: null,
 });
 
 export const SiteSettingsProvider = SiteSettingsContext.Provider;

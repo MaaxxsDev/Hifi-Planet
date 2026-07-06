@@ -93,9 +93,10 @@ export default function Datenschutz() {
           <p className="mt-2">
             Für diese technisch notwendigen Cookies ist gemäß § 25 Abs. 2 Nr. 2 TTDSG keine Einwilligung
             erforderlich. Rechtsgrundlage ist unser berechtigtes Interesse am technischen Betrieb der Website (Art.
-            6 Abs. 1 lit. f DSGVO). Für alle darüber hinausgehenden Inhalte – aktuell die eingebundenen Google
-            Maps- und YouTube-Elemente – fragen wir Sie beim ersten Besuch aktiv nach Ihrer Einwilligung. Sie
-            können Ihre Auswahl jederzeit über den Link „Cookie-Einstellungen" im Footer ändern.
+            6 Abs. 1 lit. f DSGVO). Für alle darüber hinausgehenden Inhalte und Dienste – aktuell die eingebundenen
+            Google Maps- und YouTube-Elemente sowie Google Analytics – fragen wir Sie beim ersten Besuch aktiv nach
+            Ihrer Einwilligung. Sie können Ihre Auswahl jederzeit über den Link „Cookie-Einstellungen" im Footer
+            ändern.
           </p>
         </section>
 
@@ -145,7 +146,31 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">8. Empfänger der Daten</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">8. Google Analytics</h2>
+          <p>
+            Sofern Sie der Statistik-Kategorie im Cookie-Banner zugestimmt haben, setzen wir „Google Analytics" ein,
+            einen Webanalysedienst der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland. Google
+            Analytics verwendet Cookies und ähnliche Technologien, die eine Analyse der Benutzung dieser Website
+            durch Sie ermöglichen. Die dabei erzeugten Informationen (u. a. Ihre IP-Adresse, die vor der Verarbeitung
+            durch die Aktivierung der IP-Anonymisierung gekürzt wird) werden an einen Server von Google übertragen
+            und dort gespeichert; eine Verarbeitung kann dabei auch auf Servern außerhalb der EU/des EWR erfolgen.
+            Die Verarbeitung erfolgt ausschließlich auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO),
+            die Sie jederzeit über die Cookie-Einstellungen mit Wirkung für die Zukunft widerrufen können. Weitere
+            Informationen finden Sie in der{' '}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-brand-500"
+            >
+              Datenschutzerklärung von Google
+            </a>
+            .
+          </p>
+        </section>
+
+        <section>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">9. Empfänger der Daten</h2>
           <p>
             Ihre Daten werden grundsätzlich nur innerhalb unseres Unternehmens verarbeitet. Eine Weitergabe an
             Dritte erfolgt nur, soweit dies zur Bearbeitung Ihrer Anfrage erforderlich ist (z. B. an unseren
@@ -155,7 +180,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">9. Speicherdauer</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">10. Speicherdauer</h2>
           <p>
             Sofern in dieser Erklärung keine speziellere Speicherdauer genannt wurde, verbleiben Ihre
             personenbezogenen Daten bei uns, bis der Zweck für die Datenspeicherung entfällt. Gesetzliche
@@ -165,7 +190,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">10. SSL-/TLS-Verschlüsselung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">11. SSL-/TLS-Verschlüsselung</h2>
           <p>
             Diese Seite nutzt aus Sicherheitsgründen eine SSL-/TLS-Verschlüsselung zur Übertragung Ihrer Daten. Eine
             verschlüsselte Verbindung erkennen Sie an dem Schloss-Symbol in der Adresszeile Ihres Browsers.
@@ -173,7 +198,7 @@ export default function Datenschutz() {
         </section>
 
         <section>
-          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">11. Änderung dieser Datenschutzerklärung</h2>
+          <h2 className="mb-2 font-semibold text-neutral-900 dark:text-white">12. Änderung dieser Datenschutzerklärung</h2>
           <p>
             Wir passen diese Datenschutzerklärung an, sobald sich die von uns eingesetzten Datenverarbeitungen
             ändern. Es gilt jeweils die zum Zeitpunkt Ihres Besuchs aktuelle, auf dieser Seite veröffentlichte

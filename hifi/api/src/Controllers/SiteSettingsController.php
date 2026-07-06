@@ -14,13 +14,14 @@ class SiteSettingsController
         'whatsapp' => null,
         'contact_email' => 'info@hifi-planet-amorbach.de',
         'hero_image_path' => null,
+        'ga_measurement_id' => null,
     ];
 
     public static function show(): void
     {
         try {
             $stmt = Database::connection()->query(
-                'SELECT phone, whatsapp, contact_email, hero_image_path FROM app_settings WHERE id = 1'
+                'SELECT phone, whatsapp, contact_email, hero_image_path, ga_measurement_id FROM app_settings WHERE id = 1'
             );
             $row = $stmt->fetch();
         } catch (\Throwable $e) {
@@ -43,13 +44,14 @@ class SiteSettingsController
 
         $db->exec('INSERT IGNORE INTO app_settings (id) VALUES (1)');
         $stmt = $db->prepare(
-            'UPDATE app_settings SET phone = ?, whatsapp = ?, contact_email = ?, hero_image_path = ? WHERE id = 1'
+            'UPDATE app_settings SET phone = ?, whatsapp = ?, contact_email = ?, hero_image_path = ?, ga_measurement_id = ? WHERE id = 1'
         );
         $stmt->execute([
             trim($body['phone'] ?? '') ?: null,
             trim($body['whatsapp'] ?? '') ?: null,
             trim($body['contact_email'] ?? '') ?: null,
             trim($body['hero_image_path'] ?? '') ?: null,
+            trim($body['ga_measurement_id'] ?? '') ?: null,
         ]);
 
         self::show();

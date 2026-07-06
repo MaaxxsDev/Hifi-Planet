@@ -24,6 +24,7 @@ CREATE TABLE app_settings (
   whatsapp VARCHAR(50) NULL,
   contact_email VARCHAR(150) NULL,
   hero_image_path VARCHAR(255) NULL,
+  ga_measurement_id VARCHAR(20) NULL,
   mail_host VARCHAR(255) NULL,
   mail_port INT NULL,
   mail_username VARCHAR(255) NULL,
