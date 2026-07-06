@@ -45,12 +45,20 @@ const LANGUAGE_OPTIONS = [
   { code: 'en', label: 'English', Flag: FlagGB },
 ];
 
-function LanguageSwitcher({ overHero = false, variant = 'header' }) {
+function LanguageSwitcher({ overHero = false, variant = 'header', onOpenChange }) {
   const { language, setLanguage, t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpenState] = useState(false);
   const containerRef = useRef(null);
   const current = LANGUAGE_OPTIONS.find((opt) => opt.code === language) || LANGUAGE_OPTIONS[0];
   const isHeader = variant === 'header';
+
+  const setIsOpen = (value) => {
+    setIsOpenState((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value;
+      onOpenChange?.(next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -105,8 +113,8 @@ function LanguageSwitcher({ overHero = false, variant = 'header' }) {
       {isOpen && (
         <div
           role="listbox"
-          className={`z-50 mt-2 min-w-[9rem] overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${
-            isHeader ? 'absolute right-0' : 'relative left-0'
+          className={`absolute z-50 mt-2 min-w-[9rem] overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${
+            isHeader ? 'right-0' : 'left-0'
           }`}
         >
           {LANGUAGE_OPTIONS.map((opt) => (
@@ -139,6 +147,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const { user } = useAuth();
   const { phone, whatsapp } = useSiteSettings();
   const { t } = useLanguage();
@@ -185,6 +194,14 @@ export default function Navbar() {
   }, [open, totalItems]);
 
   const flyIn = () => `transition-all duration-500 ease-out ${menuVisible ? 'opacity-100' : 'opacity-0'}`;
+  // Wie flyIn(), aber lässt sich zusätzlich per langMenuOpen abdunkeln - eine einzelne
+  // opacity-Klasse statt zwei nebeneinander gesetzten, da bei gleichzeitig vorhandenen
+  // Tailwind-opacity-Klassen die Reihenfolge im generierten CSS (nicht im class-Attribut)
+  // entscheidet und "opacity-100" die Abdunklung sonst zufällig überschreiben kann.
+  const flyInDimmable = () =>
+    `transition-all duration-500 ease-out ${
+      !menuVisible ? 'opacity-0' : langMenuOpen ? 'pointer-events-none opacity-20' : 'opacity-100'
+    }`;
   const flyInStyle = (index) => {
     const delayIndex = menuVisible ? index : totalItems - 1 - index;
     return {
@@ -274,11 +291,15 @@ export default function Navbar() {
               <div className={`h-px w-16 bg-brand-500/60 ${flyIn()}`} style={flyInStyle(4)} />
 
               <div className={flyIn()} style={flyInStyle(5)}>
-                <LanguageSwitcher variant="menu" />
+                <LanguageSwitcher variant="menu" onOpenChange={setLangMenuOpen} />
               </div>
 
               {phone && (
-                <a href={`tel:${digitsOnly(phone)}`} className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(6)}>
+                <a
+                  href={`tel:${digitsOnly(phone)}`}
+                  className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyInDimmable()}`}
+                  style={flyInStyle(6)}
+                >
                   <DynamicIcon name="phone" className="h-4 w-4" />
                   {phone}
                 </a>
@@ -288,7 +309,7 @@ export default function Navbar() {
                   href={`https://wa.me/${digitsOnly(whatsapp).replace(/^0/, '49').replace('+', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
+                  className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyInDimmable()}`}
                   style={flyInStyle(7)}
                 >
                   <DynamicIcon name="message-circle" className="h-4 w-4" />
