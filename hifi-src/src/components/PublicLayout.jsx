@@ -55,7 +55,7 @@ export default function PublicLayout() {
   return (
     <MaintenanceProvider value={{ ...status, bypass }}>
       <SiteSettingsProvider value={siteSettings}>
-        <div className="page-texture flex min-h-screen flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
+        <div className="page-texture flex min-h-screen flex-col text-neutral-900 dark:text-neutral-100">
           {bypass && status.global.enabled && <MaintenanceBypassBanner />}
           <ScrollProgress />
           <Navbar />
