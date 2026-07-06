@@ -97,10 +97,10 @@ export default function Home() {
 
       <section ref={heroRef} className="relative -mt-[89px] h-dvh min-h-[560px] overflow-hidden sm:-mt-[97px]">
         <motion.img
-          style={{ y: heroImageY }}
+          style={{ y: heroImageY, scale: 1.15 }}
           src={heroImage}
           alt={t('home.heroImageAlt')}
-          className="absolute inset-0 h-full w-full scale-110 object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-neutral-950/40" />
 
