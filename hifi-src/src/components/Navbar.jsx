@@ -105,8 +105,8 @@ function LanguageSwitcher({ overHero = false, variant = 'header' }) {
       {isOpen && (
         <div
           role="listbox"
-          className={`absolute z-50 mt-2 min-w-[9rem] overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${
-            isHeader ? 'right-0' : 'left-0'
+          className={`z-50 mt-2 min-w-[9rem] overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${
+            isHeader ? 'absolute right-0' : 'relative left-0'
           }`}
         >
           {LANGUAGE_OPTIONS.map((opt) => (
