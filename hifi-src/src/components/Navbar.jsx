@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle.jsx';
 import DynamicIcon from './DynamicIcon.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -21,6 +21,24 @@ export default function Navbar() {
   const { user } = useAuth();
   const { phone, whatsapp } = useSiteSettings();
   const totalItems = whatsapp ? 8 : 7;
+  const location = useLocation();
+  const isHome = location.pathname === '/';
+  const [scrolled, setScrolled] = useState(!isHome);
+
+  // Auf der Startseite beginnt der Header transparent, verschmolzen mit dem Hero-Bild,
+  // und wird erst zur weissen/dunklen Leiste, sobald man zu scrollen beginnt.
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
+    const handleScroll = () => setScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHome]);
+
+  const transparent = isHome && !scrolled;
 
   useEffect(() => {
     if (open) {
@@ -58,48 +76,30 @@ export default function Navbar() {
       to="/admin"
       aria-label="Zum Admin-Panel"
       title="Zum Admin-Panel"
-      className="rounded-full p-2 text-neutral-600 transition hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+      className={`rounded-full p-2 transition ${
+        transparent ? 'text-white hover:bg-white/10' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'
+      }`}
     >
       <DynamicIcon name="layout-dashboard" className="h-5 w-5" />
     </Link>
   );
 
   return (
-    <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/90">
-      {/* Schmale Kontakt-Leiste (Telefon/WhatsApp/Shop) - auf kleinen Screens ausgeblendet,
-          steht dort stattdessen im aufklappbaren mobilen Menü. */}
-      <div className="hidden border-b border-neutral-100 bg-neutral-50 px-4 py-1.5 text-xs text-neutral-600 dark:border-neutral-900 dark:bg-neutral-900/40 dark:text-neutral-400 sm:px-6 md:block">
-        <div className="mx-auto flex max-w-6xl items-center justify-end gap-5">
-          {phone && (
-            <a href={`tel:${digitsOnly(phone)}`} className="flex items-center gap-1.5 hover:text-brand-500">
-              <DynamicIcon name="phone" className="h-3.5 w-3.5" />
-              {phone}
-            </a>
-          )}
-          {whatsapp && (
-            <a
-              href={`https://wa.me/${digitsOnly(whatsapp).replace(/^0/, '49').replace('+', '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 hover:text-brand-500"
-            >
-              <DynamicIcon name="message-circle" className="h-3.5 w-3.5" />
-              WhatsApp
-            </a>
-          )}
-          <a href={SHOP_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-brand-500">
-            <DynamicIcon name="shopping-bag" className="h-3.5 w-3.5" />
-            Zum Shop
-          </a>
-        </div>
-      </div>
-
+    <header
+      className={`sticky top-0 z-30 border-b transition-colors duration-300 ${
+        transparent
+          ? 'border-transparent bg-transparent'
+          : 'border-neutral-200 bg-white/90 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/90'
+      }`}
+    >
       <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-3 sm:px-6">
         <div className="flex items-center justify-self-start">
           <button
             onClick={() => setOpen(true)}
             aria-label="Menü öffnen"
-            className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            className={`rounded-md p-2 transition ${
+              transparent ? 'text-white hover:bg-white/10' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'
+            }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -107,13 +107,13 @@ export default function Navbar() {
           </button>
         </div>
 
-        <Link to="/" className="flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white">
+        <Link to="/" className={`flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white ${transparent ? 'bg-white' : ''}`}>
           <img src={logo} alt="HifiPlanet" className="h-14 w-auto sm:h-16" />
         </Link>
 
         <div className="flex items-center justify-self-end gap-1">
           {AdminIcon}
-          <ThemeToggle />
+          <ThemeToggle overHero={transparent} />
         </div>
       </div>
 

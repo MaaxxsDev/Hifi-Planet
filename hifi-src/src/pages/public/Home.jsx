@@ -129,7 +129,7 @@ export default function Home() {
         </div>
       </motion.div>
 
-      <section ref={heroRef} className="relative h-[85vh] min-h-[560px] overflow-hidden">
+      <section ref={heroRef} className="relative -mt-[89px] h-[85vh] min-h-[560px] overflow-hidden sm:-mt-[97px]">
         <motion.img
           style={{ y: heroImageY }}
           src={heroImage}

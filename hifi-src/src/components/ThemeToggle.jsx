@@ -1,13 +1,15 @@
 import { useTheme } from '../context/ThemeContext.jsx';
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ overHero = false }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
       aria-label="Theme umschalten"
-      className="rounded-full p-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 transition"
+      className={`rounded-full p-2 transition ${
+        overHero ? 'text-white hover:bg-white/10' : 'text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800'
+      }`}
     >
       {theme === 'dark' ? (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
