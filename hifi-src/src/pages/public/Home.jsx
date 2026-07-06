@@ -6,7 +6,6 @@ import Reveal from '../../components/Reveal.jsx';
 import Accordion from '../../components/Accordion.jsx';
 import StarRating from '../../components/StarRating.jsx';
 import TestimonialSlider from '../../components/TestimonialSlider.jsx';
-import ExternalEmbed from '../../components/ExternalEmbed.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import defaultHeroImage from '../../assets/photos/gallery-dash2.jpg';
@@ -17,6 +16,7 @@ import galleryDash from '../../assets/photos/gallery-dash.jpg';
 import galleryTrunk from '../../assets/photos/hero-trunk.jpg';
 import galleryRear from '../../assets/photos/gallery-rear.jpg';
 import heroHighlight from '../../assets/leistungen/hero-highlight.jpg';
+import youtubeVideo from '../../assets/videos/youtube-hintergrund.mp4';
 
 const YOUTUBE_URL = 'https://www.youtube.com/@hifiplanet2812';
 const YOUTUBE_VIDEO_ID = 'ostj2mKDVUc';
@@ -183,63 +183,38 @@ export default function Home() {
         </div>
       </section>
 
-      <section
-        className="relative overflow-hidden py-20 sm:py-28"
-        style={{ backgroundImage: 'linear-gradient(to bottom, transparent, #0a0a0a 3%, #0a0a0a 97%, transparent)' }}
-      >
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-500/25 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-500/15 blur-3xl" />
+      <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden sm:min-h-[85vh]">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={galleryDash}
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source src={youtubeVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/55" />
 
-        <div className="relative mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
-          <Reveal direction="left" className="text-center lg:text-left">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 text-white">
-                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" />
-              </svg>
-              {t('home.youtubeBadge')}
-            </div>
-            <h2 className="text-3xl font-extrabold text-white sm:text-4xl">{t('home.youtubeTitle')}</h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-neutral-300 lg:mx-0">
-              {t('home.youtubeText')}
-            </p>
-            <ul className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-2 text-sm text-neutral-300 sm:flex-row sm:flex-wrap sm:justify-center lg:mx-0 lg:justify-start">
-              {t('home.youtubeChecklist').map((item) => (
-                <li key={item} className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 flex-none">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <a
-              href={YOUTUBE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/40 transition hover:-translate-y-0.5 hover:bg-brand-400"
-            >
-              {t('home.youtubeCta')}
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0-4 4m4-4H3" />
-              </svg>
-            </a>
-          </Reveal>
-
-          <Reveal direction="right" index={1} className="overflow-hidden rounded-xl border border-white/10 shadow-2xl shadow-black/40">
-            <div className="aspect-video w-full">
-              <ExternalEmbed name={t('home.youtubeEmbedName')} className="h-full w-full">
-                <iframe
-                  className="h-full w-full"
-                  src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}`}
-                  title="HifiPlanet Amorbach – Car-Hifi Umbauten"
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </ExternalEmbed>
-            </div>
-          </Reveal>
-        </div>
+        <Reveal className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-neutral-200 sm:text-sm">
+            {t('home.youtubeBadge')}
+          </p>
+          <h2 className="text-3xl font-bold uppercase tracking-wide text-white sm:text-5xl">
+            {t('home.youtubeTitle')}
+          </h2>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-neutral-200 sm:text-sm">
+            {t('home.youtubeText')}
+          </p>
+          <a
+            href={`https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-xs font-bold uppercase tracking-wide text-neutral-900 transition hover:-translate-y-0.5 hover:bg-neutral-100"
+          >
+            {t('home.youtubeCta')}
+          </a>
+        </Reveal>
       </section>
 
       <section className="border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
