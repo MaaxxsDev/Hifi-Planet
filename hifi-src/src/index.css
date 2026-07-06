@@ -10,3 +10,14 @@ html {
   -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
   mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
 }
+
+/* Dezentes Punktraster als Hintergrundstruktur, statt einer reinen Flaeche.
+   Sehr kontrastarm gehalten, damit es nie mit Text oder Bildern konkurriert. */
+.page-texture {
+  background-image: radial-gradient(rgba(107, 166, 38, 0.16) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .page-texture {
+  background-image: radial-gradient(rgba(146, 212, 68, 0.12) 1px, transparent 1px);
+}
