@@ -86,17 +86,10 @@ export default function Navbar() {
 
       <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-3 sm:px-6">
         <div className="flex items-center justify-self-start">
-          <nav className="hidden items-center gap-6 text-sm font-medium text-neutral-600 dark:text-neutral-300 md:flex">
-            <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link>
-            <Link to="/leistungen" className="hover:text-brand-500">Leistungen</Link>
-            <Link to="/galerie" className="hover:text-brand-500">Galerie</Link>
-            <Link to="/kontakt" className="hover:text-brand-500">Kontakt</Link>
-          </nav>
-
           <button
             onClick={() => setOpen(true)}
             aria-label="Menü öffnen"
-            className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 md:hidden"
+            className="rounded-md p-2 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -117,7 +110,7 @@ export default function Navbar() {
       {mounted &&
         createPortal(
           <div
-            className="fixed inset-0 z-[100] flex flex-col items-end justify-center gap-5 overflow-y-auto px-8 py-24 text-right backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-[100] flex flex-col items-end justify-center gap-5 overflow-y-auto px-8 py-24 text-right backdrop-blur-xl"
             style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #e3f0cf 50%, #f8fafc 100%)' }}
           >
             <button
