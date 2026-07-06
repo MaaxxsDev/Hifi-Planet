@@ -16,6 +16,94 @@ const Icon = ({ path, className = 'h-6 w-6' }) => (
   </svg>
 );
 
+function AnalyticsWidget() {
+  const [report, setReport] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    api.get('/analytics/report').then(setReport).catch((e) => setError(e.message));
+  }, []);
+
+  if (error) {
+    return (
+      <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Google Analytics</h2>
+        <p className="text-sm text-red-600">{error}</p>
+      </section>
+    );
+  }
+
+  if (!report) return null;
+
+  if (!report.configured) {
+    return (
+      <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Google Analytics</h2>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          Noch nicht eingerichtet. Unter{' '}
+          <Link to="/admin/settings/website" className="text-brand-600 hover:underline dark:text-brand-400">
+            Einstellungen → Website
+          </Link>{' '}
+          kannst du die Dashboard-Anbindung konfigurieren, um hier Besucherzahlen zu sehen.
+        </p>
+      </section>
+    );
+  }
+
+  const maxPageviews = Math.max(1, ...report.daily.map((d) => d.pageviews));
+
+  return (
+    <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Google Analytics</h2>
+      <p className="mb-5 text-sm text-neutral-500 dark:text-neutral-400">Letzte 7 Tage.</p>
+
+      <div className="mb-6 grid grid-cols-3 gap-4">
+        <div>
+          <p className="text-2xl font-extrabold text-brand-600 dark:text-brand-400">{report.totals.users}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Nutzer</p>
+        </div>
+        <div>
+          <p className="text-2xl font-extrabold text-brand-600 dark:text-brand-400">{report.totals.sessions}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Sitzungen</p>
+        </div>
+        <div>
+          <p className="text-2xl font-extrabold text-brand-600 dark:text-brand-400">{report.totals.pageviews}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Seitenaufrufe</p>
+        </div>
+      </div>
+
+      {report.daily.length > 0 && (
+        <div className="mb-6 flex h-24 items-end gap-1.5">
+          {report.daily.map((d) => (
+            <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+              <div
+                className="w-full rounded-t bg-brand-400 dark:bg-brand-500"
+                style={{ height: `${Math.max(4, (d.pageviews / maxPageviews) * 80)}px` }}
+                title={`${d.date}: ${d.pageviews} Seitenaufrufe`}
+              />
+              <span className="text-[10px] text-neutral-400">{d.date.slice(6, 8)}.{d.date.slice(4, 6)}.</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {report.top_pages.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Meistbesuchte Seiten</p>
+          <ul className="space-y-1 text-sm">
+            {report.top_pages.map((p) => (
+              <li key={p.path} className="flex items-center justify-between gap-3 text-neutral-700 dark:text-neutral-300">
+                <span className="truncate font-mono text-xs">{p.path}</span>
+                <span className="shrink-0 font-semibold">{p.pageviews}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function Dashboard() {
   const { user, hasPermission } = useAuth();
   const [stats, setStats] = useState({});
@@ -70,6 +158,8 @@ export default function Dashboard() {
           ))}
         </div>
       )}
+
+      {hasPermission('settings.manage') && <AnalyticsWidget />}
     </div>
   );
 }

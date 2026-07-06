@@ -11,6 +11,13 @@ export default function WebsiteSettings() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
+  const [gaPropertyId, setGaPropertyId] = useState('');
+  const [gaServiceAccountJson, setGaServiceAccountJson] = useState('');
+  const [gaHasCredentials, setGaHasCredentials] = useState(false);
+  const [gaBusy, setGaBusy] = useState(false);
+  const [gaError, setGaError] = useState('');
+  const [gaSaved, setGaSaved] = useState(false);
+
   useEffect(() => {
     api
       .get('/site-settings')
@@ -24,7 +31,30 @@ export default function WebsiteSettings() {
         })
       )
       .finally(() => setLoading(false));
+    api.get('/settings/analytics').then((res) => {
+      setGaPropertyId(res.ga_property_id || '');
+      setGaHasCredentials(res.has_credentials);
+    });
   }, []);
+
+  const handleGaDashboardSave = async () => {
+    setGaBusy(true);
+    setGaError('');
+    setGaSaved(false);
+    try {
+      const res = await api.post('/settings/analytics', {
+        ga_property_id: gaPropertyId,
+        service_account_json: gaServiceAccountJson,
+      });
+      setGaHasCredentials(res.has_credentials);
+      setGaServiceAccountJson('');
+      setGaSaved(true);
+    } catch (err) {
+      setGaError(err.message);
+    } finally {
+      setGaBusy(false);
+    }
+  };
 
   const update = (field, value) => {
     setForm((f) => ({ ...f, [field]: value }));
@@ -118,6 +148,48 @@ export default function WebsiteSettings() {
             placeholder="G-XXXXXXXXXX"
             className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
+        </div>
+
+        <div className="mt-5 border-t border-neutral-200 pt-5 dark:border-neutral-800">
+          <h3 className="mb-1 text-sm font-semibold text-neutral-900 dark:text-white">Dashboard-Anbindung (optional)</h3>
+          <p className="mb-3 text-sm text-neutral-500 dark:text-neutral-400">
+            Zeigt Besucherzahlen direkt in deinem Admin-Dashboard an. Braucht ein Google-Cloud-Service-Account mit
+            Lesezugriff auf diese GA4-Property.
+          </p>
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Property-ID</label>
+              <input
+                value={gaPropertyId}
+                onChange={(e) => { setGaPropertyId(e.target.value); setGaSaved(false); }}
+                placeholder="z. B. 123456789"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+              />
+              <p className="mt-1 text-xs text-neutral-400">Nicht die Measurement-ID (G-...) - zu finden unter GA4 → Verwaltung → Property-Details.</p>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                Service-Account-JSON-Schlüssel {gaHasCredentials ? '(leer lassen = unverändert)' : ''}
+              </label>
+              <textarea
+                rows={4}
+                value={gaServiceAccountJson}
+                onChange={(e) => { setGaServiceAccountJson(e.target.value); setGaSaved(false); }}
+                placeholder={gaHasCredentials ? '{ "type": "service_account", ... } (bereits hinterlegt)' : '{ "type": "service_account", ... }'}
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 font-mono text-xs dark:border-neutral-700 dark:bg-neutral-900"
+              />
+            </div>
+          </div>
+          {gaError && <p className="mt-2 text-sm text-red-600">{gaError}</p>}
+          {gaSaved && <p className="mt-2 text-sm text-green-600 dark:text-green-400">Gespeichert.</p>}
+          <button
+            type="button"
+            onClick={handleGaDashboardSave}
+            disabled={gaBusy}
+            className="mt-3 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+          >
+            {gaBusy ? 'Speichere…' : 'Dashboard-Anbindung speichern'}
+          </button>
         </div>
       </section>
 

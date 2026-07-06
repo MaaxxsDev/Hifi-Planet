@@ -9,6 +9,7 @@ ob_start();
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\Controllers\AdminUserController;
+use App\Controllers\AnalyticsController;
 use App\Controllers\AuthController;
 use App\Controllers\BrandController;
 use App\Controllers\ContactController;
@@ -178,6 +179,10 @@ $router->post('/settings/database', $perm('settings.manage', fn($p) => DatabaseC
 $router->get('/settings/mail', $perm('settings.manage', fn($p) => MailSettingsController::show()));
 $router->post('/settings/mail', $perm('settings.manage', fn($p) => MailSettingsController::update()));
 $router->post('/settings/mail/test', $perm('settings.manage', fn($p) => MailSettingsController::test()));
+
+$router->get('/settings/analytics', $perm('settings.manage', fn($p) => AnalyticsController::show()));
+$router->post('/settings/analytics', $perm('settings.manage', fn($p) => AnalyticsController::update()));
+$router->get('/analytics/report', $admin(fn($p) => AnalyticsController::report()));
 
 $router->get('/maintenance', fn($p) => MaintenanceController::status());
 $router->post('/maintenance', $perm('settings.manage', fn($p) => MaintenanceController::update()));

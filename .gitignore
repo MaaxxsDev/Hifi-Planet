@@ -28,6 +28,10 @@
 # pro Umgebung unterschiedlich und darf nicht öffentlich einsehbar sein
 /hifi/api/config/setup.php
 
+# Google-Service-Account-Schlüssel für die Analytics-Data-API-Anbindung im Dashboard
+# (wird vom Admin-Panel automatisch neu geschrieben, enthält einen privaten Schlüssel)
+/hifi/api/config/ga-service-account.json
+
 # Claude-Code-Tooling (Skills/lokale Einstellungen) - gehört nicht zum Website-Projekt
 /hifi/.claude/
 /hifi/.agents/
