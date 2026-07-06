@@ -121,7 +121,7 @@ export default function Navbar() {
         createPortal(
           <div
             className="fixed inset-0 z-[100] overflow-y-auto text-left backdrop-blur-xl"
-            style={{ background: 'linear-gradient(135deg, rgba(241,245,249,0.82) 0%, rgba(227,240,207,0.82) 50%, rgba(248,250,252,0.82) 100%)' }}
+            style={{ background: 'linear-gradient(135deg, rgba(241,245,249,0.55) 0%, rgba(227,240,207,0.55) 50%, rgba(248,250,252,0.55) 100%)' }}
           >
             <div className="relative mx-auto flex min-h-full max-w-6xl flex-col items-start justify-center gap-5 py-24 pl-6 pr-8 sm:pl-8">
               <button
