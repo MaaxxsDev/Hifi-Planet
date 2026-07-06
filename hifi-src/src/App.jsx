@@ -10,6 +10,9 @@ import Home from './pages/public/Home.jsx';
 import VehicleSelect from './pages/public/VehicleSelect.jsx';
 import BrandPage from './pages/public/BrandPage.jsx';
 import ModelPage from './pages/public/ModelPage.jsx';
+import GalleryOverview from './pages/public/GalleryOverview.jsx';
+import GalleryBrandPage from './pages/public/GalleryBrandPage.jsx';
+import GalleryProjectPage from './pages/public/GalleryProjectPage.jsx';
 import Leistungen from './pages/public/Leistungen.jsx';
 import ContactPage from './pages/public/ContactPage.jsx';
 import Impressum from './pages/public/Impressum.jsx';
@@ -21,6 +24,9 @@ import Login from './pages/admin/Login.jsx';
 import Dashboard from './pages/admin/Dashboard.jsx';
 import Brands from './pages/admin/Brands.jsx';
 import Models from './pages/admin/Models.jsx';
+import GalleryBrands from './pages/admin/GalleryBrands.jsx';
+import GalleryProjects from './pages/admin/GalleryProjects.jsx';
+import GalleryPhotos from './pages/admin/GalleryPhotos.jsx';
 import Packages from './pages/admin/Packages.jsx';
 import Services from './pages/admin/Services.jsx';
 import PackageProducts from './pages/admin/PackageProducts.jsx';
@@ -49,6 +55,9 @@ export default function App() {
         <Route path="/fahrzeuge" element={<VehicleSelect />} />
         <Route path="/fahrzeuge/:brandSlug" element={<BrandPage />} />
         <Route path="/fahrzeuge/:brandSlug/:modelSlug" element={<ModelPage />} />
+        <Route path="/galerie" element={<GalleryOverview />} />
+        <Route path="/galerie/:brandSlug" element={<GalleryBrandPage />} />
+        <Route path="/galerie/:brandSlug/:projectSlug" element={<GalleryProjectPage />} />
         <Route path="/leistungen" element={<Leistungen />} />
         <Route path="/kontakt" element={<ContactPage />} />
         <Route path="/impressum" element={<Impressum />} />
@@ -64,6 +73,9 @@ export default function App() {
           <Route path="account" element={<AccountSettings />} />
           <Route path="brands" element={<RequirePermission permission="brands.manage"><Brands /></RequirePermission>} />
           <Route path="models" element={<RequirePermission permission="models.manage"><Models /></RequirePermission>} />
+          <Route path="gallery-brands" element={<RequirePermission permission="gallery.manage"><GalleryBrands /></RequirePermission>} />
+          <Route path="gallery-projects" element={<RequirePermission permission="gallery.manage"><GalleryProjects /></RequirePermission>} />
+          <Route path="gallery-projects/:projectId/photos" element={<RequirePermission permission="gallery.manage"><GalleryPhotos /></RequirePermission>} />
           <Route path="packages" element={<RequirePermission permission="packages.manage"><Packages /></RequirePermission>} />
           <Route path="packages/:packageId/products" element={<RequirePermission permission="packages.manage"><PackageProducts /></RequirePermission>} />
           <Route path="packages/:packageId/upgrades" element={<RequirePermission permission="packages.manage"><PackageUpgrades /></RequirePermission>} />

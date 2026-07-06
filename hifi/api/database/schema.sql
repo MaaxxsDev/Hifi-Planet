@@ -91,6 +91,40 @@ CREATE TABLE car_models (
   CONSTRAINT fk_car_models_brand FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE gallery_brands (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  slug VARCHAR(120) NOT NULL UNIQUE,
+  cover_image_path VARCHAR(255) NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE gallery_projects (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  gallery_brand_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  slug VARCHAR(150) NOT NULL,
+  cover_image_path VARCHAR(255) NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_gallery_brand_slug (gallery_brand_id, slug),
+  CONSTRAINT fk_gallery_projects_brand FOREIGN KEY (gallery_brand_id) REFERENCES gallery_brands(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE gallery_photos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  gallery_project_id INT NOT NULL,
+  image_path VARCHAR(255) NOT NULL,
+  caption VARCHAR(255) NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_gallery_photos_project FOREIGN KEY (gallery_project_id) REFERENCES gallery_projects(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE packages (
   id INT AUTO_INCREMENT PRIMARY KEY,
   car_model_id INT NOT NULL,

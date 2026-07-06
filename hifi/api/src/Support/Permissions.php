@@ -9,6 +9,7 @@ class Permissions
         'models.manage' => 'Modelle verwalten',
         'packages.manage' => 'Pakete, Produkte & Upgrades verwalten',
         'services.manage' => 'Leistungen verwalten',
+        'gallery.manage' => 'Bildergalerie verwalten',
         'contact.manage' => 'Kontaktanfragen ansehen & bearbeiten',
         'contact.delete' => 'Kontaktanfragen löschen',
         'users.manage' => 'Benutzer verwalten',

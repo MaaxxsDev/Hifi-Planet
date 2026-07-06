@@ -13,6 +13,9 @@ use App\Controllers\AuthController;
 use App\Controllers\BrandController;
 use App\Controllers\ContactController;
 use App\Controllers\DatabaseConfigController;
+use App\Controllers\GalleryBrandController;
+use App\Controllers\GalleryPhotoController;
+use App\Controllers\GalleryProjectController;
 use App\Controllers\MaintenanceController;
 use App\Controllers\ModelController;
 use App\Controllers\PackageController;
@@ -120,12 +123,29 @@ $router->put('/products/{id}', $perm('packages.manage', fn($p) => ProductControl
 $router->delete('/products/{id}', $perm('packages.manage', fn($p) => ProductController::destroy($p)));
 $router->post('/products/{id}/refresh-price', $perm('packages.manage', fn($p) => ProductController::refreshPrice($p)));
 
+$router->get('/gallery-brands', fn($p) => GalleryBrandController::index());
+$router->post('/gallery-brands', $perm('gallery.manage', fn($p) => GalleryBrandController::store()));
+$router->put('/gallery-brands/{id}', $perm('gallery.manage', fn($p) => GalleryBrandController::update($p)));
+$router->delete('/gallery-brands/{id}', $perm('gallery.manage', fn($p) => GalleryBrandController::destroy($p)));
+$router->get('/gallery-brands/{slug}/projects', fn($p) => GalleryBrandController::projectsForBrand($p));
+
+$router->get('/gallery-projects', $perm('gallery.manage', fn($p) => GalleryProjectController::index()));
+$router->post('/gallery-projects', $perm('gallery.manage', fn($p) => GalleryProjectController::store()));
+$router->put('/gallery-projects/{id}', $perm('gallery.manage', fn($p) => GalleryProjectController::update($p)));
+$router->delete('/gallery-projects/{id}', $perm('gallery.manage', fn($p) => GalleryProjectController::destroy($p)));
+$router->get('/gallery-projects/{id}/photos', $perm('gallery.manage', fn($p) => GalleryProjectController::photosAdmin($p)));
+$router->get('/gallery-brands/{brand_slug}/{project_slug}/photos', fn($p) => GalleryProjectController::photosForProject($p));
+
+$router->post('/gallery-photos', $perm('gallery.manage', fn($p) => GalleryPhotoController::store()));
+$router->put('/gallery-photos/{id}', $perm('gallery.manage', fn($p) => GalleryPhotoController::update($p)));
+$router->delete('/gallery-photos/{id}', $perm('gallery.manage', fn($p) => GalleryPhotoController::destroy($p)));
+
 $router->post('/contact', $maint(null, fn($p) => ContactController::store()));
 $router->get('/contact', $perm('contact.manage', fn($p) => ContactController::index()));
 $router->patch('/contact/{id}', $perm('contact.manage', fn($p) => ContactController::updateStatus($p)));
 $router->delete('/contact/{id}', $perm('contact.delete', fn($p) => ContactController::destroy($p)));
 
-$router->post('/uploads', $anyPerm(['brands.manage', 'models.manage', 'services.manage', 'settings.manage'], fn($p) => UploadController::store()));
+$router->post('/uploads', $anyPerm(['brands.manage', 'models.manage', 'services.manage', 'settings.manage', 'gallery.manage'], fn($p) => UploadController::store()));
 
 $router->get('/services', $maint('services', fn($p) => ServiceController::index()));
 $router->post('/services', $perm('services.manage', fn($p) => ServiceController::store()));

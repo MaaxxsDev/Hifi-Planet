@@ -87,6 +87,7 @@ export default function Navbar() {
           <nav className="hidden items-center gap-6 text-sm font-medium text-neutral-600 dark:text-neutral-300 md:flex">
             <Link to="/fahrzeuge" className="hover:text-brand-500">Fahrzeuge</Link>
             <Link to="/leistungen" className="hover:text-brand-500">Leistungen</Link>
+            <Link to="/galerie" className="hover:text-brand-500">Galerie</Link>
             <Link to="/kontakt" className="hover:text-brand-500">Kontakt</Link>
           </nav>
 
@@ -125,14 +126,17 @@ export default function Navbar() {
             <Link to="/leistungen" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(1)}>
               Leistungen
             </Link>
-            <Link to="/kontakt" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(2)}>
+            <Link to="/galerie" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(2)}>
+              Galerie
+            </Link>
+            <Link to="/kontakt" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(3)}>
               Kontakt
             </Link>
 
-            <div className={`h-px w-16 bg-brand-500/60 ${flyIn()}`} style={flyInStyle(3)} />
+            <div className={`h-px w-16 bg-brand-500/60 ${flyIn()}`} style={flyInStyle(4)} />
 
             {phone && (
-              <a href={`tel:${digitsOnly(phone)}`} className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(4)}>
+              <a href={`tel:${digitsOnly(phone)}`} className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(5)}>
                 {phone}
                 <DynamicIcon name="phone" className="h-4 w-4" />
               </a>
@@ -143,7 +147,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
-                style={flyInStyle(5)}
+                style={flyInStyle(6)}
               >
                 WhatsApp
                 <DynamicIcon name="message-circle" className="h-4 w-4" />
@@ -154,7 +158,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
-              style={flyInStyle(whatsapp ? 6 : 5)}
+              style={flyInStyle(whatsapp ? 7 : 6)}
             >
               Zum Shop
               <DynamicIcon name="shopping-bag" className="h-4 w-4" />
