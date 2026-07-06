@@ -107,7 +107,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <Link to="/" className={`flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white ${transparent ? 'bg-white/50 backdrop-blur-sm' : ''}`}>
+        <Link to="/" className="flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white">
           <img src={logo} alt="HifiPlanet" className="h-14 w-auto sm:h-16" />
         </Link>
 

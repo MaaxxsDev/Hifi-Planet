@@ -8,12 +8,12 @@ import StarRating from '../../components/StarRating.jsx';
 import TestimonialSlider from '../../components/TestimonialSlider.jsx';
 import ExternalEmbed from '../../components/ExternalEmbed.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
-import defaultHeroImage from '../../assets/photos/hero-trunk.jpg';
+import defaultHeroImage from '../../assets/photos/gallery-dash2.jpg';
 import galleryAmp from '../../assets/photos/gallery-amp-purple.jpg';
 import gallerySpeaker from '../../assets/photos/gallery-speaker.jpg';
 import gallerySubs from '../../assets/photos/gallery-subs.jpg';
 import galleryDash from '../../assets/photos/gallery-dash.jpg';
-import galleryDash2 from '../../assets/photos/gallery-dash2.jpg';
+import galleryTrunk from '../../assets/photos/hero-trunk.jpg';
 import galleryRear from '../../assets/photos/gallery-rear.jpg';
 import heroHighlight from '../../assets/leistungen/hero-highlight.jpg';
 
@@ -41,7 +41,7 @@ const gallery = [
   { src: gallerySpeaker, alt: 'Hochtöner- und Mitteltöner-Einbau von Focal Utopia' },
   { src: galleryDash, alt: 'Sony Navigationssystem mit Apple CarPlay im Cockpit' },
   { src: galleryRear, alt: 'Verbauter Hochtöner im Kofferraum' },
-  { src: galleryDash2, alt: 'Individuell beleuchtetes Cockpit mit Soundsystem' },
+  { src: galleryTrunk, alt: 'Individueller Subwoofer-Einbau mit LED-Beleuchtung im Kofferraum' },
 ];
 
 const testimonials = [
@@ -133,7 +133,7 @@ export default function Home() {
         <motion.img
           style={{ y: heroImageY }}
           src={heroImage}
-          alt="Individueller Subwoofer-Einbau mit LED-Beleuchtung im Kofferraum"
+          alt="Ground Zero Subwoofer und Endstufen mit violetter Ambiente-Beleuchtung"
           className="absolute inset-0 h-full w-full scale-110 object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-neutral-950/40" />
