@@ -88,6 +88,9 @@ export default function ContactRequests() {
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="font-semibold text-slate-800 dark:text-slate-100">{r.name} · {r.email}{r.phone ? ` · ${r.phone}` : ''}</p>
+                {r.vin && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400">FIN: <span className="font-mono">{r.vin}</span></p>
+                )}
                 <p className="text-xs text-slate-400">{new Date(r.created_at.replace(' ', 'T')).toLocaleString('de-DE')}</p>
               </div>
               <div className="flex items-center gap-2">

@@ -1,6 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
 import DynamicIcon from './DynamicIcon.jsx';
 import { useCookieConsent } from '../context/CookieConsentContext.jsx';
+import { useSiteSettings } from '../context/SiteSettingsContext.jsx';
+
+const digitsOnly = (value) => (value || '').replace(/[^\d+]/g, '');
 
 const SHOP_ADDRESS_ENCODED = encodeURIComponent('Boxbrunner Str. 20a, 63916 Amorbach');
 const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${SHOP_ADDRESS_ENCODED}`;
@@ -27,6 +30,7 @@ export default function Footer() {
   // zusätzlichen Platz für sie freihalten.
   const { pathname } = useLocation();
   const isHome = pathname === '/';
+  const { phone, contact_email: contactEmail } = useSiteSettings();
 
   return (
     <footer
@@ -59,10 +63,10 @@ export default function Footer() {
             <p className="font-semibold text-slate-900 dark:text-white">Kontakt</p>
           </div>
           <p>
-            <a href="tel:+4993732062390" className="hover:text-brand-500">09373 20 62 390</a>
+            <a href={`tel:${digitsOnly(phone)}`} className="hover:text-brand-500">{phone}</a>
           </p>
           <p>
-            <a href="mailto:info@hifi-planet-amorbach.de" className="hover:text-brand-500">info@hifi-planet-amorbach.de</a>
+            <a href={`mailto:${contactEmail}`} className="hover:text-brand-500">{contactEmail}</a>
           </p>
           <Link
             to="/kontakt"

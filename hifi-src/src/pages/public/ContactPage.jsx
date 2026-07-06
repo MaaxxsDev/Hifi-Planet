@@ -3,15 +3,19 @@ import { useSearchParams } from 'react-router-dom';
 import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
 import ExternalEmbed from '../../components/ExternalEmbed.jsx';
+import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
 
 const formatPrice = (value) =>
   new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value);
+
+const digitsOnly = (value) => (value || '').replace(/[^\d+]/g, '');
 
 const SHOP_ADDRESS_ENCODED = encodeURIComponent('Boxbrunner Str. 20a, 63916 Amorbach');
 
 export default function ContactPage() {
   const [params] = useSearchParams();
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
+  const { phone, contact_email: contactEmail } = useSiteSettings();
+  const [form, setForm] = useState({ name: '', email: '', phone: '', vin: '', message: '' });
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
   const [upgrades, setUpgrades] = useState([]);
@@ -161,6 +165,18 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Fahrgestellnummer (FIN)
+                  </label>
+                  <input
+                    name="vin"
+                    value={form.vin}
+                    onChange={handleChange}
+                    placeholder="Optional – hilft uns bei der genauen Einschätzung deines Fahrzeugs"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900"
+                  />
+                </div>
+                <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Nachricht</label>
                   <textarea
                     name="message"
@@ -195,11 +211,11 @@ export default function ContactPage() {
               </div>
               <div>
                 <dt className="font-medium text-slate-800 dark:text-slate-100">Telefon</dt>
-                <dd><a href="tel:+4993732062390" className="hover:text-brand-500">09373 20 62 390</a></dd>
+                <dd><a href={`tel:${digitsOnly(phone)}`} className="hover:text-brand-500">{phone}</a></dd>
               </div>
               <div>
                 <dt className="font-medium text-slate-800 dark:text-slate-100">E-Mail</dt>
-                <dd><a href="mailto:info@hifi-planet-amorbach.de" className="hover:text-brand-500">info@hifi-planet-amorbach.de</a></dd>
+                <dd><a href={`mailto:${contactEmail}`} className="hover:text-brand-500">{contactEmail}</a></dd>
               </div>
               <div>
                 <dt className="font-medium text-slate-800 dark:text-slate-100">Öffnungszeiten</dt>

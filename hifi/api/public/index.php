@@ -24,6 +24,7 @@ use App\Controllers\SchemaController;
 use App\Controllers\ServiceController;
 use App\Controllers\SettingsController;
 use App\Controllers\SetupController;
+use App\Controllers\SiteSettingsController;
 use App\Controllers\TwoFactorController;
 use App\Controllers\UploadController;
 use App\Middleware\AuthMiddleware;
@@ -124,7 +125,7 @@ $router->get('/contact', $perm('contact.manage', fn($p) => ContactController::in
 $router->patch('/contact/{id}', $perm('contact.manage', fn($p) => ContactController::updateStatus($p)));
 $router->delete('/contact/{id}', $perm('contact.delete', fn($p) => ContactController::destroy($p)));
 
-$router->post('/uploads', $anyPerm(['brands.manage', 'models.manage', 'services.manage'], fn($p) => UploadController::store()));
+$router->post('/uploads', $anyPerm(['brands.manage', 'models.manage', 'services.manage', 'settings.manage'], fn($p) => UploadController::store()));
 
 $router->get('/services', $maint('services', fn($p) => ServiceController::index()));
 $router->post('/services', $perm('services.manage', fn($p) => ServiceController::store()));
@@ -155,6 +156,9 @@ $router->post('/settings/database', $perm('settings.manage', fn($p) => DatabaseC
 
 $router->get('/maintenance', fn($p) => MaintenanceController::status());
 $router->post('/maintenance', $perm('settings.manage', fn($p) => MaintenanceController::update()));
+
+$router->get('/site-settings', fn($p) => SiteSettingsController::show());
+$router->post('/site-settings', $perm('settings.manage', fn($p) => SiteSettingsController::update()));
 
 // Ersteinrichtungs-Assistent (/setup) - bewusst ohne Login, da es ja noch keinen
 // Admin gibt. Jeder schreibende Endpunkt prüft selbst, ob wirklich noch kein

@@ -7,6 +7,7 @@ import MaintenanceNotice from './MaintenanceNotice.jsx';
 import MaintenanceBypassBanner from './MaintenanceBypassBanner.jsx';
 import CookieConsentBanner from './CookieConsentBanner.jsx';
 import { MaintenanceProvider } from '../context/MaintenanceContext.jsx';
+import { SiteSettingsProvider } from '../context/SiteSettingsContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../api/client.js';
 
@@ -14,6 +15,13 @@ const FALLBACK_STATUS = {
   global: { enabled: false, message: null },
   services: { enabled: false, message: null },
   vehicles: { enabled: false, message: null },
+};
+
+const DEFAULT_SITE_SETTINGS = {
+  phone: '09373 20 62 390',
+  whatsapp: null,
+  contact_email: 'info@hifi-planet-amorbach.de',
+  hero_image_path: null,
 };
 
 // Das Impressum (und die anderen rechtlichen Pflichtseiten) müssen laut § 5 DDG
@@ -24,11 +32,13 @@ const LEGAL_PATHS = ['/impressum', '/datenschutz', '/agb'];
 
 export default function PublicLayout() {
   const [status, setStatus] = useState(null);
+  const [siteSettings, setSiteSettings] = useState(DEFAULT_SITE_SETTINGS);
   const { loading: authLoading, hasPermission } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
     api.get('/maintenance').then(setStatus).catch(() => setStatus(FALLBACK_STATUS));
+    api.get('/site-settings').then(setSiteSettings).catch(() => {});
   }, []);
 
   if (status === null || authLoading) {
@@ -44,16 +54,18 @@ export default function PublicLayout() {
 
   return (
     <MaintenanceProvider value={{ ...status, bypass }}>
-      <div className="flex min-h-screen flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-        {bypass && status.global.enabled && <MaintenanceBypassBanner />}
-        <ScrollProgress />
-        <Navbar />
-        <main className="flex-1">
-          <Outlet />
-        </main>
-        <Footer />
-        <CookieConsentBanner />
-      </div>
+      <SiteSettingsProvider value={siteSettings}>
+        <div className="flex min-h-screen flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+          {bypass && status.global.enabled && <MaintenanceBypassBanner />}
+          <ScrollProgress />
+          <Navbar />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <Footer />
+          <CookieConsentBanner />
+        </div>
+      </SiteSettingsProvider>
     </MaintenanceProvider>
   );
 }

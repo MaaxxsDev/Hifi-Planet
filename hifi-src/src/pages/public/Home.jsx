@@ -7,7 +7,8 @@ import Accordion from '../../components/Accordion.jsx';
 import StarRating from '../../components/StarRating.jsx';
 import TestimonialSlider from '../../components/TestimonialSlider.jsx';
 import ExternalEmbed from '../../components/ExternalEmbed.jsx';
-import heroImage from '../../assets/photos/hero-trunk.jpg';
+import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
+import defaultHeroImage from '../../assets/photos/hero-trunk.jpg';
 import galleryAmp from '../../assets/photos/gallery-amp-purple.jpg';
 import gallerySpeaker from '../../assets/photos/gallery-speaker.jpg';
 import gallerySubs from '../../assets/photos/gallery-subs.jpg';
@@ -66,6 +67,9 @@ const faqs = [
 ];
 
 export default function Home() {
+  const { hero_image_path: heroImagePath } = useSiteSettings();
+  const heroImage = heroImagePath || defaultHeroImage;
+
   usePageMeta({
     title: 'Car-Hifi Umbauten nach Maß',
     description:

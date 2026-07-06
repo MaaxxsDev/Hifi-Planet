@@ -20,6 +20,10 @@ CREATE TABLE app_settings (
   maintenance_services_message VARCHAR(500) NULL,
   maintenance_vehicles TINYINT(1) NOT NULL DEFAULT 0,
   maintenance_vehicles_message VARCHAR(500) NULL,
+  phone VARCHAR(50) NULL,
+  whatsapp VARCHAR(50) NULL,
+  contact_email VARCHAR(150) NULL,
+  hero_image_path VARCHAR(255) NULL,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -137,6 +141,7 @@ CREATE TABLE contact_requests (
   name VARCHAR(150) NOT NULL,
   email VARCHAR(150) NOT NULL,
   phone VARCHAR(50) NULL,
+  vin VARCHAR(50) NULL,
   message TEXT NULL,
   brand_name VARCHAR(100) NULL,
   model_name VARCHAR(100) NULL,

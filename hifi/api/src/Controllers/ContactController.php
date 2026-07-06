@@ -24,13 +24,14 @@ class ContactController
 
         $stmt = $db->prepare(
             'INSERT INTO contact_requests
-                (name, email, phone, message, brand_name, model_name, package_name, product_name, package_id, package_product_id, selected_upgrades)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                (name, email, phone, vin, message, brand_name, model_name, package_name, product_name, package_id, package_product_id, selected_upgrades)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $name,
             $email,
             $body['phone'] ?? null,
+            $body['vin'] ?? null,
             $body['message'] ?? null,
             $body['brand_name'] ?? null,
             $body['model_name'] ?? null,
@@ -71,7 +72,7 @@ class ContactController
     public static function index(): void
     {
         $stmt = Database::connection()->query(
-            'SELECT id, name, email, phone, message, brand_name, model_name, package_name, product_name,
+            'SELECT id, name, email, phone, vin, message, brand_name, model_name, package_name, product_name,
                     selected_upgrades, status, created_at
              FROM contact_requests ORDER BY created_at DESC'
         );
@@ -145,7 +146,8 @@ class ContactController
             }
 
             $mail->Subject = 'Neue Kontaktanfrage von ' . $name;
-            $mail->Body = "Name: {$name}\nE-Mail: {$email}\nTelefon: " . ($body['phone'] ?? '-') . "\n\n"
+            $mail->Body = "Name: {$name}\nE-Mail: {$email}\nTelefon: " . ($body['phone'] ?? '-')
+                . "\nFahrgestellnummer (FIN): " . ($body['vin'] ?? '-') . "\n\n"
                 . $context . "\n\nGewünschte Upgrades:\n" . $upgradesText . "\n\nNachricht:\n" . ($body['message'] ?? '-');
 
             $mail->send();
