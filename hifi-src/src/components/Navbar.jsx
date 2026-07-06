@@ -25,8 +25,18 @@ export default function Navbar() {
   useEffect(() => {
     if (open) {
       setMounted(true);
-      const id = requestAnimationFrame(() => setMenuVisible(true));
-      return () => cancelAnimationFrame(id);
+      // Doppeltes rAF: nach dem Mounten braucht der Browser einen echten Paint mit der
+      // "versteckten" Ausgangsposition, bevor wir auf "sichtbar" umschalten - sonst
+      // fasst er beide Zustandsänderungen in einem Frame zusammen und es gibt keinen
+      // sichtbaren Übergang (kein Fade-in).
+      let rafInner;
+      const rafOuter = requestAnimationFrame(() => {
+        rafInner = requestAnimationFrame(() => setMenuVisible(true));
+      });
+      return () => {
+        cancelAnimationFrame(rafOuter);
+        if (rafInner) cancelAnimationFrame(rafInner);
+      };
     }
     setMenuVisible(false);
     const closeDuration = FLY_DURATION_MS + (totalItems - 1) * ITEM_DELAY_MS;
@@ -110,18 +120,18 @@ export default function Navbar() {
       {mounted &&
         createPortal(
           <div
-            className="fixed inset-0 z-[100] flex flex-col items-end justify-center gap-5 overflow-y-auto px-8 py-24 text-right backdrop-blur-xl"
+            className="fixed inset-0 z-[100] flex flex-col items-start justify-center gap-5 overflow-y-auto px-8 py-24 text-left backdrop-blur-xl"
             style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #e3f0cf 50%, #f8fafc 100%)' }}
           >
             <button
               onClick={() => setOpen(false)}
               aria-label="Menü schließen"
-              className="absolute right-6 top-6 flex items-center gap-2 text-neutral-600 hover:text-brand-600"
+              className="absolute left-6 top-6 flex items-center gap-2 text-neutral-600 hover:text-brand-600"
             >
-              <span className="text-xs font-semibold uppercase tracking-wide">Schließen</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
               </svg>
+              <span className="text-xs font-semibold uppercase tracking-wide">Schließen</span>
             </button>
 
             <Link to="/fahrzeuge" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(0)}>
@@ -141,8 +151,8 @@ export default function Navbar() {
 
             {phone && (
               <a href={`tel:${digitsOnly(phone)}`} className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(5)}>
-                {phone}
                 <DynamicIcon name="phone" className="h-4 w-4" />
+                {phone}
               </a>
             )}
             {whatsapp && (
@@ -153,8 +163,8 @@ export default function Navbar() {
                 className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
                 style={flyInStyle(6)}
               >
-                WhatsApp
                 <DynamicIcon name="message-circle" className="h-4 w-4" />
+                WhatsApp
               </a>
             )}
             <a
@@ -164,8 +174,8 @@ export default function Navbar() {
               className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
               style={flyInStyle(whatsapp ? 7 : 6)}
             >
-              Zum Shop
               <DynamicIcon name="shopping-bag" className="h-4 w-4" />
+              Zum Shop
             </a>
           </div>,
           document.body
