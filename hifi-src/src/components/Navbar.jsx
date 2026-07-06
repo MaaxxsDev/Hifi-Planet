@@ -45,12 +45,11 @@ const LANGUAGE_OPTIONS = [
   { code: 'en', label: 'English', Flag: FlagGB },
 ];
 
-function LanguageSwitcher({ overHero = false, variant = 'header' }) {
+function LanguageSwitcher({ overHero = false }) {
   const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
   const current = LANGUAGE_OPTIONS.find((opt) => opt.code === language) || LANGUAGE_OPTIONS[0];
-  const isHeader = variant === 'header';
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -76,37 +75,23 @@ function LanguageSwitcher({ overHero = false, variant = 'header' }) {
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={t('languageToggle.label')}
-        className={
-          isHeader
-            ? `flex items-center gap-1 rounded-full p-1.5 transition ${overHero ? 'hover:bg-white/10' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'}`
-            : 'flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600'
-        }
+        className={`flex items-center gap-1 rounded-full p-1.5 transition ${overHero ? 'hover:bg-white/10' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
       >
-        {isHeader && (
-          <span className={`block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ${overHero ? 'ring-white/50' : 'ring-neutral-300 dark:ring-neutral-600'}`}>
-            <current.Flag className="h-full w-full" />
-          </span>
-        )}
-        {!isHeader && current.label}
-        {isHeader && (
-          <svg
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-            className={`h-3 w-3 transition-transform ${overHero ? 'text-white/70' : 'text-neutral-400'} ${isOpen ? 'rotate-180' : ''}`}
-          >
-            <path fillRule="evenodd" clipRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
-          </svg>
-        )}
+        <span className={`block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ${overHero ? 'ring-white/50' : 'ring-neutral-300 dark:ring-neutral-600'}`}>
+          <current.Flag className="h-full w-full" />
+        </span>
+        <svg
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+          className={`h-3 w-3 transition-transform ${overHero ? 'text-white/70' : 'text-neutral-400'} ${isOpen ? 'rotate-180' : ''}`}
+        >
+          <path fillRule="evenodd" clipRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" />
+        </svg>
       </button>
 
       {isOpen && (
-        <div
-          role="listbox"
-          className={`absolute z-50 mt-2 min-w-[9rem] overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900 ${
-            isHeader ? 'right-0' : 'left-0'
-          }`}
-        >
+        <div role="listbox" className="absolute right-0 z-50 mt-2 min-w-[9rem] overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
           {LANGUAGE_OPTIONS.map((opt) => (
             <button
               key={opt.code}
@@ -121,11 +106,9 @@ function LanguageSwitcher({ overHero = false, variant = 'header' }) {
                 opt.code === language ? 'font-semibold text-brand-600 dark:text-brand-400' : 'text-neutral-700 dark:text-neutral-200'
               }`}
             >
-              {isHeader && (
-                <span className="block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ring-neutral-300 dark:ring-neutral-600">
-                  <opt.Flag className="h-full w-full" />
-                </span>
-              )}
+              <span className="block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ring-neutral-300 dark:ring-neutral-600">
+                <opt.Flag className="h-full w-full" />
+              </span>
               {opt.label}
             </button>
           ))}
@@ -142,7 +125,7 @@ export default function Navbar() {
   const { user } = useAuth();
   const { phone, whatsapp } = useSiteSettings();
   const { t } = useLanguage();
-  const totalItems = whatsapp ? 9 : 8;
+  const totalItems = whatsapp ? 8 : 7;
   const location = useLocation();
   const isHome = location.pathname === '/';
   const [scrolled, setScrolled] = useState(!isHome);
@@ -235,7 +218,7 @@ export default function Navbar() {
 
         <div className="flex items-center justify-self-end gap-1">
           {AdminIcon}
-          {!open && <LanguageSwitcher overHero={transparent} variant="header" />}
+          {!open && <LanguageSwitcher overHero={transparent} />}
           <ThemeToggle overHero={transparent} />
         </div>
       </div>
@@ -273,12 +256,8 @@ export default function Navbar() {
 
               <div className={`h-px w-16 bg-brand-500/60 ${flyIn()}`} style={flyInStyle(4)} />
 
-              <div className={flyIn()} style={flyInStyle(5)}>
-                <LanguageSwitcher variant="menu" />
-              </div>
-
               {phone && (
-                <a href={`tel:${digitsOnly(phone)}`} className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(6)}>
+                <a href={`tel:${digitsOnly(phone)}`} className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(5)}>
                   <DynamicIcon name="phone" className="h-4 w-4" />
                   {phone}
                 </a>
@@ -289,7 +268,7 @@ export default function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
-                  style={flyInStyle(7)}
+                  style={flyInStyle(6)}
                 >
                   <DynamicIcon name="message-circle" className="h-4 w-4" />
                   {t('nav.whatsapp')}
@@ -300,7 +279,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600 ${flyIn()}`}
-                style={flyInStyle(whatsapp ? 8 : 7)}
+                style={flyInStyle(whatsapp ? 7 : 6)}
               >
                 <DynamicIcon name="shopping-bag" className="h-4 w-4" />
                 {t('nav.shop')}
