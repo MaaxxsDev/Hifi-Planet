@@ -58,6 +58,8 @@ export default function EmailSettings() {
   const [testBusy, setTestBusy] = useState(false);
   const [testError, setTestError] = useState('');
   const [testSuccess, setTestSuccess] = useState('');
+  const [testWarning, setTestWarning] = useState('');
+  const [testLog, setTestLog] = useState(null);
 
   useEffect(() => {
     api
@@ -95,9 +97,13 @@ export default function EmailSettings() {
     setTestBusy(true);
     setTestError('');
     setTestSuccess('');
+    setTestWarning('');
+    setTestLog(null);
     try {
       const res = await api.post('/settings/mail/test', form);
-      setTestSuccess(`Testmail gesendet an ${res.sent_to}.`);
+      setTestSuccess(`Testmail gesendet an ${res.sent_to}. Der Server hat die Mail angenommen - prüfe auch den Spam-Ordner, das ist noch keine Garantie für die Zustellung.`);
+      setTestWarning(res.warning || '');
+      setTestLog(res.smtp_log || null);
     } catch (err) {
       setTestError(err.message);
     } finally {
@@ -201,8 +207,13 @@ export default function EmailSettings() {
         </div>
 
         <div className="mt-4 border-t border-neutral-200 pt-4 dark:border-neutral-800">
-          {testError && <p className="mb-2 text-sm text-red-600">{testError}</p>}
+          {testError && <p className="mb-2 whitespace-pre-wrap text-sm text-red-600">{testError}</p>}
           {testSuccess && <p className="mb-2 text-sm text-green-600 dark:text-green-400">{testSuccess}</p>}
+          {testWarning && (
+            <p className="mb-2 rounded-md bg-amber-50 p-2 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
+              {testWarning}
+            </p>
+          )}
           <button
             type="button"
             onClick={handleTest}
@@ -211,6 +222,14 @@ export default function EmailSettings() {
           >
             {testBusy ? 'Sende Testmail…' : 'Verbindung testen'}
           </button>
+          {testLog && testLog.length > 0 && (
+            <details className="mt-3">
+              <summary className="cursor-pointer text-xs text-neutral-500 dark:text-neutral-400">SMTP-Protokoll anzeigen</summary>
+              <pre className="mt-2 max-h-64 overflow-auto rounded-md bg-neutral-900 p-3 text-xs text-neutral-200">
+                {testLog.join('\n')}
+              </pre>
+            </details>
+          )}
         </div>
       </section>
 

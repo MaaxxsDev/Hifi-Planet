@@ -111,24 +111,42 @@ class MailSettingsController
             Http::error('Empfaenger-E-Mail (Benachrichtigungs- oder Absenderadresse) ist ungueltig', 422);
         }
 
+        $username = trim($body['mail_username'] ?? '');
+        $debugLog = [];
+
         try {
             $mail = Mailer::build([
                 'host' => $host,
                 'port' => $body['mail_port'] ?? 587,
-                'username' => trim($body['mail_username'] ?? ''),
+                'username' => $username,
                 'password' => $password,
                 'encryption' => trim($body['mail_encryption'] ?? '') ?: 'tls',
                 'from_email' => $fromEmail,
                 'from_name' => trim($body['mail_from_name'] ?? '') ?: 'HifiPlanet',
             ]);
+            // Volles SMTP-Protokoll mitschneiden, damit bei "Verbindung ok, aber nichts kommt an"
+            // sichtbar wird, was der Server nach dem DATA-Befehl tatsaechlich geantwortet hat
+            // (z.B. eine 250-Bestaetigung, obwohl die Mail spaeter serverseitig verworfen wird).
+            $mail->SMTPDebug = 2;
+            $mail->Debugoutput = function ($str) use (&$debugLog) {
+                $debugLog[] = trim(preg_replace('/\s+/', ' ', $str));
+            };
             $mail->addAddress($target);
             $mail->Subject = 'Testmail von HifiPlanet';
             $mail->Body = "Diese Testmail bestaetigt, dass deine SMTP-Einstellungen funktionieren.";
             $mail->send();
         } catch (\Throwable $e) {
-            Http::error('Test fehlgeschlagen: ' . $e->getMessage(), 422);
+            Http::error('Test fehlgeschlagen: ' . $e->getMessage() . "\n\nSMTP-Protokoll:\n" . implode("\n", $debugLog), 422);
         }
 
-        Http::send(['ok' => true, 'sent_to' => $target]);
+        $warning = null;
+        if ($username !== '' && strcasecmp($username, $fromEmail) !== 0) {
+            $warning = 'Hinweis: Absender-E-Mail ("' . $fromEmail . '") und Benutzername ("' . $username . '") sind '
+                . 'unterschiedlich. Viele Mail-Provider akzeptieren die Mail dann zwar (siehe SMTP-Protokoll), '
+                . 'verwerfen sie aber im Anschluss ohne Fehlermeldung. Am sichersten ist es, die Absender-E-Mail '
+                . 'identisch zum SMTP-Benutzernamen zu setzen.';
+        }
+
+        Http::send(['ok' => true, 'sent_to' => $target, 'warning' => $warning, 'smtp_log' => $debugLog]);
     }
 }
