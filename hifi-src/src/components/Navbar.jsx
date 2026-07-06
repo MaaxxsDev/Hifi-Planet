@@ -82,13 +82,11 @@ function LanguageSwitcher({ overHero = false, variant = 'header' }) {
             : 'flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-neutral-600 hover:text-brand-600'
         }
       >
-        <span
-          className={`block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ${
-            isHeader && overHero ? 'ring-white/50' : 'ring-neutral-300 dark:ring-neutral-600'
-          }`}
-        >
-          <current.Flag className="h-full w-full" />
-        </span>
+        {isHeader && (
+          <span className={`block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ${overHero ? 'ring-white/50' : 'ring-neutral-300 dark:ring-neutral-600'}`}>
+            <current.Flag className="h-full w-full" />
+          </span>
+        )}
         {!isHeader && current.label}
         {isHeader && (
           <svg
@@ -123,9 +121,11 @@ function LanguageSwitcher({ overHero = false, variant = 'header' }) {
                 opt.code === language ? 'font-semibold text-brand-600 dark:text-brand-400' : 'text-neutral-700 dark:text-neutral-200'
               }`}
             >
-              <span className="block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ring-neutral-300 dark:ring-neutral-600">
-                <opt.Flag className="h-full w-full" />
-              </span>
+              {isHeader && (
+                <span className="block h-4 w-6 shrink-0 overflow-hidden rounded-[3px] ring-1 ring-neutral-300 dark:ring-neutral-600">
+                  <opt.Flag className="h-full w-full" />
+                </span>
+              )}
               {opt.label}
             </button>
           ))}
