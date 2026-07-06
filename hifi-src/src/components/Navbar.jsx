@@ -120,21 +120,22 @@ export default function Navbar() {
       {mounted &&
         createPortal(
           <div
-            className="fixed inset-0 z-[100] flex flex-col items-start justify-center gap-5 overflow-y-auto px-8 py-24 text-left backdrop-blur-xl"
+            className="fixed inset-0 z-[100] overflow-y-auto text-left backdrop-blur-xl"
             style={{ background: 'linear-gradient(135deg, #f1f5f9 0%, #e3f0cf 50%, #f8fafc 100%)' }}
           >
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Menü schließen"
-              className="absolute left-6 top-6 flex items-center gap-2 text-neutral-600 hover:text-brand-600"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
-              </svg>
-              <span className="text-xs font-semibold uppercase tracking-wide">Schließen</span>
-            </button>
+            <div className="relative mx-auto flex min-h-full max-w-6xl flex-col items-start justify-center gap-5 py-24 pl-6 pr-8 sm:pl-8">
+              <button
+                onClick={() => setOpen(false)}
+                aria-label="Menü schließen"
+                className="absolute left-6 top-6 flex items-center gap-2 text-neutral-600 hover:text-brand-600 sm:left-8"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6 6 18" />
+                </svg>
+                <span className="text-xs font-semibold uppercase tracking-wide">Schließen</span>
+              </button>
 
-            <Link to="/fahrzeuge" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(0)}>
+              <Link to="/fahrzeuge" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(0)}>
               Fahrzeuge
             </Link>
             <Link to="/leistungen" onClick={() => setOpen(false)} className={`text-3xl font-extrabold tracking-tight text-neutral-900 hover:text-brand-600 ${flyIn()}`} style={flyInStyle(1)}>
@@ -176,7 +177,8 @@ export default function Navbar() {
             >
               <DynamicIcon name="shopping-bag" className="h-4 w-4" />
               Zum Shop
-            </a>
+              </a>
+            </div>
           </div>,
           document.body
         )}
