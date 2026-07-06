@@ -220,7 +220,7 @@ export default function Home() {
 
       <section
         className="relative overflow-hidden py-20 sm:py-28"
-        style={{ backgroundImage: 'linear-gradient(to bottom, transparent, #0a0a0a 12%, #0a0a0a 88%, transparent)' }}
+        style={{ backgroundImage: 'linear-gradient(to bottom, transparent, #0a0a0a 3%, #0a0a0a 97%, transparent)' }}
       >
         <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-500/25 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-500/15 blur-3xl" />
