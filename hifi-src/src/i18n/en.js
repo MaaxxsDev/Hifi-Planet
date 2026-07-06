@@ -71,7 +71,7 @@ export default {
     heroSubtitle: 'Your car-hifi specialist for custom sound installations. Choose your vehicle, discover the right package and get in touch, no obligation – we take care of the rest.',
     stats: [
       { value: '20+', label: 'years of experience' },
-      { value: '30+', label: 'printers in our 3D print farm' },
+      { value: 'Huge', label: 'in-house 3D print farm' },
       { value: 'In-house', label: 'CNC & laser workshop' },
       { value: 'International', label: 'recognized car-hifi specialist' },
     ],

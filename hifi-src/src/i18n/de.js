@@ -71,7 +71,7 @@ export default {
     heroSubtitle: 'Dein Car-Hifi Spezialist für individuelle Sound-Umbauten. Wähle dein Fahrzeug, entdecke passende Pakete und frag unverbindlich an – wir kümmern uns um den Rest.',
     stats: [
       { value: '20+', label: 'Jahre Erfahrung' },
-      { value: '30+', label: 'Drucker in unserer 3D-Druckfarm' },
+      { value: 'Riesige', label: '3D-Druckfarm im eigenen Haus' },
       { value: 'Eigene', label: 'CNC- & Laserwerkstatt' },
       { value: 'International', label: 'anerkannter Car-Hifi-Spezialist' },
     ],
