@@ -70,10 +70,10 @@ export default {
     heroTitle: 'Audiophil aus Prinzip',
     heroSubtitle: 'Dein Car-Hifi Spezialist für individuelle Sound-Umbauten. Wähle dein Fahrzeug, entdecke passende Pakete und frag unverbindlich an – wir kümmern uns um den Rest.',
     stats: [
-      { value: 'Seit 2010', label: 'in Amorbach' },
-      { value: '20+', label: '3D-Drucker im Haus' },
+      { value: '20+', label: 'Jahre Erfahrung' },
+      { value: '30+', label: 'Drucker in unserer 3D-Druckfarm' },
       { value: 'Eigene', label: 'CNC- & Laserwerkstatt' },
-      { value: 'Bundesweit', label: 'anerkannter Car-Hifi-Spezialist' },
+      { value: 'International', label: 'anerkannter Car-Hifi-Spezialist' },
     ],
     brandsHeading: 'Marken, mit denen wir arbeiten',
     howItWorks: "So funktioniert's",

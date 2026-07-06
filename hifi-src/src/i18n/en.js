@@ -70,10 +70,10 @@ export default {
     heroTitle: 'Audiophile by principle',
     heroSubtitle: 'Your car-hifi specialist for custom sound installations. Choose your vehicle, discover the right package and get in touch, no obligation – we take care of the rest.',
     stats: [
-      { value: 'Since 2010', label: 'in Amorbach, Germany' },
-      { value: '20+', label: '3D printers in-house' },
+      { value: '20+', label: 'years of experience' },
+      { value: '30+', label: 'printers in our 3D print farm' },
       { value: 'In-house', label: 'CNC & laser workshop' },
-      { value: 'Nationwide', label: 'recognized car-hifi specialist' },
+      { value: 'International', label: 'recognized car-hifi specialist' },
     ],
     brandsHeading: 'Brands we work with',
     howItWorks: 'How it works',
