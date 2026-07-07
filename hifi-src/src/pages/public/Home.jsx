@@ -330,7 +330,11 @@ export default function Home() {
               loading="lazy"
             />
           </Reveal>
-          <Reveal direction="right" index={1} className="text-center md:text-left">
+          <Reveal
+            direction="right"
+            index={1}
+            className="rounded-xl border border-neutral-200 bg-white p-8 text-center shadow-sm dark:border-neutral-800 dark:bg-neutral-900 md:text-left"
+          >
             <h2 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white">{t('home.moreTitle')}</h2>
             <p className="mx-auto mb-8 max-w-2xl text-neutral-600 dark:text-neutral-300 md:mx-0">
               {t('home.moreText')}
