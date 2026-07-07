@@ -228,7 +228,7 @@ export default function Home() {
         </Reveal>
       </section>
 
-      <section className="border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
+      <section className="grain-band border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
         <div className="mx-auto max-w-6xl space-y-16 overflow-hidden px-4 sm:px-6">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <Reveal direction="left" shine className="rounded-xl shadow-lg">
@@ -295,7 +295,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
+      <section className="grain-band border-y border-neutral-200 bg-neutral-50 py-16 dark:border-neutral-800 dark:bg-neutral-900/40">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal className="mb-10 text-center">
             <div className="mb-2 flex items-center justify-center gap-2">
