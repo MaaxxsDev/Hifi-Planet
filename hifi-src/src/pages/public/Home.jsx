@@ -349,7 +349,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-t border-neutral-200 py-16 dark:border-neutral-800">
+      <section className="border-t border-neutral-300 py-16 dark:border-neutral-700">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Reveal className="mb-8 text-center">
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">{t('home.faqHeading')}</h2>
