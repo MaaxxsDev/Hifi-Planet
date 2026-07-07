@@ -54,8 +54,8 @@ const mixHsl = (c1, c2, t) => [0, 1, 2].map((i) => c1[i] + (c2[i] - c1[i]) * t);
 // verlaesslicher als ein RGB-Luminanz-Naeherungswert, da satte Mitteltoene sonst
 // faelschlich als "hell genug fuer dunklen Text" gelten wuerden) als auch die RGB-Werte.
 const stopColor = (stops, t) => {
-  const [h, s, l] = t <= 0.5 ? mixHsl(stops[0], stops[1], t / 0.5) : mixHsl(stops[1], stops[2], (t - 0.5) / 0.5);
-  return { rgb: hslToRgb(h, s, l), lightness: l };
+  const hsl = t <= 0.5 ? mixHsl(stops[0], stops[1], t / 0.5) : mixHsl(stops[1], stops[2], (t - 0.5) / 0.5);
+  return { rgb: hslToRgb(...hsl), lightness: hsl[2], hsl };
 };
 
 export default function ModelPage() {
@@ -113,13 +113,22 @@ export default function ModelPage() {
     const border = stopColor(stops.border, tierT);
     // Ab hier reicht der Hintergrund nicht mehr zum Kontrastieren mit dunklem Text -
     // satte gruene Mitteltoene brauchen (wie die Buttons) helle statt dunkle Schrift.
+    // Diese Entscheidung haengt bewusst an der Basis-Farbe, nicht am Lichtschein unten,
+    // damit der Text unabhaengig vom Verlauf IMMER gut lesbar bleibt.
     const isDarkCard = bg.lightness < 60;
     const glowAlpha = (0.05 + tierT * 0.35).toFixed(2);
+
+    // Leichter "Lichtschein" von oben rechts statt flacher Flaeche - kommt von oben
+    // rechts, weil dort nie Text steht (Titel/Preis/Liste sind linksbuendig), damit die
+    // Aufhellung die Lesbarkeit nirgends beeintraechtigt.
+    const [bh, bs, bl] = bg.hsl;
+    const highlight = hslToRgb(bh, Math.max(bs - 8, 0), Math.min(bl + 16, 99));
 
     return {
       isDarkCard,
       style: {
         backgroundColor: `rgb(${bg.rgb.join(', ')})`,
+        backgroundImage: `radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bg.rgb.join(', ')}) 55%)`,
         borderColor: `rgb(${border.rgb.join(', ')})`,
         borderWidth: tierT > 0.12 ? 2 : 1,
         boxShadow:
