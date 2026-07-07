@@ -212,11 +212,11 @@ export default function ContactPage() {
               </div>
               <div>
                 <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.phone')}</dt>
-                <dd><a href={`tel:${digitsOnly(phone)}`} className="hover:text-brand-500">{phone}</a></dd>
+                <dd><a href={`tel:${digitsOnly(phone)}`} className="inline-block py-1 hover:text-brand-500">{phone}</a></dd>
               </div>
               <div>
                 <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.email')}</dt>
-                <dd><a href={`mailto:${contactEmail}`} className="hover:text-brand-500">{contactEmail}</a></dd>
+                <dd><a href={`mailto:${contactEmail}`} className="inline-block py-1 hover:text-brand-500">{contactEmail}</a></dd>
               </div>
               <div>
                 <dt className="font-medium text-neutral-800 dark:text-neutral-100">{t('contactPage.hours')}</dt>

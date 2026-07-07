@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     api
       .get('/auth/me')
-      .then(setUser)
+      .then((data) => setUser(data.authenticated === false ? null : data))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
 
   const refreshUser = async () => {
     const data = await api.get('/auth/me');
-    setUser(data);
+    setUser(data.authenticated === false ? null : data);
   };
 
   const hasPermission = (permission) =>

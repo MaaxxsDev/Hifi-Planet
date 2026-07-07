@@ -8,14 +8,14 @@ import StarRating from '../../components/StarRating.jsx';
 import TestimonialSlider from '../../components/TestimonialSlider.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
-import defaultHeroImage from '../../assets/photos/gallery-dash2.jpg';
-import galleryAmp from '../../assets/photos/gallery-amp-purple.jpg';
-import gallerySpeaker from '../../assets/photos/gallery-speaker.jpg';
-import gallerySubs from '../../assets/photos/gallery-subs.jpg';
-import galleryDash from '../../assets/photos/gallery-dash.jpg';
-import galleryTrunk from '../../assets/photos/hero-trunk.jpg';
-import galleryRear from '../../assets/photos/gallery-rear.jpg';
-import heroHighlight from '../../assets/leistungen/hero-highlight.jpg';
+import defaultHeroImage from '../../assets/photos/gallery-dash2.webp';
+import galleryAmp from '../../assets/photos/gallery-amp-purple.webp';
+import gallerySpeaker from '../../assets/photos/gallery-speaker.webp';
+import gallerySubs from '../../assets/photos/gallery-subs.webp';
+import galleryDash from '../../assets/photos/gallery-dash.webp';
+import galleryTrunk from '../../assets/photos/hero-trunk.webp';
+import galleryRear from '../../assets/photos/gallery-rear.webp';
+import heroHighlight from '../../assets/leistungen/hero-highlight.webp';
 import youtubeVideo from '../../assets/videos/youtube-hintergrund.mp4';
 
 const YOUTUBE_URL = 'https://www.youtube.com/@hifiplanet2812';
@@ -23,7 +23,18 @@ const YOUTUBE_VIDEO_ID = 'ostj2mKDVUc';
 
 const brands = ['Focal', 'Helix', 'Ground Zero', 'Mosconi', 'Hifonics', 'Audison'];
 
-const galleryImages = [gallerySubs, galleryAmp, gallerySpeaker, galleryDash, galleryRear, galleryTrunk];
+// Native Pixelmasse der Bilder unten - nur fuer die width/height-Attribute auf <img>,
+// damit der Browser vor dem Laden Platz reserviert (verhindert Layout-Sprung). Die
+// tatsaechliche Anzeigegroesse wird weiterhin komplett per CSS (aspect-square etc.)
+// bestimmt, diese Werte muessen also nicht exakt zum gerenderten Seitenverhaeltnis passen.
+const galleryImages = [
+  { src: gallerySubs, width: 900, height: 600 },
+  { src: galleryAmp, width: 900, height: 600 },
+  { src: gallerySpeaker, width: 900, height: 1200 },
+  { src: galleryDash, width: 900, height: 814 },
+  { src: galleryRear, width: 900, height: 1200 },
+  { src: galleryTrunk, width: 1920, height: 1280 },
+];
 
 export default function Home() {
   const { hero_image_path: heroImagePath } = useSiteSettings();
@@ -33,7 +44,7 @@ export default function Home() {
   const stats = t('home.stats');
   const steps = t('home.steps');
   const galleryAlts = t('home.galleryAlts');
-  const gallery = galleryImages.map((src, i) => ({ src, alt: galleryAlts[i] }));
+  const gallery = galleryImages.map((img, i) => ({ ...img, alt: galleryAlts[i] }));
   const testimonials = t('home.testimonials');
   const faqs = t('home.faqs');
 
@@ -221,7 +232,14 @@ export default function Home() {
         <div className="mx-auto max-w-6xl space-y-16 overflow-hidden px-4 sm:px-6">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <Reveal direction="left" shine className="rounded-xl shadow-lg">
-              <img src={gallerySubs} alt={t('home.craftImageAlt')} className="w-full rounded-xl object-cover" style={{ maxHeight: 380 }} />
+              <img
+                src={gallerySubs}
+                alt={t('home.craftImageAlt')}
+                width={900}
+                height={600}
+                className="w-full rounded-xl object-cover"
+                style={{ maxHeight: 380 }}
+              />
             </Reveal>
             <Reveal direction="right" index={1}>
               <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-brand-600 dark:text-brand-400">{t('home.craftEyebrow')}</p>
@@ -241,7 +259,14 @@ export default function Home() {
               </p>
             </Reveal>
             <Reveal direction="right" index={1} shine className="order-1 md:order-2 rounded-xl shadow-lg">
-              <img src={galleryAmp} alt={t('home.adviceImageAlt')} className="w-full rounded-xl object-cover" style={{ maxHeight: 380 }} />
+              <img
+                src={galleryAmp}
+                alt={t('home.adviceImageAlt')}
+                width={900}
+                height={600}
+                className="w-full rounded-xl object-cover"
+                style={{ maxHeight: 380 }}
+              />
             </Reveal>
           </div>
         </div>
@@ -257,7 +282,14 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {gallery.map((img, i) => (
             <Reveal key={img.src} index={i % 3} shine className="aspect-square overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
-              <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover transition duration-300 hover:scale-105" />
+              <img
+                src={img.src}
+                alt={img.alt}
+                width={img.width}
+                height={img.height}
+                loading="lazy"
+                className="h-full w-full object-cover transition duration-300 hover:scale-105"
+              />
             </Reveal>
           ))}
         </div>
@@ -289,7 +321,14 @@ export default function Home() {
       <section className="mx-auto max-w-6xl overflow-hidden px-4 py-16 sm:px-6">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <Reveal direction="left" shine className="overflow-hidden rounded-xl shadow-lg">
-            <img src={heroHighlight} alt={t('home.moreImageAlt')} className="h-full w-full object-cover" loading="lazy" />
+            <img
+              src={heroHighlight}
+              alt={t('home.moreImageAlt')}
+              width={1600}
+              height={905}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
           </Reveal>
           <Reveal direction="right" index={1} className="text-center md:text-left">
             <h2 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white">{t('home.moreTitle')}</h2>

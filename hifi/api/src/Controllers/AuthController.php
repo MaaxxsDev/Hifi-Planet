@@ -154,8 +154,12 @@ class AuthController
 
     public static function me(): void
     {
+        // Bewusst kein 401 hier: /auth/me wird auf JEDER oeffentlichen Seite aufgerufen,
+        // um den Login-Status zu pruefen - "nicht angemeldet" ist der Normalfall fuer
+        // Besucher, kein Fehler. Ein 401 erzeugt in der Browser-Konsole/DevTools trotz
+        // JS-seitigem catch() einen sichtbaren Netzwerk-Fehler (bemaengelt u.a. Lighthouse).
         if (empty($_SESSION['admin_id'])) {
-            Http::error('Nicht angemeldet', 401);
+            Http::send(['authenticated' => false]);
         }
         Http::send(self::userPayload((int) $_SESSION['admin_id'], $_SESSION['admin_username']));
     }

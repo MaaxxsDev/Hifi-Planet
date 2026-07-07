@@ -1,6 +1,20 @@
 RewriteEngine On
 RewriteBase /
 
+# Lang-lebiger Cache fuer gehashte Build-Assets (Vite haengt bei jeder Aenderung einen
+# neuen Hash an den Dateinamen) und hochgeladene Bilder (bekommen beim Upload einen
+# zufaelligen Dateinamen) - beide aendern sich unter derselben URL nie, "immutable" ist
+# hier also sicher. Ueber mod_headers statt mod_expires, da Letzteres nicht ueberall
+# aktiviert ist.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2?|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(jpg|jpeg|png|webp|avif|gif|svg|ico|mp4|webm)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
 # Ohne dies leitet Apache (mod_dir) Anfragen an /api/uploads mit einem 301 auf
 # /api/uploads/ um, bevor mod_rewrite greifen kann - weil api/uploads/ als
 # echtes Verzeichnis existiert. Bei einem POST mit Datei-Upload geht dabei der

@@ -66,10 +66,10 @@ export default function Footer() {
             <p className="font-semibold text-neutral-900 dark:text-white">{t('footer.contactHeading')}</p>
           </div>
           <p>
-            <a href={`tel:${digitsOnly(phone)}`} className="hover:text-brand-500">{phone}</a>
+            <a href={`tel:${digitsOnly(phone)}`} className="inline-block py-1 hover:text-brand-500">{phone}</a>
           </p>
           <p>
-            <a href={`mailto:${contactEmail}`} className="hover:text-brand-500">{contactEmail}</a>
+            <a href={`mailto:${contactEmail}`} className="inline-block py-1 hover:text-brand-500">{contactEmail}</a>
           </p>
           <Link
             to="/kontakt"
