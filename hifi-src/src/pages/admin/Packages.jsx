@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client.js';
+import IconPicker from '../../components/IconPicker.jsx';
+import DynamicIcon from '../../components/DynamicIcon.jsx';
 
-const emptyForm = { name: '', car_model_id: '', description: '', markup_type: 'none', markup_value: 0, sort_order: 0 };
+const emptyForm = {
+  name: '',
+  car_model_id: '',
+  description: '',
+  markup_type: 'none',
+  markup_value: 0,
+  icon_name: '',
+  tagline: '',
+  is_featured: false,
+  sort_order: 0,
+};
 
 export default function Packages() {
   const [packages, setPackages] = useState([]);
@@ -62,6 +74,9 @@ export default function Packages() {
       description: pkg.description || '',
       markup_type: pkg.markup_type || 'none',
       markup_value: pkg.markup_value || 0,
+      icon_name: pkg.icon_name || '',
+      tagline: pkg.tagline || '',
+      is_featured: !!pkg.is_featured,
       sort_order: pkg.sort_order,
     });
   };
@@ -139,7 +154,17 @@ export default function Packages() {
               {filteredPackages.map((pkg) => (
                 <tr key={pkg.id} className="bg-white dark:bg-neutral-950">
                   <td className="px-4 py-2">{pkg.brand_name} {pkg.model_name}</td>
-                  <td className="px-4 py-2 font-medium text-neutral-800 dark:text-neutral-100">{pkg.name}</td>
+                  <td className="px-4 py-2 font-medium text-neutral-800 dark:text-neutral-100">
+                    <span className="inline-flex items-center gap-1.5">
+                      {pkg.icon_name && <DynamicIcon name={pkg.icon_name} className="h-4 w-4 text-brand-600 dark:text-brand-400" />}
+                      {pkg.name}
+                      {pkg.is_featured && (
+                        <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900/40 dark:text-brand-400">
+                          Empfohlen
+                        </span>
+                      )}
+                    </span>
+                  </td>
                   <td className="px-4 py-2 text-neutral-500 dark:text-neutral-400">
                     {pkg.markup_type === 'fixed' && `+${pkg.markup_value} €`}
                     {pkg.markup_type === 'percent' && `+${pkg.markup_value} %`}
@@ -196,6 +221,28 @@ export default function Packages() {
             className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Icon (optional)</label>
+          <IconPicker value={form.icon_name} onChange={(name) => setForm({ ...form, icon_name: name })} />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kurzer Slogan (optional)</label>
+          <input
+            value={form.tagline}
+            onChange={(e) => setForm({ ...form, tagline: e.target.value })}
+            placeholder="z. B. Perfekt für den Einstieg"
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          />
+        </div>
+        <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
+          <input
+            type="checkbox"
+            checked={form.is_featured}
+            onChange={(e) => setForm({ ...form, is_featured: e.target.checked })}
+            className="h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
+          />
+          Als empfohlen hervorheben
+        </label>
         <div>
           <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Aufschlag</label>
           <div className="flex gap-2">

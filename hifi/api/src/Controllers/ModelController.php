@@ -90,7 +90,7 @@ class ModelController
         }
 
         $pkgStmt = $db->prepare(
-            'SELECT id, name, slug, description, markup_type, markup_value, sort_order
+            'SELECT id, name, slug, description, markup_type, markup_value, icon_name, tagline, is_featured, sort_order
              FROM packages WHERE car_model_id = ? ORDER BY sort_order, name'
         );
         $pkgStmt->execute([$model['id']]);
@@ -125,6 +125,7 @@ class ModelController
                 unset($package['markup_type'], $package['markup_value']);
                 $package['products'] = $products;
                 $package['total_price'] = round($total, 2);
+                $package['is_featured'] = (bool) $package['is_featured'];
             }
             unset($package);
         }

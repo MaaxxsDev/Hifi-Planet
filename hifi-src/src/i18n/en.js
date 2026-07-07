@@ -154,6 +154,7 @@ export default {
     totalPrice: 'Total price (approx.)',
     productLoading: 'Loading product…',
     requestContact: 'Request contact',
+    featuredBadge: 'Recommended',
   },
   leistungen: {
     metaTitle: 'Services',
