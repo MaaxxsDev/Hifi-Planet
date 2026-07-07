@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Config\Database;
 use App\Support\Http;
+use App\Support\Slug;
 use PDO;
 
 class SettingsController
@@ -143,6 +144,16 @@ class SettingsController
         Http::send(['ok' => true, 'count' => count($defaults)]);
     }
 
+    /** Löscht Galerie-Marken (Foreign-Key-Kaskade räumt Projekte & Fotos automatisch mit auf). */
+    public static function resetGalleryToDefaults(): void
+    {
+        $db = Database::connection();
+        $db->exec('DELETE FROM gallery_brands');
+        $photoCount = self::seedGalleryDefaults($db);
+
+        Http::send(['ok' => true, 'photos' => $photoCount]);
+    }
+
     /** Löscht Marken (Foreign-Key-Kaskade räumt Modelle, Pakete, Produkte & Upgrades automatisch mit auf). */
     public static function resetCatalog(): void
     {
@@ -176,7 +187,16 @@ class SettingsController
             $faqStmt->execute($row);
         }
 
-        Http::send(['ok' => true, 'brands_removed' => $brandCount, 'services_reset' => count($defaults), 'faqs_reset' => count($faqDefaults)]);
+        $db->exec('DELETE FROM gallery_brands');
+        $galleryPhotoCount = self::seedGalleryDefaults($db);
+
+        Http::send([
+            'ok' => true,
+            'brands_removed' => $brandCount,
+            'services_reset' => count($defaults),
+            'faqs_reset' => count($faqDefaults),
+            'gallery_photos_reset' => $galleryPhotoCount,
+        ]);
     }
 
     /** @param string[] $allowedColumns @param array<int,array<string,mixed>> $rows */
@@ -286,6 +306,136 @@ class SettingsController
                 "What if my vehicle isn't listed?",
                 "No problem – just message us through the contact form, we'll find a suitable solution for any vehicle.",
                 5,
+            ],
+        ];
+    }
+
+    /** Legt Galerie-Marken/-Projekte/-Fotos aus {@see defaultGalleryData()} neu an (Tabellen müssen leer sein). Gibt die Foto-Anzahl zurück. */
+    private static function seedGalleryDefaults(PDO $db): int
+    {
+        $photoCount = 0;
+        $brandStmt = $db->prepare('INSERT INTO gallery_brands (name, slug, cover_image_path, sort_order) VALUES (?,?,?,?)');
+        $projectStmt = $db->prepare('INSERT INTO gallery_projects (gallery_brand_id, name, slug, cover_image_path, sort_order) VALUES (?,?,?,?,?)');
+        $photoStmt = $db->prepare('INSERT INTO gallery_photos (gallery_project_id, image_path, sort_order) VALUES (?,?,?)');
+        $updateBrandCoverStmt = $db->prepare('UPDATE gallery_brands SET cover_image_path = ? WHERE id = ?');
+
+        $brandIndex = 0;
+        foreach (self::defaultGalleryData() as $brand) {
+            $brandIndex++;
+            $brandStmt->execute([$brand['name'], Slug::make($brand['name']), null, $brandIndex]);
+            $brandId = (int) $db->lastInsertId();
+            $brandCover = null;
+
+            $projectIndex = 0;
+            foreach ($brand['projects'] as $project) {
+                $projectIndex++;
+                $photoUrls = array_map(fn($filename) => self::uploadsUrlPrefix() . $filename, $project['photos']);
+                $projectCover = $photoUrls[0] ?? null;
+                $brandCover ??= $projectCover;
+
+                $projectStmt->execute([$brandId, $project['name'], Slug::make($project['name']), $projectCover, $projectIndex]);
+                $projectId = (int) $db->lastInsertId();
+
+                $photoIndex = 0;
+                foreach ($photoUrls as $url) {
+                    $photoIndex++;
+                    $photoStmt->execute([$projectId, $url, $photoIndex]);
+                    $photoCount++;
+                }
+            }
+
+            if ($brandCover !== null) {
+                $updateBrandCoverStmt->execute([$brandCover, $brandId]);
+            }
+        }
+
+        return $photoCount;
+    }
+
+    /** Bildergalerie der alten hifi-planet.de-Seite (WordPress), einmalig übernommen. */
+    private static function defaultGalleryData(): array
+    {
+        return [
+            [
+                'name' => 'Audi', 'projects' => [
+                    ['name' => 'Audi TT', 'photos' => ['seed-galerie-audi-audi-tt-1.jpg', 'seed-galerie-audi-audi-tt-2.jpg', 'seed-galerie-audi-audi-tt-3.jpg', 'seed-galerie-audi-audi-tt-4.jpg', 'seed-galerie-audi-audi-tt-5.jpg', 'seed-galerie-audi-audi-tt-6.jpg', 'seed-galerie-audi-audi-tt-7.jpg', 'seed-galerie-audi-audi-tt-8.jpg', 'seed-galerie-audi-audi-tt-9.jpg']],
+                    ['name' => 'Audi RS Q3', 'photos' => ['seed-galerie-audi-audio-rs-q3-1.jpg', 'seed-galerie-audi-audio-rs-q3-2.jpg', 'seed-galerie-audi-audio-rs-q3-3.jpg', 'seed-galerie-audi-audio-rs-q3-4.jpg', 'seed-galerie-audi-audio-rs-q3-5.jpg', 'seed-galerie-audi-audio-rs-q3-6.jpg', 'seed-galerie-audi-audio-rs-q3-7.jpg', 'seed-galerie-audi-audio-rs-q3-8.jpg', 'seed-galerie-audi-audio-rs-q3-9.jpg', 'seed-galerie-audi-audio-rs-q3-10.jpg']],
+                ],
+            ],
+            [
+                'name' => 'BMW', 'projects' => [
+                    ['name' => 'F10 Touring', 'photos' => ['seed-galerie-bmw-f10-touring-1.jpg', 'seed-galerie-bmw-f10-touring-2.jpg', 'seed-galerie-bmw-f10-touring-3.jpg', 'seed-galerie-bmw-f10-touring-4.jpg', 'seed-galerie-bmw-f10-touring-5.jpg', 'seed-galerie-bmw-f10-touring-6.jpg', 'seed-galerie-bmw-f10-touring-7.jpg', 'seed-galerie-bmw-f10-touring-8.jpg']],
+                    ['name' => 'Mini Cooper RS', 'photos' => ['seed-galerie-bmw-mini-cooper-rs-1.jpg', 'seed-galerie-bmw-mini-cooper-rs-2.jpg', 'seed-galerie-bmw-mini-cooper-rs-3.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Elektro-Autos', 'projects' => [
+                    ['name' => 'Hyundai Ioniq 5', 'photos' => ['seed-galerie-elektro-autos-hyundai-ioniq-5-1.jpg', 'seed-galerie-elektro-autos-hyundai-ioniq-5-2.jpg', 'seed-galerie-elektro-autos-hyundai-ioniq-5-3.jpg', 'seed-galerie-elektro-autos-hyundai-ioniq-5-4.jpg', 'seed-galerie-elektro-autos-hyundai-ioniq-5-5.jpg', 'seed-galerie-elektro-autos-hyundai-ioniq-5-6.jpg', 'seed-galerie-elektro-autos-hyundai-ioniq-5-7.jpg']],
+                    ['name' => 'Tesla Model Y', 'photos' => ['seed-galerie-elektro-autos-tesla-model-y-1.jpg', 'seed-galerie-elektro-autos-tesla-model-y-2.jpg', 'seed-galerie-elektro-autos-tesla-model-y-3.jpg', 'seed-galerie-elektro-autos-tesla-model-y-4.jpg', 'seed-galerie-elektro-autos-tesla-model-y-5.jpg', 'seed-galerie-elektro-autos-tesla-model-y-6.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Fiat / Ford', 'projects' => [
+                    ['name' => 'Fiesta MK7', 'photos' => ['seed-galerie-fiat-ford-fiesta-mk7-1.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-2.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-3.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-4.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-5.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-6.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-7.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-8.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-9.jpg', 'seed-galerie-fiat-ford-fiesta-mk7-10.jpg']],
+                    ['name' => 'Mustang VI', 'photos' => ['seed-galerie-fiat-ford-mustang-vi-1.jpg', 'seed-galerie-fiat-ford-mustang-vi-2.jpg', 'seed-galerie-fiat-ford-mustang-vi-3.jpg', 'seed-galerie-fiat-ford-mustang-vi-4.jpg', 'seed-galerie-fiat-ford-mustang-vi-5.jpg', 'seed-galerie-fiat-ford-mustang-vi-6.jpg', 'seed-galerie-fiat-ford-mustang-vi-7.jpg']],
+                    ['name' => 'Mustang V', 'photos' => ['seed-galerie-fiat-ford-mustang-1.jpg', 'seed-galerie-fiat-ford-mustang-2.jpg', 'seed-galerie-fiat-ford-mustang-3.jpg', 'seed-galerie-fiat-ford-mustang-4.jpg', 'seed-galerie-fiat-ford-mustang-5.jpg', 'seed-galerie-fiat-ford-mustang-6.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Hyundai', 'projects' => [
+                    ['name' => 'i30', 'photos' => ['seed-galerie-hyundai-i30-1.jpg', 'seed-galerie-hyundai-i30-2.jpg', 'seed-galerie-hyundai-i30-3.jpg', 'seed-galerie-hyundai-i30-4.jpg', 'seed-galerie-hyundai-i30-5.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Mercedes-Benz', 'projects' => [
+                    ['name' => 'GLS', 'photos' => ['seed-galerie-mercedes-benz-gls-1.jpg', 'seed-galerie-mercedes-benz-gls-2.jpg', 'seed-galerie-mercedes-benz-gls-3.jpg', 'seed-galerie-mercedes-benz-gls-4.jpg', 'seed-galerie-mercedes-benz-gls-5.jpg']],
+                    ['name' => 'SLK R 170', 'photos' => ['seed-galerie-mercedes-benz-slk-r-170-1.jpg', 'seed-galerie-mercedes-benz-slk-r-170-2.jpg', 'seed-galerie-mercedes-benz-slk-r-170-3.jpg', 'seed-galerie-mercedes-benz-slk-r-170-4.jpg', 'seed-galerie-mercedes-benz-slk-r-170-5.jpg', 'seed-galerie-mercedes-benz-slk-r-170-6.jpg', 'seed-galerie-mercedes-benz-slk-r-170-7.jpg', 'seed-galerie-mercedes-benz-slk-r-170-8.jpg']],
+                    ['name' => 'Vito', 'photos' => ['seed-galerie-mercedes-benz-vito-1.jpg', 'seed-galerie-mercedes-benz-vito-2.jpg', 'seed-galerie-mercedes-benz-vito-3.jpg', 'seed-galerie-mercedes-benz-vito-4.jpg', 'seed-galerie-mercedes-benz-vito-5.jpg', 'seed-galerie-mercedes-benz-vito-6.jpg', 'seed-galerie-mercedes-benz-vito-7.jpg', 'seed-galerie-mercedes-benz-vito-8.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Opel', 'projects' => [
+                    ['name' => 'Astra J', 'photos' => ['seed-galerie-opel-astra-j-1.jpg', 'seed-galerie-opel-astra-j-2.jpg', 'seed-galerie-opel-astra-j-3.jpg', 'seed-galerie-opel-astra-j-4.jpg', 'seed-galerie-opel-astra-j-5.jpg', 'seed-galerie-opel-astra-j-6.jpg']],
+                    ['name' => 'Meriva A', 'photos' => ['seed-galerie-opel-meriva-a-1.jpg', 'seed-galerie-opel-meriva-a-2.jpg', 'seed-galerie-opel-meriva-a-3.jpg', 'seed-galerie-opel-meriva-a-4.jpg', 'seed-galerie-opel-meriva-a-5.jpg', 'seed-galerie-opel-meriva-a-6.jpg', 'seed-galerie-opel-meriva-a-7.jpg', 'seed-galerie-opel-meriva-a-8.jpg', 'seed-galerie-opel-meriva-a-9.jpg']],
+                    ['name' => 'Insignia A', 'photos' => ['seed-galerie-opel-opel-insignia-a-1.jpg', 'seed-galerie-opel-opel-insignia-a-2.jpg', 'seed-galerie-opel-opel-insignia-a-3.jpg', 'seed-galerie-opel-opel-insignia-a-4.jpg', 'seed-galerie-opel-opel-insignia-a-5.jpg', 'seed-galerie-opel-opel-insignia-a-6.jpg', 'seed-galerie-opel-opel-insignia-a-7.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Peugeot', 'projects' => [
+                    ['name' => '208 HDI', 'photos' => ['seed-galerie-peugeot-208-hdi-1.jpg', 'seed-galerie-peugeot-208-hdi-2.jpg', 'seed-galerie-peugeot-208-hdi-3.jpg', 'seed-galerie-peugeot-208-hdi-4.jpg', 'seed-galerie-peugeot-208-hdi-5.jpg', 'seed-galerie-peugeot-208-hdi-6.jpg', 'seed-galerie-peugeot-208-hdi-7.jpg', 'seed-galerie-peugeot-208-hdi-8.jpg', 'seed-galerie-peugeot-208-hdi-9.jpg', 'seed-galerie-peugeot-208-hdi-10.jpg', 'seed-galerie-peugeot-208-hdi-11.jpg', 'seed-galerie-peugeot-208-hdi-12.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Seat / Skoda', 'projects' => [
+                    ['name' => 'Alhambra', 'photos' => ['seed-galerie-seat-skoda-alhambra-1.jpg', 'seed-galerie-seat-skoda-alhambra-2.jpg', 'seed-galerie-seat-skoda-alhambra-3.jpg', 'seed-galerie-seat-skoda-alhambra-4.jpg', 'seed-galerie-seat-skoda-alhambra-5.jpg', 'seed-galerie-seat-skoda-alhambra-6.jpg', 'seed-galerie-seat-skoda-alhambra-7.jpg', 'seed-galerie-seat-skoda-alhambra-8.jpg']],
+                    ['name' => 'Octavia', 'photos' => ['seed-galerie-seat-skoda-octavia-1.jpg', 'seed-galerie-seat-skoda-octavia-2.jpg', 'seed-galerie-seat-skoda-octavia-3.jpg', 'seed-galerie-seat-skoda-octavia-4.jpg', 'seed-galerie-seat-skoda-octavia-5.jpg', 'seed-galerie-seat-skoda-octavia-6.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Smart', 'projects' => [
+                    ['name' => 'Fortwo 453', 'photos' => ['seed-galerie-smart-for-two-453-1.jpg', 'seed-galerie-smart-for-two-453-2.jpg', 'seed-galerie-smart-for-two-453-3.jpg', 'seed-galerie-smart-for-two-453-4.jpg', 'seed-galerie-smart-for-two-453-5.jpg', 'seed-galerie-smart-for-two-453-6.jpg', 'seed-galerie-smart-for-two-453-7.jpg', 'seed-galerie-smart-for-two-453-8.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Suzuki', 'projects' => [
+                    ['name' => 'Swift', 'photos' => ['seed-galerie-suzuki-swift-1.jpg', 'seed-galerie-suzuki-swift-2.jpg', 'seed-galerie-suzuki-swift-3.jpg', 'seed-galerie-suzuki-swift-4.jpg', 'seed-galerie-suzuki-swift-5.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Toyota', 'projects' => [
+                    ['name' => 'Corolla', 'photos' => ['seed-galerie-toyota-crolla-1.jpg', 'seed-galerie-toyota-crolla-2.jpg', 'seed-galerie-toyota-crolla-3.jpg', 'seed-galerie-toyota-crolla-4.jpg', 'seed-galerie-toyota-crolla-5.jpg', 'seed-galerie-toyota-crolla-6.jpg']],
+                ],
+            ],
+            [
+                'name' => 'Volkswagen', 'projects' => [
+                    ['name' => 'Golf 1 Cabrio', 'photos' => ['seed-galerie-volkswagen-golf-1-cabrio-1.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-2.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-3.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-4.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-5.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-6.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-7.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-8.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-9.jpg', 'seed-galerie-volkswagen-golf-1-cabrio-10.jpg']],
+                    ['name' => 'Golf 4', 'photos' => ['seed-galerie-volkswagen-golf-4-1.jpg', 'seed-galerie-volkswagen-golf-4-2.jpg', 'seed-galerie-volkswagen-golf-4-3.jpg', 'seed-galerie-volkswagen-golf-4-4.jpg', 'seed-galerie-volkswagen-golf-4-5.jpg', 'seed-galerie-volkswagen-golf-4-6.jpg']],
+                    ['name' => 'Golf 6', 'photos' => ['seed-galerie-volkswagen-golf-6-1.jpg', 'seed-galerie-volkswagen-golf-6-2.jpg', 'seed-galerie-volkswagen-golf-6-3.jpg', 'seed-galerie-volkswagen-golf-6-4.jpg', 'seed-galerie-volkswagen-golf-6-5.jpg', 'seed-galerie-volkswagen-golf-6-6.jpg', 'seed-galerie-volkswagen-golf-6-7.jpg', 'seed-galerie-volkswagen-golf-6-8.jpg', 'seed-galerie-volkswagen-golf-6-9.jpg', 'seed-galerie-volkswagen-golf-6-10.jpg', 'seed-galerie-volkswagen-golf-6-11.jpg', 'seed-galerie-volkswagen-golf-6-12.jpg']],
+                    ['name' => 'T5 Multivan', 'photos' => ['seed-galerie-volkswagen-t5-multivan-1.jpg', 'seed-galerie-volkswagen-t5-multivan-2.jpg', 'seed-galerie-volkswagen-t5-multivan-3.jpg', 'seed-galerie-volkswagen-t5-multivan-4.jpg', 'seed-galerie-volkswagen-t5-multivan-5.jpg', 'seed-galerie-volkswagen-t5-multivan-6.jpg', 'seed-galerie-volkswagen-t5-multivan-7.jpg', 'seed-galerie-volkswagen-t5-multivan-8.jpg']],
+                    ['name' => 'VW Crafter', 'photos' => ['seed-galerie-volkswagen-vw-crafter-1.jpg', 'seed-galerie-volkswagen-vw-crafter-2.jpg', 'seed-galerie-volkswagen-vw-crafter-3.jpg']],
+                    ['name' => 'VW T6.1', 'photos' => ['seed-galerie-volkswagen-vw-t6-1-1.jpg', 'seed-galerie-volkswagen-vw-t6-1-2.jpg', 'seed-galerie-volkswagen-vw-t6-1-3.jpg', 'seed-galerie-volkswagen-vw-t6-1-4.jpg']],
+                    ['name' => 'VW T6', 'photos' => ['seed-galerie-volkswagen-vw-t6-1.jpg', 'seed-galerie-volkswagen-vw-t6-2.jpg', 'seed-galerie-volkswagen-vw-t6-3.jpg', 'seed-galerie-volkswagen-vw-t6-4.jpg', 'seed-galerie-volkswagen-vw-t6-5.jpg']],
+                ],
             ],
         ];
     }

@@ -174,6 +174,7 @@ $router->get('/settings/export', $perm('settings.manage', fn($p) => SettingsCont
 $router->post('/settings/import', $perm('settings.manage', fn($p) => SettingsController::importData()));
 $router->post('/settings/reset-services', $perm('settings.manage', fn($p) => SettingsController::resetServicesToDefaults()));
 $router->post('/settings/reset-faqs', $perm('settings.manage', fn($p) => SettingsController::resetFaqsToDefaults()));
+$router->post('/settings/reset-gallery', $perm('settings.manage', fn($p) => SettingsController::resetGalleryToDefaults()));
 $router->post('/settings/reset-catalog', $perm('settings.manage', fn($p) => SettingsController::resetCatalog()));
 $router->post('/settings/reset-all', $perm('settings.manage', fn($p) => SettingsController::resetAll()));
 

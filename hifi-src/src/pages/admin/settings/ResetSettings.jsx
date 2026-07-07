@@ -8,6 +8,9 @@ export default function ResetSettings() {
   const [faqsBusy, setFaqsBusy] = useState(false);
   const [faqsMessage, setFaqsMessage] = useState('');
 
+  const [galleryBusy, setGalleryBusy] = useState(false);
+  const [galleryMessage, setGalleryMessage] = useState('');
+
   const [catalogBusy, setCatalogBusy] = useState(false);
   const [catalogMessage, setCatalogMessage] = useState('');
 
@@ -42,6 +45,20 @@ export default function ResetSettings() {
     }
   };
 
+  const handleResetGallery = async () => {
+    if (!confirm('Die komplette Bildergalerie wird gelöscht und durch die 13 Marken/29 Projekte/207 Fotos der alten hifi-planet.de-Seite ersetzt. Fortfahren?')) return;
+    setGalleryBusy(true);
+    setGalleryMessage('');
+    try {
+      const result = await api.post('/settings/reset-gallery', {});
+      setGalleryMessage(`${result.photos} Fotos wiederhergestellt.`);
+    } catch (err) {
+      setGalleryMessage('Fehler: ' + err.message);
+    } finally {
+      setGalleryBusy(false);
+    }
+  };
+
   const handleResetCatalog = async () => {
     if (!confirm('Alle Marken, Modelle, Pakete, Produkte und Upgrades werden unwiderruflich gelöscht. Leistungen und Kontaktanfragen bleiben erhalten. Fortfahren?')) return;
     setCatalogBusy(true);
@@ -57,12 +74,12 @@ export default function ResetSettings() {
   };
 
   const handleResetAll = async () => {
-    if (!confirm('WIRKLICH ALLES zurücksetzen? Marken, Modelle, Pakete, Produkte und Upgrades werden gelöscht, Leistungen und FAQs auf Standard zurückgesetzt. Kontaktanfragen und Benutzerkonten bleiben erhalten. Das kann nicht rückgängig gemacht werden!')) return;
+    if (!confirm('WIRKLICH ALLES zurücksetzen? Marken, Modelle, Pakete, Produkte und Upgrades werden gelöscht, Leistungen, FAQs und die Bildergalerie auf Standard zurückgesetzt. Kontaktanfragen und Benutzerkonten bleiben erhalten. Das kann nicht rückgängig gemacht werden!')) return;
     setAllBusy(true);
     setAllMessage('');
     try {
       const result = await api.post('/settings/reset-all', {});
-      setAllMessage(`Erledigt: ${result.brands_removed} Marken entfernt, ${result.services_reset} Standard-Leistungen und ${result.faqs_reset} Standard-Fragen wiederhergestellt.`);
+      setAllMessage(`Erledigt: ${result.brands_removed} Marken entfernt, ${result.services_reset} Standard-Leistungen, ${result.faqs_reset} Standard-Fragen und ${result.gallery_photos_reset} Galerie-Fotos wiederhergestellt.`);
     } catch (err) {
       setAllMessage('Fehler: ' + err.message);
     } finally {
@@ -105,6 +122,23 @@ export default function ResetSettings() {
       </section>
 
       <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Nur Bildergalerie zurücksetzen</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Löscht alle aktuellen Galerie-Marken, -Projekte und -Fotos und stellt die komplette Galerie der alten
+          hifi-planet.de-Seite wieder her (13 Marken, 29 Projekte, 207 Fotos). Fahrzeugkatalog, Leistungen und
+          FAQs bleiben unangetastet.
+        </p>
+        <button
+          onClick={handleResetGallery}
+          disabled={galleryBusy}
+          className="rounded-md border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50 dark:border-red-900 dark:hover:bg-red-900/20"
+        >
+          {galleryBusy ? 'Setze zurück…' : 'Galerie auf Standard zurücksetzen'}
+        </button>
+        {galleryMessage && <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">{galleryMessage}</p>}
+      </section>
+
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Nur Fahrzeugkatalog leeren</h2>
         <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Löscht alle Marken, Modelle, Pakete, Produkte und Upgrades unwiderruflich. Leistungen, Kontaktanfragen
@@ -123,8 +157,9 @@ export default function ResetSettings() {
       <section className="rounded-xl border border-red-300 bg-red-50/40 p-6 dark:border-red-900 dark:bg-red-900/10">
         <h2 className="mb-1 font-semibold text-red-700 dark:text-red-300">Alles zurücksetzen</h2>
         <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-300">
-          Kombiniert alles: Fahrzeugkatalog wird komplett geleert <strong>und</strong> Leistungen sowie FAQs werden
-          auf Standard zurückgesetzt. Kontaktanfragen und Benutzerkonten bleiben erhalten. Nicht rückgängig zu machen.
+          Kombiniert alles: Fahrzeugkatalog wird komplett geleert <strong>und</strong> Leistungen, FAQs sowie die
+          Bildergalerie werden auf Standard zurückgesetzt. Kontaktanfragen und Benutzerkonten bleiben erhalten.
+          Nicht rückgängig zu machen.
         </p>
         <button
           onClick={handleResetAll}
