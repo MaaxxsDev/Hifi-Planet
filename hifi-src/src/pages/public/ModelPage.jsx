@@ -124,25 +124,33 @@ export default function ModelPage() {
     const accentRgb = accentRgbFloat.map(Math.round);
     const bgHsl = rgbToHsl(...bgRgb);
     const accentHsl = rgbToHsl(...accentRgbFloat);
+    const bgL = bgHsl[2];
     // Ab hier reicht der Hintergrund nicht mehr zum Kontrastieren mit dunklem Text -
     // Bronze/Gold-Mitteltoene brauchen (wie die Buttons) helle statt dunkle Schrift.
     // Diese Entscheidung haengt bewusst an der Flaechenfarbe, nicht am Lichtschein
     // unten, damit der Text unabhaengig vom Material IMMER gut lesbar bleibt.
-    const isDarkCard = bgHsl[2] < 60;
-    // Preis/Icon brauchen eine kraeftigere, hellere Variante des Materialtons als der
-    // Rahmen - der reine Akzent waere auf dunklem Untergrund selbst zu dunkel zum Lesen.
-    const priceRgb = isDarkCard
-      ? hslToRgb(accentHsl[0], Math.min(accentHsl[1] + 10, 90), Math.min(accentHsl[2] + 25, 90))
-      : accentRgb;
+    const isDarkCard = bgL < 60;
+    // Garantiert einen Mindestabstand zur tatsaechlichen Hintergrund-Helligkeit statt
+    // sich auf einen festen Hell/Dunkel-Klassenwechsel zu verlassen - sonst kann ein
+    // Hintergrund GENAU im Grenzbereich (z.B. ein kuehles Mittelgrau nahe der 60%-Schwelle)
+    // eine "eigentlich helle" Textfarbe bekommen, die kaum noch Kontrast zum Hintergrund hat.
+    const contrastingL = (delta) => (isDarkCard ? Math.min(bgL + delta, 92) : Math.max(bgL - delta, 10));
+    // Preis/Icon brauchen den kraeftigsten Kontrast, da sie die Kernaussage der Karte sind.
+    const priceRgb = hslToRgb(accentHsl[0], Math.min(accentHsl[1] + 10, 90), contrastingL(48));
+    // Dezente Texte (Label/Slogan/Liste) bleiben neutral-grau, aber ebenfalls mit
+    // garantiertem Abstand zur Flaeche - kein fixes Tailwind-Grau mehr, das zufaellig auf
+    // gleicher Helligkeit wie der Hintergrund landen und unsichtbar werden koennte.
+    const mutedColor = `rgb(${hslToRgb(0, 0, contrastingL(38)).join(', ')})`;
     const glowAlpha = (0.1 + tierT * 0.3).toFixed(2);
 
     // Leichter "Lichtschein" von oben rechts statt flacher Flaeche - kommt von oben
     // rechts, weil dort nie Text steht (Titel/Preis/Liste sind linksbuendig), damit die
     // Aufhellung die Lesbarkeit nirgends beeintraechtigt.
-    const highlight = hslToRgb(bgHsl[0], Math.max(bgHsl[1] - 8, 0), Math.min(bgHsl[2] + 16, 99));
+    const highlight = hslToRgb(bgHsl[0], Math.max(bgHsl[1] - 8, 0), Math.min(bgL + 16, 99));
 
     return {
       isDarkCard,
+      mutedColor,
       priceColor: `rgb(${priceRgb.join(', ')})`,
       iconChipStyle: {
         backgroundColor: `rgba(${accentRgb.join(', ')}, 0.16)`,
@@ -190,7 +198,7 @@ export default function ModelPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {packages.map((pkg) => {
-          const { isDarkCard, style, priceColor, iconChipStyle } = styleOf(pkg);
+          const { isDarkCard, style, priceColor, mutedColor, iconChipStyle } = styleOf(pkg);
 
           return (
             <div key={pkg.id} style={style} className="relative flex flex-col rounded-xl border p-6">
@@ -210,13 +218,13 @@ export default function ModelPage() {
                 {pkg.name}
               </h2>
               {pkg.tagline && (
-                <p className={`mt-1 text-sm ${isDarkCard ? 'text-neutral-300' : 'text-neutral-500'}`}>
+                <p style={{ color: mutedColor }} className="mt-1 text-sm">
                   {pkg.tagline}
                 </p>
               )}
 
               <div className="my-4">
-                <p className={`text-xs uppercase tracking-wide ${isDarkCard ? 'text-neutral-300' : 'text-neutral-400'}`}>
+                <p style={{ color: mutedColor }} className="text-xs uppercase tracking-wide">
                   {t('modelPage.totalPrice')}
                 </p>
                 <p style={{ color: priceColor }} className="text-2xl font-extrabold">
@@ -224,11 +232,7 @@ export default function ModelPage() {
                 </p>
               </div>
 
-              <ul
-                className={`mb-5 flex-1 list-disc space-y-1 pl-5 text-sm ${
-                  isDarkCard ? 'text-neutral-300' : 'text-neutral-700'
-                }`}
-              >
+              <ul style={{ color: mutedColor }} className="mb-5 flex-1 list-disc space-y-1 pl-5 text-sm">
                 {pkg.products.map((product) => (
                   <li key={product.id}>
                     {product.name_override || product.scraped_name || t('modelPage.productLoading')}
