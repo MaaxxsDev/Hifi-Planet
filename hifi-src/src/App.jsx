@@ -29,6 +29,7 @@ import GalleryProjects from './pages/admin/GalleryProjects.jsx';
 import GalleryPhotos from './pages/admin/GalleryPhotos.jsx';
 import Packages from './pages/admin/Packages.jsx';
 import Services from './pages/admin/Services.jsx';
+import Faqs from './pages/admin/Faqs.jsx';
 import PackageProducts from './pages/admin/PackageProducts.jsx';
 import PackageUpgrades from './pages/admin/PackageUpgrades.jsx';
 import ContactRequests from './pages/admin/ContactRequests.jsx';
@@ -81,6 +82,7 @@ export default function App() {
           <Route path="packages/:packageId/products" element={<RequirePermission permission="packages.manage"><PackageProducts /></RequirePermission>} />
           <Route path="packages/:packageId/upgrades" element={<RequirePermission permission="packages.manage"><PackageUpgrades /></RequirePermission>} />
           <Route path="services" element={<RequirePermission permission="services.manage"><Services /></RequirePermission>} />
+          <Route path="faqs" element={<RequirePermission permission="content.manage"><Faqs /></RequirePermission>} />
           <Route path="contact-requests" element={<RequirePermission permission="contact.manage"><ContactRequests /></RequirePermission>} />
           <Route path="users" element={<RequirePermission permission="users.manage"><AdminUsers /></RequirePermission>} />
           <Route path="permission-groups" element={<RequirePermission permission="permission_groups.manage"><PermissionGroups /></RequirePermission>} />

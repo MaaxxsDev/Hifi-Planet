@@ -195,6 +195,17 @@ class Schema
             CONSTRAINT fk_products_package FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
         ) ENGINE=InnoDB",
 
+        'faqs' => "CREATE TABLE faqs (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            question_de TEXT NOT NULL,
+            answer_de TEXT NOT NULL,
+            question_en TEXT NOT NULL,
+            answer_en TEXT NOT NULL,
+            sort_order INT NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB",
+
         'contact_requests' => "CREATE TABLE contact_requests (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(150) NOT NULL,
@@ -370,6 +381,16 @@ class Schema
             'price_updated_at' => 'DATETIME NULL',
             'scrape_status' => "ENUM('pending','ok','error') NOT NULL DEFAULT 'pending'",
             'scrape_error' => 'VARCHAR(255) NULL',
+            'sort_order' => 'INT NOT NULL DEFAULT 0',
+            'created_at' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            'updated_at' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+        ],
+        'faqs' => [
+            'id' => 'INT AUTO_INCREMENT PRIMARY KEY',
+            'question_de' => 'TEXT NOT NULL',
+            'answer_de' => 'TEXT NOT NULL',
+            'question_en' => 'TEXT NOT NULL',
+            'answer_en' => 'TEXT NOT NULL',
             'sort_order' => 'INT NOT NULL DEFAULT 0',
             'created_at' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
             'updated_at' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',

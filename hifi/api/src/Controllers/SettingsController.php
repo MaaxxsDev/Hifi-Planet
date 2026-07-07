@@ -19,6 +19,10 @@ class SettingsController
         'package_products' => ['id', 'package_id', 'source_url', 'name_override', 'scraped_name', 'scraped_price', 'scraped_currency', 'scraped_image_url', 'price_updated_at', 'scrape_status', 'scrape_error', 'sort_order', 'created_at', 'updated_at'],
         'package_upgrades' => ['id', 'package_id', 'name', 'description', 'price', 'sort_order', 'created_at', 'updated_at'],
         'services' => ['id', 'icon_name', 'title', 'description', 'image_path', 'cta_label', 'cta_url', 'sort_order', 'created_at', 'updated_at'],
+        'faqs' => ['id', 'question_de', 'answer_de', 'question_en', 'answer_en', 'sort_order', 'created_at', 'updated_at'],
+        'gallery_brands' => ['id', 'name', 'slug', 'cover_image_path', 'sort_order', 'created_at', 'updated_at'],
+        'gallery_projects' => ['id', 'gallery_brand_id', 'name', 'slug', 'cover_image_path', 'sort_order', 'created_at', 'updated_at'],
+        'gallery_photos' => ['id', 'gallery_project_id', 'image_path', 'caption', 'sort_order', 'created_at', 'updated_at'],
     ];
 
     // Kein const, da abhängig von der Umgebung (base_path unterscheidet sich
@@ -38,7 +42,13 @@ class SettingsController
         }
 
         $images = [];
-        foreach (['services' => 'image_path'] as $table => $column) {
+        $imageColumns = [
+            'services' => 'image_path',
+            'gallery_brands' => 'cover_image_path',
+            'gallery_projects' => 'cover_image_path',
+            'gallery_photos' => 'image_path',
+        ];
+        foreach ($imageColumns as $table => $column) {
             foreach ($data[$table] as $row) {
                 self::collectImage($row[$column] ?? null, $images);
             }
@@ -117,6 +127,22 @@ class SettingsController
         Http::send(['ok' => true, 'count' => count($defaults)]);
     }
 
+    public static function resetFaqsToDefaults(): void
+    {
+        $db = Database::connection();
+        $defaults = self::defaultFaqs();
+
+        $db->exec('DELETE FROM faqs');
+        $stmt = $db->prepare(
+            'INSERT INTO faqs (question_de, answer_de, question_en, answer_en, sort_order) VALUES (?,?,?,?,?)'
+        );
+        foreach ($defaults as $row) {
+            $stmt->execute($row);
+        }
+
+        Http::send(['ok' => true, 'count' => count($defaults)]);
+    }
+
     /** Löscht Marken (Foreign-Key-Kaskade räumt Modelle, Pakete, Produkte & Upgrades automatisch mit auf). */
     public static function resetCatalog(): void
     {
@@ -141,7 +167,16 @@ class SettingsController
             $stmt->execute($row);
         }
 
-        Http::send(['ok' => true, 'brands_removed' => $brandCount, 'services_reset' => count($defaults)]);
+        $faqDefaults = self::defaultFaqs();
+        $db->exec('DELETE FROM faqs');
+        $faqStmt = $db->prepare(
+            'INSERT INTO faqs (question_de, answer_de, question_en, answer_en, sort_order) VALUES (?,?,?,?,?)'
+        );
+        foreach ($faqDefaults as $row) {
+            $faqStmt->execute($row);
+        }
+
+        Http::send(['ok' => true, 'brands_removed' => $brandCount, 'services_reset' => count($defaults), 'faqs_reset' => count($faqDefaults)]);
     }
 
     /** @param string[] $allowedColumns @param array<int,array<string,mixed>> $rows */
@@ -204,6 +239,54 @@ class SettingsController
             ['boxes', '3D-Druck', 'Über 20 Drucker (FDM & SLA) für individuelle Halterungen, Blenden und Kleinserien – Fertigung meist in 1–3 Tagen, auf Wunsch auch farbig.', self::uploadsUrlPrefix() . 'seed-leistung-3d-druck.jpg', null, null, 5],
             ['shield-alert', 'Alarmanlagen', 'Zuverlässiger Diebstahlschutz für dein Fahrzeug, abgestimmt auf deine Ansprüche und dein Budget.', self::uploadsUrlPrefix() . 'seed-leistung-alarmanlagen.jpg', null, null, 6],
             ['video', 'Dash Cams', 'Beweissichere Aufzeichnung fürs Auto – wir beraten dich zur passenden Kamera und übernehmen den unauffälligen Einbau.', self::uploadsUrlPrefix() . 'seed-leistung-dashcam.jpg', null, null, 7],
+        ];
+    }
+
+    private static function defaultFaqs(): array
+    {
+        return [
+            [
+                'Was kostet eine Beratung?',
+                'Beratung und Preisanfrage sind für dich komplett kostenlos und unverbindlich.',
+                'How much does a consultation cost?',
+                'A consultation and price estimate are completely free and non-binding.',
+                0,
+            ],
+            [
+                'Muss ich mein Fahrzeug vorbeibringen?',
+                'Für eine erste Einschätzung reicht oft deine Anfrage über die Website. Für den Einbau selbst vereinbaren wir gemeinsam einen Termin bei uns in Amorbach.',
+                'Do I need to bring my vehicle in?',
+                "For an initial assessment, your inquiry through the website is often enough. For the installation itself, we'll schedule an appointment together at our workshop in Amorbach.",
+                1,
+            ],
+            [
+                'Wie lange dauert ein Umbau?',
+                'Das hängt vom Umfang ab – von einem einfachen Lautsprecher-Tausch in wenigen Stunden bis zum aufwendigen Komplettumbau über mehrere Tage.',
+                'How long does an installation take?',
+                'It depends on the scope – from a simple speaker swap in a few hours to an elaborate full installation over several days.',
+                2,
+            ],
+            [
+                'Bietet ihr auch Lösungen für Leasingfahrzeuge?',
+                'Ja, auf Wunsch bauen wir reversibel um, sodass dein Fahrzeug bei Rückgabe wieder in den Originalzustand versetzt werden kann.',
+                'Do you offer solutions for leased vehicles?',
+                'Yes, on request we install everything reversibly, so your vehicle can be returned to its original condition when handed back.',
+                3,
+            ],
+            [
+                'Arbeitet ihr nur mit bestimmten Marken?',
+                'Nein, wir sind herstellerunabhängig und wählen die Komponenten, die am besten zu deinem Anspruch und Budget passen.',
+                'Do you only work with certain brands?',
+                "No, we're brand-independent and choose the components that best fit your needs and budget.",
+                4,
+            ],
+            [
+                'Was ist, wenn mein Fahrzeug nicht gelistet ist?',
+                'Kein Problem – schreib uns einfach über das Kontaktformular, wir finden für jedes Fahrzeug eine passende Lösung.',
+                "What if my vehicle isn't listed?",
+                "No problem – just message us through the contact form, we'll find a suitable solution for any vehicle.",
+                5,
+            ],
         ];
     }
 }

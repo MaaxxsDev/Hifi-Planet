@@ -14,6 +14,7 @@ use App\Controllers\AuthController;
 use App\Controllers\BrandController;
 use App\Controllers\ContactController;
 use App\Controllers\DatabaseConfigController;
+use App\Controllers\FaqController;
 use App\Controllers\GalleryBrandController;
 use App\Controllers\GalleryPhotoController;
 use App\Controllers\GalleryProjectController;
@@ -154,6 +155,11 @@ $router->post('/services', $perm('services.manage', fn($p) => ServiceController:
 $router->put('/services/{id}', $perm('services.manage', fn($p) => ServiceController::update($p)));
 $router->delete('/services/{id}', $perm('services.manage', fn($p) => ServiceController::destroy($p)));
 
+$router->get('/faqs', fn($p) => FaqController::index());
+$router->post('/faqs', $perm('content.manage', fn($p) => FaqController::store()));
+$router->put('/faqs/{id}', $perm('content.manage', fn($p) => FaqController::update($p)));
+$router->delete('/faqs/{id}', $perm('content.manage', fn($p) => FaqController::destroy($p)));
+
 $router->get('/admin-users', $perm('users.manage', fn($p) => AdminUserController::index()));
 $router->post('/admin-users', $perm('users.manage', fn($p) => AdminUserController::store()));
 $router->put('/admin-users/{id}', $perm('users.manage', fn($p) => AdminUserController::update($p)));
@@ -167,6 +173,7 @@ $router->delete('/permission-groups/{id}', $perm('permission_groups.manage', fn(
 $router->get('/settings/export', $perm('settings.manage', fn($p) => SettingsController::exportData()));
 $router->post('/settings/import', $perm('settings.manage', fn($p) => SettingsController::importData()));
 $router->post('/settings/reset-services', $perm('settings.manage', fn($p) => SettingsController::resetServicesToDefaults()));
+$router->post('/settings/reset-faqs', $perm('settings.manage', fn($p) => SettingsController::resetFaqsToDefaults()));
 $router->post('/settings/reset-catalog', $perm('settings.manage', fn($p) => SettingsController::resetCatalog()));
 $router->post('/settings/reset-all', $perm('settings.manage', fn($p) => SettingsController::resetAll()));
 

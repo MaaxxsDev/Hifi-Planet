@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
 import Reveal from '../../components/Reveal.jsx';
 import Accordion from '../../components/Accordion.jsx';
@@ -46,7 +47,21 @@ export default function Home() {
   const galleryAlts = t('home.galleryAlts');
   const gallery = galleryImages.map((img, i) => ({ ...img, alt: galleryAlts[i] }));
   const testimonials = t('home.testimonials');
-  const faqs = t('home.faqs');
+  const [faqs, setFaqs] = useState([]);
+
+  useEffect(() => {
+    api
+      .get('/faqs')
+      .then((rows) => {
+        setFaqs(
+          rows.map((f) => ({
+            question: language === 'de' ? f.question_de : f.question_en,
+            answer: language === 'de' ? f.answer_de : f.answer_en,
+          }))
+        );
+      })
+      .catch(() => {});
+  }, [language]);
 
   usePageMeta({
     title: t('home.metaTitle'),
@@ -55,6 +70,8 @@ export default function Home() {
   });
 
   useEffect(() => {
+    if (faqs.length === 0) return;
+
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.text = JSON.stringify({
@@ -68,7 +85,7 @@ export default function Home() {
     });
     document.head.appendChild(script);
     return () => document.head.removeChild(script);
-  }, [language]);
+  }, [faqs]);
 
   const heroRef = useRef(null);
   const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });

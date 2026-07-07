@@ -34,8 +34,9 @@ export default function ExportImportSettings() {
       <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Daten exportieren</h2>
         <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
-          Lädt eine Datei mit allen Marken, Modellen, Paketen, Produkten, Upgrades und Leistungen (inkl. Bilder)
-          herunter. Benutzerkonten und Kontaktanfragen sind bewusst <strong>nicht</strong> enthalten.
+          Lädt eine Datei mit allen Marken, Modellen, Paketen, Produkten, Upgrades, Leistungen, FAQs und der
+          kompletten Bildergalerie (inkl. Bilder) herunter. Benutzerkonten und Kontaktanfragen sind bewusst
+          <strong> nicht</strong> enthalten.
         </p>
         <a
           href={`${API_BASE}/settings/export`}
@@ -49,8 +50,9 @@ export default function ExportImportSettings() {
         <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Daten importieren</h2>
         <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Lädt eine zuvor exportierte Datei auf diesen Server. <strong>Ersetzt dabei alle</strong> aktuellen
-          Marken, Modelle, Pakete, Produkte, Upgrades und Leistungen auf diesem Server – das kann nicht
-          rückgängig gemacht werden. Kontaktanfragen und Benutzerkonten bleiben unangetastet.
+          Marken, Modelle, Pakete, Produkte, Upgrades, Leistungen, FAQs und die komplette Bildergalerie auf
+          diesem Server – das kann nicht rückgängig gemacht werden. Kontaktanfragen und Benutzerkonten bleiben
+          unangetastet.
         </p>
         <form onSubmit={handleImport} className="space-y-3">
           <input
@@ -66,8 +68,8 @@ export default function ExportImportSettings() {
               onChange={(e) => setImportConfirmed(e.target.checked)}
               className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-brand-600 focus:ring-brand-500"
             />
-            Mir ist bewusst, dass dies alle aktuellen Marken, Modelle, Pakete, Produkte, Upgrades und
-            Leistungen auf diesem Server unwiderruflich ersetzt.
+            Mir ist bewusst, dass dies alle aktuellen Marken, Modelle, Pakete, Produkte, Upgrades, Leistungen,
+            FAQs und die Bildergalerie auf diesem Server unwiderruflich ersetzt.
           </label>
           <button
             type="submit"
@@ -88,6 +90,10 @@ export default function ExportImportSettings() {
               <li>{importResult.counts.package_products} Produkte</li>
               <li>{importResult.counts.package_upgrades} Upgrades</li>
               <li>{importResult.counts.services} Leistungen</li>
+              <li>{importResult.counts.faqs} FAQs</li>
+              <li>{importResult.counts.gallery_brands} Galerie-Marken</li>
+              <li>{importResult.counts.gallery_projects} Galerie-Projekte</li>
+              <li>{importResult.counts.gallery_photos} Galerie-Fotos</li>
               <li>{importResult.images_restored} Bilder wiederhergestellt</li>
             </ul>
           </div>

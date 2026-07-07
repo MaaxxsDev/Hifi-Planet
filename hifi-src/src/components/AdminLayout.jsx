@@ -17,6 +17,7 @@ const ICONS = {
   briefcase: 'M4 7h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Zm4 0V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18',
   sliders: 'M4 6h16M4 6a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm16 6H4m10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM4 18h16m-12 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z',
   image: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm2 12 4.5-5.5L14 16l2.5-3L20 17H6ZM8 9.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z',
+  help: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-5.5v.01M9.5 9.25a2.5 2.5 0 1 1 3.5 2.29c-.7.32-1 .77-1 1.46v.3',
 };
 
 const Icon = ({ path }) => (
@@ -56,6 +57,7 @@ export default function AdminLayout() {
       title: 'Website',
       links: [
         { to: '/admin/services', label: 'Leistungen', icon: 'briefcase', permission: 'services.manage' },
+        { to: '/admin/faqs', label: 'FAQ', icon: 'help', permission: 'content.manage' },
       ],
     },
     {

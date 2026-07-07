@@ -127,14 +127,6 @@ export default {
     moreText: 'Besides custom sound installations, we also offer CNC machining, laser technology, 3D printing and more – all from a single source in our own workshop.',
     moreCta: 'Discover all our services',
     faqHeading: 'Frequently asked questions',
-    faqs: [
-      { question: 'How much does a consultation cost?', answer: 'A consultation and price estimate are completely free and non-binding.' },
-      { question: 'Do I need to bring my vehicle in?', answer: 'For an initial assessment, your inquiry through the website is often enough. For the installation itself, we\'ll schedule an appointment together at our workshop in Amorbach.' },
-      { question: 'How long does an installation take?', answer: 'It depends on the scope – from a simple speaker swap in a few hours to an elaborate full installation over several days.' },
-      { question: 'Do you offer solutions for leased vehicles?', answer: 'Yes, on request we install everything reversibly, so your vehicle can be returned to its original condition when handed back.' },
-      { question: 'Do you only work with certain brands?', answer: "No, we're brand-independent and choose the components that best fit your needs and budget." },
-      { question: "What if my vehicle isn't listed?", answer: "No problem – just message us through the contact form, we'll find a suitable solution for any vehicle." },
-    ],
   },
   vehicleSelect: {
     metaTitle: 'Select your vehicle',

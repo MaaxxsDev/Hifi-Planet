@@ -127,14 +127,6 @@ export default {
     moreText: 'Neben individuellen Sound-Umbauten bieten wir CNC-Zerspanung, Lasertechnik, 3D-Druck und mehr – alles aus einer Hand in unserer eigenen Werkstatt.',
     moreCta: 'Alle Leistungen entdecken',
     faqHeading: 'Häufig gestellte Fragen',
-    faqs: [
-      { question: 'Was kostet eine Beratung?', answer: 'Beratung und Preisanfrage sind für dich komplett kostenlos und unverbindlich.' },
-      { question: 'Muss ich mein Fahrzeug vorbeibringen?', answer: 'Für eine erste Einschätzung reicht oft deine Anfrage über die Website. Für den Einbau selbst vereinbaren wir gemeinsam einen Termin bei uns in Amorbach.' },
-      { question: 'Wie lange dauert ein Umbau?', answer: 'Das hängt vom Umfang ab – von einem einfachen Lautsprecher-Tausch in wenigen Stunden bis zum aufwendigen Komplettumbau über mehrere Tage.' },
-      { question: 'Bietet ihr auch Lösungen für Leasingfahrzeuge?', answer: 'Ja, auf Wunsch bauen wir reversibel um, sodass dein Fahrzeug bei Rückgabe wieder in den Originalzustand versetzt werden kann.' },
-      { question: 'Arbeitet ihr nur mit bestimmten Marken?', answer: 'Nein, wir sind herstellerunabhängig und wählen die Komponenten, die am besten zu deinem Anspruch und Budget passen.' },
-      { question: 'Was ist, wenn mein Fahrzeug nicht gelistet ist?', answer: 'Kein Problem – schreib uns einfach über das Kontaktformular, wir finden für jedes Fahrzeug eine passende Lösung.' },
-    ],
   },
   vehicleSelect: {
     metaTitle: 'Fahrzeug auswählen',
