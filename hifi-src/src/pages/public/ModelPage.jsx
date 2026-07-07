@@ -9,37 +9,30 @@ import { useMaintenance } from '../../context/MaintenanceContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
 
-// Farbverlauf fuer die Paket-Kacheln: von schlicht/hell (guenstigste Option) bis
-// dunkel/schwarz (teuerste Option). Die FLAECHE bleibt dabei fast neutral grau/schwarz
-// (nur ein Hauch Gruenstich) - ein voll gesaettigter Gruenverlauf in der Mitte sah nicht
-// premium aus, sondern kollidierte mit dem gruenen Preistext/Rahmen. Gruen bleibt der
-// alleinige Akzent (Rahmen + Leucht-Schatten). Interpoliert wird in HSL statt RGB (drei
-// Stuetzpunkte bei t=0/0.5/1, dazwischen linear) - dadurch bekommt JEDES Paket eine
-// eigene Abstufung statt nur 2-3 fester Stile, egal ob ein Modell 2 oder 12 Pakete hat.
-const LIGHT_STOPS = {
-  bg: [
-    [0, 0, 100],
-    [90, 6, 85],
-    [95, 10, 7],
-  ],
-  border: [
-    [0, 0, 88],
-    [85, 55, 62],
-    [88, 63, 42],
-  ],
-};
-const DARK_STOPS = {
-  bg: [
-    [0, 0, 9],
-    [95, 8, 18],
-    [100, 12, 4],
-  ],
-  border: [
-    [0, 0, 16],
-    [95, 42, 34],
-    [92, 62, 56],
-  ],
-};
+// Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
+// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen - Basis (weiss) -> Bronze -> Silber
+// -> Gold -> Platin -> Onyx (fast schwarz, mit Gold-Glanz als Kroenung ganz oben). Jede
+// Stufe hat sowohl eine Flaechenfarbe (bg) als auch eine dazu passende Akzentfarbe
+// (Rahmen/Leucht-Schatten/Preis/Icon) - nur der "Kontakt anfragen"-Button bleibt ueberall
+// einheitlich markengruen, damit die Kernaktion auf jeder Karte wiedererkennbar bleibt.
+// Zwischen zwei Nachbar-Materialien wird in HSL linear interpoliert, sodass JEDES Paket
+// (nicht nur die Materialien selbst) eine eigene Abstufung bekommt.
+const MATERIALS_LIGHT = [
+  { bg: [0, 0, 100], accent: [88, 63, 40] }, // Basis
+  { bg: [24, 42, 55], accent: [24, 58, 42] }, // Bronze
+  { bg: [212, 10, 80], accent: [212, 15, 48] }, // Silber
+  { bg: [45, 60, 60], accent: [42, 75, 42] }, // Gold
+  { bg: [196, 16, 85], accent: [200, 22, 52] }, // Platin
+  { bg: [225, 20, 6], accent: [45, 70, 55] }, // Onyx
+];
+const MATERIALS_DARK = [
+  { bg: [0, 0, 9], accent: [88, 55, 48] },
+  { bg: [22, 35, 20], accent: [25, 55, 58] },
+  { bg: [212, 10, 20], accent: [212, 18, 68] },
+  { bg: [45, 42, 22], accent: [42, 68, 58] },
+  { bg: [196, 14, 24], accent: [200, 22, 72] },
+  { bg: [225, 22, 4], accent: [45, 75, 68] },
+];
 
 const hslToRgb = (h, s, l) => {
   s /= 100;
@@ -49,13 +42,29 @@ const hslToRgb = (h, s, l) => {
   const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
   return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
 };
-const mixHsl = (c1, c2, t) => [0, 1, 2].map((i) => c1[i] + (c2[i] - c1[i]) * t);
-// Liefert sowohl die interpolierte HSL-Lightness (fuer die Textfarben-Entscheidung -
-// verlaesslicher als ein RGB-Luminanz-Naeherungswert, da satte Mitteltoene sonst
-// faelschlich als "hell genug fuer dunklen Text" gelten wuerden) als auch die RGB-Werte.
-const stopColor = (stops, t) => {
-  const hsl = t <= 0.5 ? mixHsl(stops[0], stops[1], t / 0.5) : mixHsl(stops[1], stops[2], (t - 0.5) / 0.5);
-  return { rgb: hslToRgb(...hsl), lightness: hsl[2], hsl };
+const rgbToHsl = (r, g, b) => {
+  (r /= 255), (g /= 255), (b /= 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l * 100];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  const h = max === r ? ((g - b) / d + (g < b ? 6 : 0)) * 60 : max === g ? ((b - r) / d + 2) * 60 : ((r - g) / d + 4) * 60;
+  return [h, s * 100, l * 100];
+};
+const mixRgb = (c1, c2, t) => [0, 1, 2].map((i) => c1[i] + (c2[i] - c1[i]) * t);
+// Findet die zwei Nachbar-Materialien fuer einen Preis-Rang t (0..1) und mischt linear
+// dazwischen - dadurch bekommt jedes Paket eine eigene Abstufung, nicht nur die 6
+// Materialien selbst, egal ob ein Modell 2 oder 12 Pakete hat. Gemischt wird in RGB statt
+// HSL: der Farbton zweier benachbarter Materialien (z.B. Bronze 24° -> Silber 212°) liegt
+// oft weit auseinander, eine HSL-Interpolation liefe dann mitten durch fremde Farbtoene
+// (Gelb/Gruen) statt sauber zwischen den beiden Materialien zu vermitteln.
+const materialRgbAt = (materials, t, key) => {
+  const n = materials.length;
+  const pos = t * (n - 1);
+  const idx = Math.min(Math.floor(pos), n - 2);
+  const frac = pos - idx;
+  return mixRgb(hslToRgb(...materials[idx][key]), hslToRgb(...materials[idx + 1][key]), frac);
 };
 
 export default function ModelPage() {
@@ -97,10 +106,11 @@ export default function ModelPage() {
   const { model, packages } = data;
 
   // Preis-Rang innerhalb dieses Modells bestimmt die optische Wucht der Kachel:
-  // die guenstigste Option bleibt schlicht/hell, jede weitere Preisstufe wird
-  // kontinuierlich dunkler/leuchtender bis zur teuersten Option. Das braucht keine
-  // zusaetzliche Admin-Einstellung und passt sich automatisch an jede Paketanzahl an.
-  const stops = theme === 'dark' ? DARK_STOPS : LIGHT_STOPS;
+  // die guenstigste Option bleibt schlicht/weiss, jede weitere Preisstufe durchlaeuft
+  // eine eigene Materialstufe (Bronze/Silber/Gold/Platin) bis zur Onyx-Kroenung ganz
+  // oben. Das braucht keine zusaetzliche Admin-Einstellung und passt sich automatisch
+  // an jede Paketanzahl an.
+  const materials = theme === 'dark' ? MATERIALS_DARK : MATERIALS_LIGHT;
   const rankById = new Map(
     [...packages].sort((a, b) => a.total_price - b.total_price).map((p, i) => [p.id, i])
   );
@@ -109,31 +119,44 @@ export default function ModelPage() {
     const rank = rankById.get(pkg.id) ?? 0;
     const tierT = n <= 1 ? 0 : rank / (n - 1);
 
-    const bg = stopColor(stops.bg, tierT);
-    const border = stopColor(stops.border, tierT);
+    const bgRgb = materialRgbAt(materials, tierT, 'bg').map(Math.round);
+    const accentRgbFloat = materialRgbAt(materials, tierT, 'accent');
+    const accentRgb = accentRgbFloat.map(Math.round);
+    const bgHsl = rgbToHsl(...bgRgb);
+    const accentHsl = rgbToHsl(...accentRgbFloat);
     // Ab hier reicht der Hintergrund nicht mehr zum Kontrastieren mit dunklem Text -
-    // satte gruene Mitteltoene brauchen (wie die Buttons) helle statt dunkle Schrift.
-    // Diese Entscheidung haengt bewusst an der Basis-Farbe, nicht am Lichtschein unten,
-    // damit der Text unabhaengig vom Verlauf IMMER gut lesbar bleibt.
-    const isDarkCard = bg.lightness < 60;
-    const glowAlpha = (0.05 + tierT * 0.35).toFixed(2);
+    // Bronze/Gold-Mitteltoene brauchen (wie die Buttons) helle statt dunkle Schrift.
+    // Diese Entscheidung haengt bewusst an der Flaechenfarbe, nicht am Lichtschein
+    // unten, damit der Text unabhaengig vom Material IMMER gut lesbar bleibt.
+    const isDarkCard = bgHsl[2] < 60;
+    // Preis/Icon brauchen eine kraeftigere, hellere Variante des Materialtons als der
+    // Rahmen - der reine Akzent waere auf dunklem Untergrund selbst zu dunkel zum Lesen.
+    const priceRgb = isDarkCard
+      ? hslToRgb(accentHsl[0], Math.min(accentHsl[1] + 10, 90), Math.min(accentHsl[2] + 25, 90))
+      : accentRgb;
+    const glowAlpha = (0.1 + tierT * 0.3).toFixed(2);
 
     // Leichter "Lichtschein" von oben rechts statt flacher Flaeche - kommt von oben
     // rechts, weil dort nie Text steht (Titel/Preis/Liste sind linksbuendig), damit die
     // Aufhellung die Lesbarkeit nirgends beeintraechtigt.
-    const [bh, bs, bl] = bg.hsl;
-    const highlight = hslToRgb(bh, Math.max(bs - 8, 0), Math.min(bl + 16, 99));
+    const highlight = hslToRgb(bgHsl[0], Math.max(bgHsl[1] - 8, 0), Math.min(bgHsl[2] + 16, 99));
 
     return {
       isDarkCard,
+      priceColor: `rgb(${priceRgb.join(', ')})`,
+      iconChipStyle: {
+        backgroundColor: `rgba(${accentRgb.join(', ')}, 0.16)`,
+        color: `rgb(${priceRgb.join(', ')})`,
+        boxShadow: `inset 0 0 0 1px rgba(${accentRgb.join(', ')}, 0.45)`,
+      },
       style: {
-        backgroundColor: `rgb(${bg.rgb.join(', ')})`,
-        backgroundImage: `radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bg.rgb.join(', ')}) 55%)`,
-        borderColor: `rgb(${border.rgb.join(', ')})`,
-        borderWidth: tierT > 0.12 ? 2 : 1,
+        backgroundColor: `rgb(${bgRgb.join(', ')})`,
+        backgroundImage: `radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bgRgb.join(', ')}) 55%)`,
+        borderColor: `rgb(${accentRgb.join(', ')})`,
+        borderWidth: tierT > 0.08 ? 2 : 1,
         boxShadow:
-          tierT > 0.08
-            ? `0 ${Math.round(6 + tierT * 14)}px ${Math.round(20 + tierT * 45)}px -10px rgba(107, 166, 38, ${glowAlpha})`
+          tierT > 0.04
+            ? `0 ${Math.round(6 + tierT * 14)}px ${Math.round(20 + tierT * 45)}px -10px rgba(${accentRgb.join(', ')}, ${glowAlpha})`
             : undefined,
       },
     };
@@ -167,7 +190,7 @@ export default function ModelPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {packages.map((pkg) => {
-          const { isDarkCard, style } = styleOf(pkg);
+          const { isDarkCard, style, priceColor, iconChipStyle } = styleOf(pkg);
 
           return (
             <div key={pkg.id} style={style} className="relative flex flex-col rounded-xl border p-6">
@@ -178,13 +201,7 @@ export default function ModelPage() {
               )}
 
               {pkg.icon_name && (
-                <div
-                  className={`mb-3 flex h-11 w-11 items-center justify-center rounded-full ${
-                    isDarkCard
-                      ? 'bg-brand-500/15 text-brand-400 ring-1 ring-brand-500/40'
-                      : 'bg-brand-100 text-brand-600'
-                  }`}
-                >
+                <div style={iconChipStyle} className="mb-3 flex h-11 w-11 items-center justify-center rounded-full">
                   <DynamicIcon name={pkg.icon_name} className="h-6 w-6" />
                 </div>
               )}
@@ -202,7 +219,7 @@ export default function ModelPage() {
                 <p className={`text-xs uppercase tracking-wide ${isDarkCard ? 'text-neutral-300' : 'text-neutral-400'}`}>
                   {t('modelPage.totalPrice')}
                 </p>
-                <p className={`text-2xl font-extrabold ${isDarkCard ? 'text-brand-400' : 'text-brand-600'}`}>
+                <p style={{ color: priceColor }} className="text-2xl font-extrabold">
                   {formatPrice(pkg.total_price)}
                 </p>
               </div>
