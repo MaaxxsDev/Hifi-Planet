@@ -7,6 +7,56 @@ import MaintenanceBypassBanner from '../../components/MaintenanceBypassBanner.js
 import DynamicIcon from '../../components/DynamicIcon.jsx';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
+
+// Farbverlauf fuer die Paket-Kacheln: von schlicht/hell (guenstigste Option) bis
+// dunkel/leuchtend (teuerste Option). Interpoliert wird in HSL statt RGB, mit dem
+// Farbton (Hue) konstant nahe "Markengruen" - eine direkte RGB-Mischung von hellem
+// Mintgruen zu Schwarz liefe sonst mittendrin durch ein schmutziges Graugruen statt
+// gleichmaessig satter zu wirken. Drei Stuetzpunkte (t=0/0.5/1), dazwischen linear
+// interpoliert - dadurch bekommt JEDES Paket eine eigene Abstufung statt nur 2-3
+// fester Stile, egal ob ein Modell 2 oder 12 Pakete hat.
+const LIGHT_STOPS = {
+  bg: [
+    [0, 0, 100],
+    [88, 55, 92],
+    [100, 45, 7],
+  ],
+  border: [
+    [0, 0, 90],
+    [83, 60, 65],
+    [88, 63, 40],
+  ],
+};
+const DARK_STOPS = {
+  bg: [
+    [0, 0, 9],
+    [95, 35, 14],
+    [105, 55, 5],
+  ],
+  border: [
+    [0, 0, 15],
+    [95, 45, 35],
+    [92, 65, 60],
+  ],
+};
+
+const hslToRgb = (h, s, l) => {
+  s /= 100;
+  l /= 100;
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+};
+const mixHsl = (c1, c2, t) => [0, 1, 2].map((i) => c1[i] + (c2[i] - c1[i]) * t);
+// Liefert sowohl die interpolierte HSL-Lightness (fuer die Textfarben-Entscheidung -
+// verlaesslicher als ein RGB-Luminanz-Naeherungswert, da satte Mitteltoene sonst
+// faelschlich als "hell genug fuer dunklen Text" gelten wuerden) als auch die RGB-Werte.
+const stopColor = (stops, t) => {
+  const [h, s, l] = t <= 0.5 ? mixHsl(stops[0], stops[1], t / 0.5) : mixHsl(stops[1], stops[2], (t - 0.5) / 0.5);
+  return { rgb: hslToRgb(h, s, l), lightness: l };
+};
 
 export default function ModelPage() {
   const { brandSlug, modelSlug } = useParams();
@@ -14,6 +64,7 @@ export default function ModelPage() {
   const [error, setError] = useState('');
   const maintenance = useMaintenance();
   const { t, language } = useLanguage();
+  const { theme } = useTheme();
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -46,18 +97,37 @@ export default function ModelPage() {
   const { model, packages } = data;
 
   // Preis-Rang innerhalb dieses Modells bestimmt die optische Wucht der Kachel:
-  // die guenstigste Option bleibt schlicht/hell, dazwischen liegende Pakete
-  // bekommen einen Akzent-Rahmen, das teuerste Paket eine dunkle "Premium"-Karte.
-  // Das braucht keine zusaetzliche Admin-Einstellung und passt sich automatisch an.
+  // die guenstigste Option bleibt schlicht/hell, jede weitere Preisstufe wird
+  // kontinuierlich dunkler/leuchtender bis zur teuersten Option. Das braucht keine
+  // zusaetzliche Admin-Einstellung und passt sich automatisch an jede Paketanzahl an.
+  const stops = theme === 'dark' ? DARK_STOPS : LIGHT_STOPS;
   const rankById = new Map(
     [...packages].sort((a, b) => a.total_price - b.total_price).map((p, i) => [p.id, i])
   );
-  const tierOf = (pkg) => {
-    if (packages.length <= 1) return 'plain';
-    const rank = rankById.get(pkg.id);
-    if (rank === 0) return 'plain';
-    if (rank === packages.length - 1) return 'premium';
-    return 'accent';
+  const styleOf = (pkg) => {
+    const n = packages.length;
+    const rank = rankById.get(pkg.id) ?? 0;
+    const tierT = n <= 1 ? 0 : rank / (n - 1);
+
+    const bg = stopColor(stops.bg, tierT);
+    const border = stopColor(stops.border, tierT);
+    // Ab hier reicht der Hintergrund nicht mehr zum Kontrastieren mit dunklem Text -
+    // satte gruene Mitteltoene brauchen (wie die Buttons) helle statt dunkle Schrift.
+    const isDarkCard = bg.lightness < 60;
+    const glowAlpha = (0.05 + tierT * 0.35).toFixed(2);
+
+    return {
+      isDarkCard,
+      style: {
+        backgroundColor: `rgb(${bg.rgb.join(', ')})`,
+        borderColor: `rgb(${border.rgb.join(', ')})`,
+        borderWidth: tierT > 0.12 ? 2 : 1,
+        boxShadow:
+          tierT > 0.08
+            ? `0 ${Math.round(6 + tierT * 14)}px ${Math.round(20 + tierT * 45)}px -10px rgba(107, 166, 38, ${glowAlpha})`
+            : undefined,
+      },
+    };
   };
 
   const contactUrl = (pkg) => {
@@ -88,20 +158,10 @@ export default function ModelPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {packages.map((pkg) => {
-          const tier = tierOf(pkg);
-          const isPremium = tier === 'premium';
+          const { isDarkCard, style } = styleOf(pkg);
 
           return (
-            <div
-              key={pkg.id}
-              className={`relative flex flex-col rounded-xl border p-6 ${
-                isPremium
-                  ? 'border-brand-500/50 bg-gradient-to-br from-neutral-900 via-neutral-900 to-brand-900/60 shadow-xl shadow-brand-500/20 ring-1 ring-brand-500/40 dark:border-brand-400/60 dark:shadow-brand-400/25 dark:ring-brand-400/50'
-                  : tier === 'accent'
-                    ? 'border-2 border-brand-400 bg-brand-50 shadow-lg shadow-brand-500/10 dark:border-brand-500/70 dark:bg-brand-900/20'
-                    : 'border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900'
-              }`}
-            >
+            <div key={pkg.id} style={style} className="relative flex flex-col rounded-xl border p-6">
               {pkg.is_featured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
                   {t('modelPage.featuredBadge')}
@@ -111,36 +171,36 @@ export default function ModelPage() {
               {pkg.icon_name && (
                 <div
                   className={`mb-3 flex h-11 w-11 items-center justify-center rounded-full ${
-                    isPremium
+                    isDarkCard
                       ? 'bg-brand-500/15 text-brand-400 ring-1 ring-brand-500/40'
-                      : 'bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-400'
+                      : 'bg-brand-100 text-brand-600'
                   }`}
                 >
                   <DynamicIcon name={pkg.icon_name} className="h-6 w-6" />
                 </div>
               )}
 
-              <h2 className={`text-lg font-bold ${isPremium ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>
+              <h2 className={`text-lg font-bold ${isDarkCard ? 'text-white' : 'text-neutral-900'}`}>
                 {pkg.name}
               </h2>
               {pkg.tagline && (
-                <p className={`mt-1 text-sm ${isPremium ? 'text-neutral-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                <p className={`mt-1 text-sm ${isDarkCard ? 'text-neutral-400' : 'text-neutral-500'}`}>
                   {pkg.tagline}
                 </p>
               )}
 
               <div className="my-4">
-                <p className={`text-xs uppercase tracking-wide ${isPremium ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                <p className={`text-xs uppercase tracking-wide ${isDarkCard ? 'text-neutral-500' : 'text-neutral-400'}`}>
                   {t('modelPage.totalPrice')}
                 </p>
-                <p className={`text-2xl font-extrabold ${isPremium ? 'text-brand-400' : 'text-brand-600 dark:text-brand-400'}`}>
+                <p className={`text-2xl font-extrabold ${isDarkCard ? 'text-brand-400' : 'text-brand-600'}`}>
                   {formatPrice(pkg.total_price)}
                 </p>
               </div>
 
               <ul
                 className={`mb-5 flex-1 list-disc space-y-1 pl-5 text-sm ${
-                  isPremium ? 'text-neutral-300' : 'text-neutral-700 dark:text-neutral-300'
+                  isDarkCard ? 'text-neutral-300' : 'text-neutral-700'
                 }`}
               >
                 {pkg.products.map((product) => (
@@ -158,11 +218,7 @@ export default function ModelPage() {
               <Link
                 to={contactUrl(pkg)}
                 className={`inline-block rounded-md px-4 py-2 text-center text-sm font-semibold text-white ${
-                  isPremium
-                    ? 'bg-brand-500 shadow-lg shadow-brand-500/30 hover:bg-brand-400'
-                    : tier === 'accent'
-                      ? 'bg-brand-600 hover:bg-brand-700'
-                      : 'bg-brand-500 hover:bg-brand-600'
+                  isDarkCard ? 'bg-brand-500 shadow-lg shadow-brand-500/30 hover:bg-brand-400' : 'bg-brand-500 hover:bg-brand-600'
                 }`}
               >
                 {t('modelPage.requestContact')}
