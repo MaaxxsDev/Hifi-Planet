@@ -10,34 +10,34 @@ import { useLanguage } from '../../context/LanguageContext.jsx';
 import { useTheme } from '../../context/ThemeContext.jsx';
 
 // Farbverlauf fuer die Paket-Kacheln: von schlicht/hell (guenstigste Option) bis
-// dunkel/leuchtend (teuerste Option). Interpoliert wird in HSL statt RGB, mit dem
-// Farbton (Hue) konstant nahe "Markengruen" - eine direkte RGB-Mischung von hellem
-// Mintgruen zu Schwarz liefe sonst mittendrin durch ein schmutziges Graugruen statt
-// gleichmaessig satter zu wirken. Drei Stuetzpunkte (t=0/0.5/1), dazwischen linear
-// interpoliert - dadurch bekommt JEDES Paket eine eigene Abstufung statt nur 2-3
-// fester Stile, egal ob ein Modell 2 oder 12 Pakete hat.
+// dunkel/schwarz (teuerste Option). Die FLAECHE bleibt dabei fast neutral grau/schwarz
+// (nur ein Hauch Gruenstich) - ein voll gesaettigter Gruenverlauf in der Mitte sah nicht
+// premium aus, sondern kollidierte mit dem gruenen Preistext/Rahmen. Gruen bleibt der
+// alleinige Akzent (Rahmen + Leucht-Schatten). Interpoliert wird in HSL statt RGB (drei
+// Stuetzpunkte bei t=0/0.5/1, dazwischen linear) - dadurch bekommt JEDES Paket eine
+// eigene Abstufung statt nur 2-3 fester Stile, egal ob ein Modell 2 oder 12 Pakete hat.
 const LIGHT_STOPS = {
   bg: [
     [0, 0, 100],
-    [88, 55, 92],
-    [100, 45, 7],
+    [90, 6, 85],
+    [95, 10, 7],
   ],
   border: [
-    [0, 0, 90],
-    [83, 60, 65],
-    [88, 63, 40],
+    [0, 0, 88],
+    [85, 55, 62],
+    [88, 63, 42],
   ],
 };
 const DARK_STOPS = {
   bg: [
     [0, 0, 9],
-    [95, 35, 14],
-    [105, 55, 5],
+    [95, 8, 18],
+    [100, 12, 4],
   ],
   border: [
-    [0, 0, 15],
-    [95, 45, 35],
-    [92, 65, 60],
+    [0, 0, 16],
+    [95, 42, 34],
+    [92, 62, 56],
   ],
 };
 
@@ -184,13 +184,13 @@ export default function ModelPage() {
                 {pkg.name}
               </h2>
               {pkg.tagline && (
-                <p className={`mt-1 text-sm ${isDarkCard ? 'text-neutral-400' : 'text-neutral-500'}`}>
+                <p className={`mt-1 text-sm ${isDarkCard ? 'text-neutral-300' : 'text-neutral-500'}`}>
                   {pkg.tagline}
                 </p>
               )}
 
               <div className="my-4">
-                <p className={`text-xs uppercase tracking-wide ${isDarkCard ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                <p className={`text-xs uppercase tracking-wide ${isDarkCard ? 'text-neutral-300' : 'text-neutral-400'}`}>
                   {t('modelPage.totalPrice')}
                 </p>
                 <p className={`text-2xl font-extrabold ${isDarkCard ? 'text-brand-400' : 'text-brand-600'}`}>
