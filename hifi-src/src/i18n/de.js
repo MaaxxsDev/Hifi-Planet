@@ -156,6 +156,8 @@ export default {
     requestContact: 'Kontakt anfragen',
     featuredBadge: 'Empfohlen',
     tierLabels: ['Einstieg', 'Upgrade', 'Performance', 'Premium', 'High-End', 'Signature', 'Referenz'],
+    tiersHeading: (count) => `${count} Stufen. Ein Ziel: perfekter Klang.`,
+    tiersSubheading: 'Von der soliden Basis bis zum kompromisslosen Meisterwerk – finde dein Paket.',
   },
   leistungen: {
     metaTitle: 'Leistungen',
