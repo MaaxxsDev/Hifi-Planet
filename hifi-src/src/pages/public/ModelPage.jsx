@@ -8,6 +8,19 @@ import DynamicIcon from '../../components/DynamicIcon.jsx';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
+import textureGraphite from '../../assets/textures/metal-graphite.webp';
+import textureDeepBlue from '../../assets/textures/metal-deep-blue.webp';
+import textureWarmBronze from '../../assets/textures/metal-warm-bronze.webp';
+
+// Eine generierte, gebuerstete Metall-Oberflaechenstruktur je Theme (statt Fotos pro
+// Paket, die es fuer echte Kundenpakete nicht gibt) - wird per "overlay"-Blendmodus mit
+// dem bestehenden Farbverlauf kombiniert, sodass die Preis-Staffelung weiterhin die
+// Farbe/Helligkeit steuert, die Textur nur die Material-Oberflaeche liefert.
+const PACKAGE_TEXTURES = {
+  graphite: textureGraphite,
+  'deep-blue': textureDeepBlue,
+  'warm-bronze': textureWarmBronze,
+};
 
 // Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
 // "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen. Die Paket-Sektion sitzt bewusst IMMER
@@ -89,6 +102,7 @@ export default function ModelPage() {
   const { t, language } = useLanguage();
   const { package_card_theme: packageCardTheme } = useSiteSettings();
   const MATERIALS = PACKAGE_THEMES[packageCardTheme] || PACKAGE_THEMES.graphite;
+  const cardTexture = PACKAGE_TEXTURES[packageCardTheme] || PACKAGE_TEXTURES.graphite;
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -125,7 +139,6 @@ export default function ModelPage() {
   // eine eigene Materialstufe (Bronze/Silber/Gold/Platin) bis zur Onyx-Kroenung ganz
   // oben. Das braucht keine zusaetzliche Admin-Einstellung und passt sich automatisch
   // an jede Paketanzahl an.
-  const tierLabels = t('modelPage.tierLabels');
   const rankById = new Map(
     [...packages].sort((a, b) => a.total_price - b.total_price).map((p, i) => [p.id, i])
   );
@@ -133,8 +146,6 @@ export default function ModelPage() {
     const n = packages.length;
     const rank = rankById.get(pkg.id) ?? 0;
     const tierT = n <= 1 ? 0 : rank / (n - 1);
-    const tierNumber = String(rank + 1).padStart(2, '0');
-    const tierLabel = tierLabels[Math.min(Math.floor(tierT * tierLabels.length), tierLabels.length - 1)];
 
     const bgRgb = materialRgbAt(MATERIALS, tierT, 'bg').map(Math.round);
     const accentRgbFloat = materialRgbAt(MATERIALS, tierT, 'accent');
@@ -171,8 +182,6 @@ export default function ModelPage() {
 
     return {
       mutedColor,
-      tierNumber,
-      tierLabel,
       accentColor: `rgb(${accentRgb.join(', ')})`,
       priceColor: `rgb(${priceRgb.join(', ')})`,
       roadOpacity,
@@ -190,7 +199,12 @@ export default function ModelPage() {
       },
       style: {
         backgroundColor: `rgb(${bgRgb.join(', ')})`,
-        backgroundImage: `radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bgRgb.join(', ')}) 55%)`,
+        // Generierte Metall-Oberflaechenstruktur (oberste Ebene, per Blendmodus mit der
+        // Farbe darunter verschmolzen) + der bestehende Eck-Lichtschein-Verlauf darunter -
+        // die Preis-Farbstufe bleibt fuehrend, die Textur liefert nur die Materialoberflaeche.
+        backgroundImage: `url(${cardTexture}), radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bgRgb.join(', ')}) 55%)`,
+        backgroundSize: '480px 480px, cover',
+        backgroundBlendMode: 'overlay, normal',
         borderColor: `rgb(${accentRgb.join(', ')})`,
         boxShadow:
           tierT > 0.04
@@ -241,18 +255,8 @@ export default function ModelPage() {
 
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {packages.map((pkg) => {
-                const {
-                  style,
-                  priceColor,
-                  mutedColor,
-                  iconChipStyle,
-                  tierNumber,
-                  tierLabel,
-                  accentColor,
-                  glowLineStyle,
-                  roadOpacity,
-                  roadGlowOpacity,
-                } = styleOf(pkg);
+                const { style, priceColor, mutedColor, iconChipStyle, accentColor, glowLineStyle, roadOpacity, roadGlowOpacity } =
+                  styleOf(pkg);
 
                 return (
                   <div key={pkg.id} style={style} className="relative flex flex-col overflow-hidden rounded-xl border p-8">
@@ -292,15 +296,6 @@ export default function ModelPage() {
                     {/* Eigener Stapelkontext ueber dem Lichtweg-SVG, damit der Text IMMER lesbar
                         oben liegt statt vom absolut positionierten Hintergrund verdeckt zu werden. */}
                     <div className="relative z-10 flex flex-1 flex-col">
-                      <div className="mb-4 flex items-baseline gap-3">
-                        <span style={{ color: mutedColor }} className="text-3xl font-extralight leading-none">
-                          {tierNumber}
-                        </span>
-                        <span style={{ color: accentColor }} className="text-xs font-semibold uppercase tracking-[0.2em]">
-                          {tierLabel}
-                        </span>
-                      </div>
-
                       {pkg.icon_name && (
                         <div style={iconChipStyle} className="mb-4 flex h-11 w-11 items-center justify-center rounded-full">
                           <DynamicIcon name={pkg.icon_name} className="h-6 w-6" />

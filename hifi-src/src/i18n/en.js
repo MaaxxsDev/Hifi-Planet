@@ -155,7 +155,6 @@ export default {
     productLoading: 'Loading product…',
     requestContact: 'Request contact',
     featuredBadge: 'Recommended',
-    tierLabels: ['Entry', 'Upgrade', 'Performance', 'Premium', 'High-End', 'Signature', 'Reference'],
     tiersHeading: (count) => `${count} tiers. One goal: perfect sound.`,
     tiersSubheading: 'From a solid foundation to an uncompromising masterpiece – find your package.',
   },
