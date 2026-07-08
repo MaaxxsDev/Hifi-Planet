@@ -48,10 +48,6 @@ const PACKAGE_THEMES = {
   ],
 };
 
-// Ein Icon je Kategorie-Stufe (nicht pro Paket - siehe tierLabels), fuer die erklaerende
-// Legende unter der Kachel-Reihe. Reihenfolge muss zu modelPage.tierLabels passen.
-const TIER_ICONS = ['route', 'activity', 'gauge', 'shield-check', 'gem', 'crown', 'star'];
-
 const hslToRgb = (h, s, l) => {
   s /= 100;
   l /= 100;
@@ -130,15 +126,6 @@ export default function ModelPage() {
   // oben. Das braucht keine zusaetzliche Admin-Einstellung und passt sich automatisch
   // an jede Paketanzahl an.
   const tierLabels = t('modelPage.tierLabels');
-  const tierDescriptions = t('modelPage.tierDescriptions');
-  // Erklaerende Legende unter den Karten: ein Eintrag je Kategorie-Stufe (nicht je Paket),
-  // Akzentfarbe an einem repraesentativen Punkt der jeweiligen Kategorie-Spanne entnommen,
-  // damit die Legende farblich zu den Karten oben passt.
-  const tierLegend = tierLabels.map((label, i) => {
-    const legendT = (i + 0.5) / tierLabels.length;
-    const accentRgb = materialRgbAt(MATERIALS, legendT, 'accent').map(Math.round);
-    return { label, description: tierDescriptions[i], icon: TIER_ICONS[i], color: `rgb(${accentRgb.join(', ')})` };
-  });
   const rankById = new Map(
     [...packages].sort((a, b) => a.total_price - b.total_price).map((p, i) => [p.id, i])
   );
@@ -172,6 +159,10 @@ export default function ModelPage() {
     // gleicher Helligkeit wie der Hintergrund landen und unsichtbar werden koennte.
     const mutedColor = `rgb(${hslToRgb(0, 0, contrastingL(38)).join(', ')})`;
     const glowAlpha = (0.1 + tierT * 0.3).toFixed(2);
+    // Der "Lichtweg" im Kartenhintergrund faengt bei der Einstiegsstufe kaum sichtbar an
+    // und wird zur teuersten Stufe hin kraeftiger/leuchtender - genau wie der Rahmen-Glow.
+    const roadOpacity = 0.14 + tierT * 0.22;
+    const roadGlowOpacity = 0.15 + tierT * 0.55;
 
     // Leichter "Lichtschein" von oben rechts statt flacher Flaeche - kommt von oben
     // rechts, weil dort nie Text steht (Titel/Preis/Liste sind linksbuendig), damit die
@@ -184,6 +175,8 @@ export default function ModelPage() {
       tierLabel,
       accentColor: `rgb(${accentRgb.join(', ')})`,
       priceColor: `rgb(${priceRgb.join(', ')})`,
+      roadOpacity,
+      roadGlowOpacity,
       iconChipStyle: {
         backgroundColor: `rgba(${accentRgb.join(', ')}, 0.16)`,
         color: `rgb(${priceRgb.join(', ')})`,
@@ -248,94 +241,123 @@ export default function ModelPage() {
 
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {packages.map((pkg) => {
-                const { style, priceColor, mutedColor, iconChipStyle, tierNumber, tierLabel, accentColor, glowLineStyle } =
-                  styleOf(pkg);
+                const {
+                  style,
+                  priceColor,
+                  mutedColor,
+                  iconChipStyle,
+                  tierNumber,
+                  tierLabel,
+                  accentColor,
+                  glowLineStyle,
+                  roadOpacity,
+                  roadGlowOpacity,
+                } = styleOf(pkg);
 
                 return (
-                  <div key={pkg.id} style={style} className="relative flex flex-col rounded-xl border p-8">
+                  <div key={pkg.id} style={style} className="relative flex flex-col overflow-hidden rounded-xl border p-8">
+                    {/* Abstrakter "Lichtweg" im Hintergrund - je teurer die Stufe, desto praesenter/leuchtender.
+                        Fixe Aspect-Ratio + "slice" statt "none", damit Strich/Kurve bei jeder Kartenhoehe
+                        gleichmaessig aussieht statt verzerrt gestreckt zu werden. */}
+                    <svg
+                      viewBox="0 0 200 260"
+                      preserveAspectRatio="xMidYMid slice"
+                      className="pointer-events-none absolute inset-0 h-full w-full"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M 20 250 C 60 250 70 190 100 150 C 130 110 160 130 175 90 C 185 65 190 40 195 10"
+                        fill="none"
+                        stroke={accentColor}
+                        strokeWidth="14"
+                        strokeLinecap="round"
+                        style={{ opacity: roadGlowOpacity, filter: 'blur(7px)' }}
+                      />
+                      <path
+                        d="M 20 250 C 60 250 70 190 100 150 C 130 110 160 130 175 90 C 185 65 190 40 195 10"
+                        fill="none"
+                        stroke={accentColor}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        style={{ opacity: roadOpacity }}
+                      />
+                    </svg>
+
                     {pkg.is_featured && (
-                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
+                      <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
                         {t('modelPage.featuredBadge')}
                       </span>
                     )}
 
-                    <div className="mb-4 flex items-baseline gap-3">
-                      <span style={{ color: mutedColor }} className="text-3xl font-extralight leading-none">
-                        {tierNumber}
-                      </span>
-                      <span style={{ color: accentColor }} className="text-xs font-semibold uppercase tracking-[0.2em]">
-                        {tierLabel}
-                      </span>
-                    </div>
-
-                    {pkg.icon_name && (
-                      <div style={iconChipStyle} className="mb-4 flex h-11 w-11 items-center justify-center rounded-full">
-                        <DynamicIcon name={pkg.icon_name} className="h-6 w-6" />
+                    {/* Eigener Stapelkontext ueber dem Lichtweg-SVG, damit der Text IMMER lesbar
+                        oben liegt statt vom absolut positionierten Hintergrund verdeckt zu werden. */}
+                    <div className="relative z-10 flex flex-1 flex-col">
+                      <div className="mb-4 flex items-baseline gap-3">
+                        <span style={{ color: mutedColor }} className="text-3xl font-extralight leading-none">
+                          {tierNumber}
+                        </span>
+                        <span style={{ color: accentColor }} className="text-xs font-semibold uppercase tracking-[0.2em]">
+                          {tierLabel}
+                        </span>
                       </div>
-                    )}
 
-                    <h3 className="text-lg font-bold text-white">{pkg.name}</h3>
-                    {pkg.tagline && (
-                      <p style={{ color: mutedColor }} className="mt-1 text-sm">
-                        {pkg.tagline}
-                      </p>
-                    )}
+                      {pkg.icon_name && (
+                        <div style={iconChipStyle} className="mb-4 flex h-11 w-11 items-center justify-center rounded-full">
+                          <DynamicIcon name={pkg.icon_name} className="h-6 w-6" />
+                        </div>
+                      )}
 
-                    <div style={glowLineStyle} className="my-5 h-px w-full" />
+                      <h3 className="text-lg font-bold text-white">{pkg.name}</h3>
+                      {pkg.tagline && (
+                        <p style={{ color: mutedColor }} className="mt-1 text-sm">
+                          {pkg.tagline}
+                        </p>
+                      )}
 
-                    <div className="mb-4">
-                      <p style={{ color: mutedColor }} className="text-xs uppercase tracking-wide">
-                        {t('modelPage.totalPrice')}
-                      </p>
-                      <p style={{ color: priceColor }} className="text-2xl font-extrabold">
-                        {formatPrice(pkg.total_price)}
-                      </p>
-                    </div>
+                      <div style={glowLineStyle} className="my-5 h-px w-full" />
 
-                    <ul className="mb-6 flex-1 space-y-2.5 text-sm">
-                      {pkg.products.map((product) => (
-                        <li key={product.id} className="flex items-start gap-2.5">
-                          <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
-                          <span style={{ color: mutedColor }} className="leading-snug">
-                            {product.name_override || product.scraped_name || t('modelPage.productLoading')}
-                          </span>
-                        </li>
-                      ))}
-                      {pkg.description
-                        ?.split('\n')
-                        .map((line) => line.trim())
-                        .filter(Boolean)
-                        .map((line, i) => (
-                          <li key={`desc-${i}`} className="flex items-start gap-2.5">
+                      <div className="mb-4">
+                        <p style={{ color: mutedColor }} className="text-xs uppercase tracking-wide">
+                          {t('modelPage.totalPrice')}
+                        </p>
+                        <p style={{ color: priceColor }} className="text-2xl font-extrabold">
+                          {formatPrice(pkg.total_price)}
+                        </p>
+                      </div>
+
+                      <ul className="mb-6 flex-1 space-y-2.5 text-sm">
+                        {pkg.products.map((product) => (
+                          <li key={product.id} className="flex items-start gap-2.5">
                             <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
                             <span style={{ color: mutedColor }} className="leading-snug">
-                              {line}
+                              {product.name_override || product.scraped_name || t('modelPage.productLoading')}
                             </span>
                           </li>
                         ))}
-                    </ul>
+                        {pkg.description
+                          ?.split('\n')
+                          .map((line) => line.trim())
+                          .filter(Boolean)
+                          .map((line, i) => (
+                            <li key={`desc-${i}`} className="flex items-start gap-2.5">
+                              <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
+                              <span style={{ color: mutedColor }} className="leading-snug">
+                                {line}
+                              </span>
+                            </li>
+                          ))}
+                      </ul>
 
-                    <Link
-                      to={contactUrl(pkg)}
-                      className="inline-block rounded-md bg-brand-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400"
-                    >
-                      {t('modelPage.requestContact')}
-                    </Link>
+                      <Link
+                        to={contactUrl(pkg)}
+                        className="inline-block rounded-md bg-brand-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400"
+                      >
+                        {t('modelPage.requestContact')}
+                      </Link>
+                    </div>
                   </div>
                 );
               })}
-            </div>
-
-            <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-white/10 pt-10 sm:grid-cols-4 lg:grid-cols-7">
-              {tierLegend.map((item) => (
-                <div key={item.label}>
-                  <DynamicIcon name={item.icon} className="mb-2 h-6 w-6" style={{ color: item.color }} />
-                  <p style={{ color: item.color }} className="text-xs font-semibold uppercase tracking-wider">
-                    {item.label}
-                  </p>
-                  <p className="mt-1 text-xs text-neutral-400">{item.description}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
