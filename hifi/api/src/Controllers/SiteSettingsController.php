@@ -15,13 +15,14 @@ class SiteSettingsController
         'contact_email' => 'info@hifi-planet-amorbach.de',
         'hero_image_path' => null,
         'ga_measurement_id' => null,
+        'package_card_theme' => 'graphite',
     ];
 
     public static function show(): void
     {
         try {
             $stmt = Database::connection()->query(
-                'SELECT phone, whatsapp, contact_email, hero_image_path, ga_measurement_id FROM app_settings WHERE id = 1'
+                'SELECT phone, whatsapp, contact_email, hero_image_path, ga_measurement_id, package_card_theme FROM app_settings WHERE id = 1'
             );
             $row = $stmt->fetch();
         } catch (\Throwable $e) {
@@ -37,14 +38,21 @@ class SiteSettingsController
         Http::send($result);
     }
 
+    private const PACKAGE_CARD_THEMES = ['graphite', 'deep-blue', 'warm-bronze'];
+
     public static function update(): void
     {
         $body = Http::jsonBody();
         $db = Database::connection();
 
+        $packageCardTheme = trim($body['package_card_theme'] ?? '') ?: 'graphite';
+        if (!in_array($packageCardTheme, self::PACKAGE_CARD_THEMES, true)) {
+            $packageCardTheme = 'graphite';
+        }
+
         $db->exec('INSERT IGNORE INTO app_settings (id) VALUES (1)');
         $stmt = $db->prepare(
-            'UPDATE app_settings SET phone = ?, whatsapp = ?, contact_email = ?, hero_image_path = ?, ga_measurement_id = ? WHERE id = 1'
+            'UPDATE app_settings SET phone = ?, whatsapp = ?, contact_email = ?, hero_image_path = ?, ga_measurement_id = ?, package_card_theme = ? WHERE id = 1'
         );
         $stmt->execute([
             trim($body['phone'] ?? '') ?: null,
@@ -52,6 +60,7 @@ class SiteSettingsController
             trim($body['contact_email'] ?? '') ?: null,
             trim($body['hero_image_path'] ?? '') ?: null,
             trim($body['ga_measurement_id'] ?? '') ?: null,
+            $packageCardTheme,
         ]);
 
         self::show();

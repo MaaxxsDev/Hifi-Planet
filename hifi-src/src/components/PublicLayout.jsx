@@ -25,6 +25,7 @@ const DEFAULT_SITE_SETTINGS = {
   contact_email: 'info@hifi-planet-amorbach.de',
   hero_image_path: null,
   ga_measurement_id: null,
+  package_card_theme: 'graphite',
 };
 
 // Das Impressum (und die anderen rechtlichen Pflichtseiten) müssen laut § 5 DDG

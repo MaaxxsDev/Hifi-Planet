@@ -7,26 +7,46 @@ import MaintenanceBypassBanner from '../../components/MaintenanceBypassBanner.js
 import DynamicIcon from '../../components/DynamicIcon.jsx';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
 
 // Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
-// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen - Graphit (Einstieg) -> Bronze ->
-// Silber -> Gold -> Platin -> Onyx (fast schwarz, mit Gold-Glanz als Kroenung ganz oben).
-// Die Paket-Sektion sitzt bewusst IMMER auf einer dunklen Buehne (unabhaengig vom
-// Hell/Dunkel-Modus der Seite, wie ein Fahrzeugkonfigurator) - das ist der groesste Hebel
-// fuer den edlen/luxurioesen Eindruck, den flache helle Kacheln nicht liefern konnten.
-// Jede Stufe hat eine Flaechenfarbe (bg) und eine dazu passende Akzentfarbe (Rahmen/
-// Leucht-Schatten/Preis/Icon) - nur der "Kontakt anfragen"-Button bleibt ueberall
-// einheitlich markengruen, damit die Kernaktion auf jeder Karte wiedererkennbar bleibt.
-// Zwischen zwei Nachbar-Materialien wird in RGB linear interpoliert (siehe materialRgbAt),
-// sodass JEDES Paket (nicht nur die Materialien selbst) eine eigene Abstufung bekommt.
-const MATERIALS = [
-  { bg: [0, 0, 14], accent: [88, 45, 55] }, // Graphit (Einstieg)
-  { bg: [24, 32, 22], accent: [24, 55, 58] }, // Bronze
-  { bg: [212, 10, 24], accent: [212, 18, 68] }, // Silber
-  { bg: [45, 38, 24], accent: [42, 68, 58] }, // Gold
-  { bg: [196, 12, 27], accent: [200, 20, 72] }, // Platin
-  { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
-];
+// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen. Die Paket-Sektion sitzt bewusst IMMER
+// auf einer dunklen Buehne (unabhaengig vom Hell/Dunkel-Modus der Seite, wie ein
+// Fahrzeugkonfigurator) - das ist der groesste Hebel fuer den edlen/luxurioesen Eindruck,
+// den flache helle Kacheln nicht liefern konnten. Jede Stufe hat eine Flaechenfarbe (bg)
+// und eine dazu passende Akzentfarbe (Rahmen/Leucht-Schatten/Preis/Icon) - nur der
+// "Kontakt anfragen"-Button bleibt ueberall einheitlich markengruen, damit die Kernaktion
+// auf jeder Karte wiedererkennbar bleibt. Zwischen zwei Nachbar-Materialien wird in RGB
+// linear interpoliert (siehe materialRgbAt), sodass JEDES Paket (nicht nur die Materialien
+// selbst) eine eigene Abstufung bekommt. Welches Farbschema verwendet wird, waehlt der
+// Kunde selbst unter Admin -> Einstellungen -> Website ("Paket-Kachel-Design") - alle drei
+// laufen bewusst auf dieselbe Onyx+Gold-Kroenung bei der teuersten Stufe zu.
+const PACKAGE_THEMES = {
+  graphite: [
+    { bg: [0, 0, 14], accent: [88, 45, 55] }, // Graphit (Einstieg)
+    { bg: [24, 32, 22], accent: [24, 55, 58] }, // Bronze
+    { bg: [212, 10, 24], accent: [212, 18, 68] }, // Silber
+    { bg: [45, 38, 24], accent: [42, 68, 58] }, // Gold
+    { bg: [196, 12, 27], accent: [200, 20, 72] }, // Platin
+    { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
+  ],
+  'deep-blue': [
+    { bg: [212, 30, 16], accent: [205, 45, 62] }, // Eisblau (Einstieg)
+    { bg: [212, 35, 20], accent: [205, 50, 64] }, // Tiefblau
+    { bg: [190, 30, 22], accent: [190, 45, 62] }, // Petrol
+    { bg: [160, 30, 20], accent: [150, 45, 58] }, // Seegruen
+    { bg: [95, 30, 20], accent: [95, 50, 58] }, // Markengruen
+    { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
+  ],
+  'warm-bronze': [
+    { bg: [28, 22, 16], accent: [32, 40, 55] }, // Warmes Graphit (Einstieg)
+    { bg: [26, 38, 22], accent: [28, 58, 55] }, // Bronze
+    { bg: [32, 42, 24], accent: [34, 62, 56] }, // Kupfer
+    { bg: [38, 45, 24], accent: [38, 66, 58] }, // Amber
+    { bg: [42, 48, 24], accent: [42, 70, 60] }, // Reiches Gold
+    { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
+  ],
+};
 
 const hslToRgb = (h, s, l) => {
   s /= 100;
@@ -67,6 +87,8 @@ export default function ModelPage() {
   const [error, setError] = useState('');
   const maintenance = useMaintenance();
   const { t, language } = useLanguage();
+  const { package_card_theme: packageCardTheme } = useSiteSettings();
+  const MATERIALS = PACKAGE_THEMES[packageCardTheme] || PACKAGE_THEMES.graphite;
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -257,17 +279,27 @@ export default function ModelPage() {
                       </p>
                     </div>
 
-                    <ul style={{ color: mutedColor }} className="mb-6 flex-1 list-disc space-y-1 pl-5 text-sm">
+                    <ul className="mb-6 flex-1 space-y-2.5 text-sm">
                       {pkg.products.map((product) => (
-                        <li key={product.id}>
-                          {product.name_override || product.scraped_name || t('modelPage.productLoading')}
+                        <li key={product.id} className="flex items-start gap-2.5">
+                          <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
+                          <span style={{ color: mutedColor }} className="leading-snug">
+                            {product.name_override || product.scraped_name || t('modelPage.productLoading')}
+                          </span>
                         </li>
                       ))}
                       {pkg.description
                         ?.split('\n')
                         .map((line) => line.trim())
                         .filter(Boolean)
-                        .map((line, i) => <li key={`desc-${i}`}>{line}</li>)}
+                        .map((line, i) => (
+                          <li key={`desc-${i}`} className="flex items-start gap-2.5">
+                            <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
+                            <span style={{ color: mutedColor }} className="leading-snug">
+                              {line}
+                            </span>
+                          </li>
+                        ))}
                     </ul>
 
                     <Link
