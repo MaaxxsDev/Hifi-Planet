@@ -111,6 +111,7 @@ export default function ModelPage() {
   // oben. Das braucht keine zusaetzliche Admin-Einstellung und passt sich automatisch
   // an jede Paketanzahl an.
   const materials = theme === 'dark' ? MATERIALS_DARK : MATERIALS_LIGHT;
+  const tierLabels = t('modelPage.tierLabels');
   const rankById = new Map(
     [...packages].sort((a, b) => a.total_price - b.total_price).map((p, i) => [p.id, i])
   );
@@ -118,6 +119,8 @@ export default function ModelPage() {
     const n = packages.length;
     const rank = rankById.get(pkg.id) ?? 0;
     const tierT = n <= 1 ? 0 : rank / (n - 1);
+    const tierNumber = String(rank + 1).padStart(2, '0');
+    const tierLabel = tierLabels[Math.min(Math.floor(tierT * tierLabels.length), tierLabels.length - 1)];
 
     const bgRgb = materialRgbAt(materials, tierT, 'bg').map(Math.round);
     const accentRgbFloat = materialRgbAt(materials, tierT, 'accent');
@@ -151,6 +154,8 @@ export default function ModelPage() {
     return {
       isDarkCard,
       mutedColor,
+      tierNumber,
+      tierLabel,
       priceColor: `rgb(${priceRgb.join(', ')})`,
       iconChipStyle: {
         backgroundColor: `rgba(${accentRgb.join(', ')}, 0.16)`,
@@ -198,7 +203,7 @@ export default function ModelPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {packages.map((pkg) => {
-          const { isDarkCard, style, priceColor, mutedColor, iconChipStyle } = styleOf(pkg);
+          const { isDarkCard, style, priceColor, mutedColor, iconChipStyle, tierNumber, tierLabel } = styleOf(pkg);
 
           return (
             <div key={pkg.id} style={style} className="relative flex flex-col rounded-xl border p-6">
@@ -207,6 +212,10 @@ export default function ModelPage() {
                   {t('modelPage.featuredBadge')}
                 </span>
               )}
+
+              <p style={{ color: mutedColor }} className="mb-2 text-xs font-semibold uppercase tracking-wider">
+                {tierNumber} · {tierLabel}
+              </p>
 
               {pkg.icon_name && (
                 <div style={iconChipStyle} className="mb-3 flex h-11 w-11 items-center justify-center rounded-full">

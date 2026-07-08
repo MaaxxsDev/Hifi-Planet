@@ -155,6 +155,7 @@ export default {
     productLoading: 'Produkt wird geladen…',
     requestContact: 'Kontakt anfragen',
     featuredBadge: 'Empfohlen',
+    tierLabels: ['Einstieg', 'Upgrade', 'Performance', 'Premium', 'High-End', 'Signature', 'Referenz'],
   },
   leistungen: {
     metaTitle: 'Leistungen',

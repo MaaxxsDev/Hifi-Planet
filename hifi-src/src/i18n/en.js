@@ -155,6 +155,7 @@ export default {
     productLoading: 'Loading product…',
     requestContact: 'Request contact',
     featuredBadge: 'Recommended',
+    tierLabels: ['Entry', 'Upgrade', 'Performance', 'Premium', 'High-End', 'Signature', 'Reference'],
   },
   leistungen: {
     metaTitle: 'Services',
