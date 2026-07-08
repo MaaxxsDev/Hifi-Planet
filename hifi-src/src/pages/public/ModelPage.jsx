@@ -11,6 +11,7 @@ import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
 import textureGraphite from '../../assets/textures/metal-graphite.webp';
 import textureDeepBlue from '../../assets/textures/metal-deep-blue.webp';
 import textureWarmBronze from '../../assets/textures/metal-warm-bronze.webp';
+import roadGlowTexture from '../../assets/textures/road-glow.webp';
 
 // Eine generierte, gebuerstete Metall-Oberflaechenstruktur je Theme (statt Fotos pro
 // Paket, die es fuer echte Kundenpakete nicht gibt) - wird per "overlay"-Blendmodus mit
@@ -172,10 +173,29 @@ export default function ModelPage() {
     // gleicher Helligkeit wie der Hintergrund landen und unsichtbar werden koennte.
     const mutedColor = `rgb(${hslToRgb(0, 0, contrastingL(38)).join(', ')})`;
     const glowAlpha = (0.1 + tierT * 0.3).toFixed(2);
-    // Der "Lichtweg" im Kartenhintergrund faengt bei der Einstiegsstufe kaum sichtbar an
-    // und wird zur teuersten Stufe hin kraeftiger/leuchtender - genau wie der Rahmen-Glow.
-    const roadOpacity = 0.14 + tierT * 0.22;
-    const roadGlowOpacity = 0.15 + tierT * 0.55;
+    // Der "Lichtweg" im Kartenhintergrund ist ein generiertes, fotografisches Glow-Motiv
+    // (weisser Lichtstreif auf Schwarz) statt einer duennen Vektorlinie - per CSS-Maske
+    // wird die weisse Kurve zur Alphamaske fuer die jeweilige Akzentfarbe, sodass das
+    // Motiv bei JEDER Preisstufe/JEDEM Theme automatisch in der richtigen Farbe leuchtet.
+    // Schon die Einstiegsstufe bleibt sichtbar praesent statt fast unsichtbar - die
+    // Preis-Staffelung zeigt sich in der Intensitaet, nicht im "Ob ueberhaupt sichtbar".
+    const roadOpacity = (0.55 + tierT * 0.45).toFixed(2);
+    const roadGlowOpacity = (0.2 + tierT * 0.45).toFixed(2);
+    const roadMaskStyle = {
+      backgroundColor: `rgb(${accentRgb.join(', ')})`,
+      WebkitMaskImage: `url(${roadGlowTexture})`,
+      maskImage: `url(${roadGlowTexture})`,
+      // WebP-Dateien bringen einen (durchgehend deckenden) Alphakanal mit - ohne explizites
+      // "luminance" bevorzugt CSS per Default den Alphakanal statt der Helligkeit, wodurch
+      // die Maske komplett deckend (= volle Flaeche statt duenner Kurve) gerendert wuerde.
+      maskMode: 'luminance',
+      WebkitMaskSize: 'cover',
+      maskSize: 'cover',
+      WebkitMaskPosition: 'center',
+      maskPosition: 'center',
+      WebkitMaskRepeat: 'no-repeat',
+      maskRepeat: 'no-repeat',
+    };
     // Die Metall-Textur wird als eigene Ebene mit eigener Deckkraft gefahren (statt fest
     // per background-blend-mode verschmolzen) - bei der hellen Einstiegsstufe bleibt sie
     // kaum sichtbar, damit die Karte wirklich hell/weiss bleibt statt durch die dunkle
@@ -194,6 +214,7 @@ export default function ModelPage() {
       priceColor: `rgb(${priceRgb.join(', ')})`,
       roadOpacity,
       roadGlowOpacity,
+      roadMaskStyle,
       textureStyle: {
         backgroundImage: `url(${cardTexture})`,
         backgroundSize: '480px 480px',
@@ -256,11 +277,22 @@ export default function ModelPage() {
               <h2 className="text-2xl font-bold text-white sm:text-3xl">{t('modelPage.tiersHeading')(packages.length)}</h2>
               <p className="mx-auto mt-2 max-w-xl text-sm text-neutral-400">{t('modelPage.tiersSubheading')}</p>
             </div>
+          </div>
 
+          {/* Eigener, deutlich breiterer Rahmen fuer die Kartenreihe im Scroll-Band-Modus:
+              die restliche Seite haelt sich an die normale Lesebreite (max-w-6xl), aber
+              die Kacheln sollen auf breiten Bildschirmen wirklich die volle Breite nutzen
+              koennen, statt unnoetig frueh in den Scroll-Modus zu wechseln. */}
+          <div className={isStripLayout ? 'mx-auto max-w-[1800px] px-4 sm:px-6' : 'mx-auto max-w-6xl px-4 sm:px-6'}>
             <div
               className={
                 isStripLayout
-                  ? 'flex items-stretch gap-5 overflow-x-auto pb-2 snap-x snap-mandatory'
+                  ? // flex statt fixer Breite: Kacheln teilen sich die volle Zeilenbreite und
+                    // wachsen bis max-w, sobald genug Platz da ist - erst wenn selbst die
+                    // Mindestbreite nicht mehr fuer alle passt, greift das seitliche Scrollen.
+                    // Der Scrollbalken bekommt ein dezentes, zum dunklen Design passendes
+                    // Styling statt des vollen System-Scrollbalkens.
+                    'flex items-stretch gap-5 overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/25'
                   : 'grid gap-6 sm:grid-cols-2 xl:grid-cols-3'
               }
             >
@@ -269,10 +301,10 @@ export default function ModelPage() {
                   style,
                   priceColor,
                   mutedColor,
-                  accentColor,
                   glowLineStyle,
                   roadOpacity,
                   roadGlowOpacity,
+                  roadMaskStyle,
                   textureStyle,
                   isDarkCard,
                 } = styleOf(pkg);
@@ -283,36 +315,25 @@ export default function ModelPage() {
                     style={style}
                     className={
                       isStripLayout
-                        ? 'relative flex w-[190px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border p-6 sm:w-[210px]'
+                        ? 'relative flex grow shrink basis-[190px] min-w-[190px] max-w-[240px] snap-start flex-col overflow-hidden rounded-xl border p-6 sm:basis-[210px] sm:p-7'
                         : 'relative flex flex-col overflow-hidden rounded-xl border p-8'
                     }
                   >
-                    {/* Abstrakter "Lichtweg" im Hintergrund - je teurer die Stufe, desto praesenter/leuchtender.
-                        Fixe Aspect-Ratio + "slice" statt "none", damit Strich/Kurve bei jeder Kartenhoehe
-                        gleichmaessig aussieht statt verzerrt gestreckt zu werden. */}
-                    <svg
-                      viewBox="0 0 200 260"
-                      preserveAspectRatio="xMidYMid slice"
-                      className="pointer-events-none absolute inset-0 h-full w-full"
+                    {/* Abstrakter "Lichtweg" im Hintergrund - ein generiertes Foto-Glow-Motiv
+                        (weisser Lichtstreif auf Schwarz), per CSS-Maske in die jeweilige
+                        Akzentfarbe eingefaerbt. Zwei Ebenen: eine weich verwischte Halo-Ebene
+                        fuer die Tiefe darunter, eine scharfe Ebene fuer die Kontur darueber -
+                        je teurer die Stufe, desto praesenter/leuchtender beide. */}
+                    <div
+                      className="pointer-events-none absolute inset-0"
+                      style={{ ...roadMaskStyle, opacity: roadGlowOpacity, filter: 'blur(18px)' }}
                       aria-hidden="true"
-                    >
-                      <path
-                        d="M 20 250 C 60 250 70 190 100 150 C 130 110 160 130 175 90 C 185 65 190 40 195 10"
-                        fill="none"
-                        stroke={accentColor}
-                        strokeWidth="14"
-                        strokeLinecap="round"
-                        style={{ opacity: roadGlowOpacity, filter: 'blur(7px)' }}
-                      />
-                      <path
-                        d="M 20 250 C 60 250 70 190 100 150 C 130 110 160 130 175 90 C 185 65 190 40 195 10"
-                        fill="none"
-                        stroke={accentColor}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        style={{ opacity: roadOpacity }}
-                      />
-                    </svg>
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-0"
+                      style={{ ...roadMaskStyle, opacity: roadOpacity }}
+                      aria-hidden="true"
+                    />
 
                     {/* Metall-Textur als eigene Ebene mit eigener, stufenabhaengiger Deckkraft -
                         so bleibt die helle Einstiegsstufe wirklich hell statt durch die dunkle
