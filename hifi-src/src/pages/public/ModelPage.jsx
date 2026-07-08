@@ -48,6 +48,10 @@ const PACKAGE_THEMES = {
   ],
 };
 
+// Ein Icon je Kategorie-Stufe (nicht pro Paket - siehe tierLabels), fuer die erklaerende
+// Legende unter der Kachel-Reihe. Reihenfolge muss zu modelPage.tierLabels passen.
+const TIER_ICONS = ['route', 'activity', 'gauge', 'shield-check', 'gem', 'crown', 'star'];
+
 const hslToRgb = (h, s, l) => {
   s /= 100;
   l /= 100;
@@ -126,6 +130,15 @@ export default function ModelPage() {
   // oben. Das braucht keine zusaetzliche Admin-Einstellung und passt sich automatisch
   // an jede Paketanzahl an.
   const tierLabels = t('modelPage.tierLabels');
+  const tierDescriptions = t('modelPage.tierDescriptions');
+  // Erklaerende Legende unter den Karten: ein Eintrag je Kategorie-Stufe (nicht je Paket),
+  // Akzentfarbe an einem repraesentativen Punkt der jeweiligen Kategorie-Spanne entnommen,
+  // damit die Legende farblich zu den Karten oben passt.
+  const tierLegend = tierLabels.map((label, i) => {
+    const legendT = (i + 0.5) / tierLabels.length;
+    const accentRgb = materialRgbAt(MATERIALS, legendT, 'accent').map(Math.round);
+    return { label, description: tierDescriptions[i], icon: TIER_ICONS[i], color: `rgb(${accentRgb.join(', ')})` };
+  });
   const rankById = new Map(
     [...packages].sort((a, b) => a.total_price - b.total_price).map((p, i) => [p.id, i])
   );
@@ -311,6 +324,18 @@ export default function ModelPage() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-white/10 pt-10 sm:grid-cols-4 lg:grid-cols-7">
+              {tierLegend.map((item) => (
+                <div key={item.label}>
+                  <DynamicIcon name={item.icon} className="mb-2 h-6 w-6" style={{ color: item.color }} />
+                  <p style={{ color: item.color }} className="text-xs font-semibold uppercase tracking-wider">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-400">{item.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
