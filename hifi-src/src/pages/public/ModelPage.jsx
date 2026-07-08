@@ -23,41 +23,41 @@ const PACKAGE_TEXTURES = {
 };
 
 // Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
-// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen. Die Paket-Sektion sitzt bewusst IMMER
-// auf einer dunklen Buehne (unabhaengig vom Hell/Dunkel-Modus der Seite, wie ein
-// Fahrzeugkonfigurator) - das ist der groesste Hebel fuer den edlen/luxurioesen Eindruck,
-// den flache helle Kacheln nicht liefern konnten. Jede Stufe hat eine Flaechenfarbe (bg)
-// und eine dazu passende Akzentfarbe (Rahmen/Leucht-Schatten/Preis/Icon) - nur der
-// "Kontakt anfragen"-Button bleibt ueberall einheitlich markengruen, damit die Kernaktion
-// auf jeder Karte wiedererkennbar bleibt. Zwischen zwei Nachbar-Materialien wird in RGB
-// linear interpoliert (siehe materialRgbAt), sodass JEDES Paket (nicht nur die Materialien
-// selbst) eine eigene Abstufung bekommt. Welches Farbschema verwendet wird, waehlt der
-// Kunde selbst unter Admin -> Einstellungen -> Website ("Paket-Kachel-Design") - alle drei
-// laufen bewusst auf dieselbe Onyx+Gold-Kroenung bei der teuersten Stufe zu.
+// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen - hell/weiss beim Einstieg (passt zum
+// hellen Seitenstil), zunehmend gesaettigter und dunkler zur teuersten Stufe hin, aber
+// NIE bis zu Grau/Schwarz entsaettigt - die oberste Stufe bleibt eine satte, tiefe
+// Farbe (tiefes Gruen/Saphirblau/Bordeaux-Bronze je nach Theme). Jede Stufe hat eine
+// Flaechenfarbe (bg) und eine dazu passende Akzentfarbe (Rahmen/Leucht-Schatten/Preis/
+// Icon) - nur der "Kontakt anfragen"-Button bleibt ueberall einheitlich markengruen,
+// damit die Kernaktion auf jeder Karte wiedererkennbar bleibt. Zwischen zwei Nachbar-
+// Materialien wird in RGB linear interpoliert (siehe materialRgbAt), sodass JEDES Paket
+// (nicht nur die Materialien selbst) eine eigene Abstufung bekommt. Welches Farbschema
+// verwendet wird, waehlt der Kunde selbst unter Admin -> Einstellungen -> Website
+// ("Paket-Kachel-Design").
 const PACKAGE_THEMES = {
   graphite: [
-    { bg: [0, 0, 14], accent: [88, 45, 55] }, // Graphit (Einstieg)
-    { bg: [24, 32, 22], accent: [24, 55, 58] }, // Bronze
-    { bg: [212, 10, 24], accent: [212, 18, 68] }, // Silber
-    { bg: [45, 38, 24], accent: [42, 68, 58] }, // Gold
-    { bg: [196, 12, 27], accent: [200, 20, 72] }, // Platin
-    { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
+    { bg: [215, 6, 98], accent: [214, 20, 45] },
+    { bg: [214, 9, 85], accent: [213, 24, 46] },
+    { bg: [213, 11, 65], accent: [211, 28, 48] },
+    { bg: [212, 13, 45], accent: [209, 32, 52] },
+    { bg: [211, 15, 28], accent: [207, 36, 58] },
+    { bg: [210, 17, 15], accent: [205, 40, 64] },
   ],
   'deep-blue': [
-    { bg: [212, 30, 16], accent: [205, 45, 62] }, // Eisblau (Einstieg)
-    { bg: [212, 35, 20], accent: [205, 50, 64] }, // Tiefblau
-    { bg: [190, 30, 22], accent: [190, 45, 62] }, // Petrol
-    { bg: [160, 30, 20], accent: [150, 45, 58] }, // Seegruen
-    { bg: [95, 30, 20], accent: [95, 50, 58] }, // Markengruen
-    { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
+    { bg: [210, 10, 98], accent: [205, 45, 50] },
+    { bg: [212, 30, 85], accent: [205, 48, 52] },
+    { bg: [212, 40, 65], accent: [203, 52, 55] },
+    { bg: [210, 50, 45], accent: [200, 58, 58] },
+    { bg: [208, 58, 28], accent: [198, 62, 62] },
+    { bg: [205, 65, 15], accent: [195, 68, 68] },
   ],
   'warm-bronze': [
-    { bg: [28, 22, 16], accent: [32, 40, 55] }, // Warmes Graphit (Einstieg)
-    { bg: [26, 38, 22], accent: [28, 58, 55] }, // Bronze
-    { bg: [32, 42, 24], accent: [34, 62, 56] }, // Kupfer
-    { bg: [38, 45, 24], accent: [38, 66, 58] }, // Amber
-    { bg: [42, 48, 24], accent: [42, 70, 60] }, // Reiches Gold
-    { bg: [225, 22, 5], accent: [45, 78, 68] }, // Onyx
+    { bg: [35, 12, 98], accent: [32, 55, 42] },
+    { bg: [36, 32, 85], accent: [30, 58, 44] },
+    { bg: [34, 42, 65], accent: [28, 60, 46] },
+    { bg: [30, 48, 45], accent: [26, 64, 50] },
+    { bg: [26, 54, 28], accent: [24, 68, 54] },
+    { bg: [20, 60, 15], accent: [22, 72, 58] },
   ],
 };
 
@@ -174,6 +174,11 @@ export default function ModelPage() {
     // und wird zur teuersten Stufe hin kraeftiger/leuchtender - genau wie der Rahmen-Glow.
     const roadOpacity = 0.14 + tierT * 0.22;
     const roadGlowOpacity = 0.15 + tierT * 0.55;
+    // Die Metall-Textur wird als eigene Ebene mit eigener Deckkraft gefahren (statt fest
+    // per background-blend-mode verschmolzen) - bei der hellen Einstiegsstufe bleibt sie
+    // kaum sichtbar, damit die Karte wirklich hell/weiss bleibt statt durch die dunkle
+    // Textur grau anzulaufen; zur teuersten Stufe hin wird sie praesenter.
+    const textureOpacity = (0.05 + tierT * 0.32).toFixed(2);
 
     // Leichter "Lichtschein" von oben rechts statt flacher Flaeche - kommt von oben
     // rechts, weil dort nie Text steht (Titel/Preis/Liste sind linksbuendig), damit die
@@ -181,11 +186,18 @@ export default function ModelPage() {
     const highlight = hslToRgb(bgHsl[0], Math.max(bgHsl[1] - 8, 0), Math.min(bgL + 16, 99));
 
     return {
+      isDarkCard,
       mutedColor,
       accentColor: `rgb(${accentRgb.join(', ')})`,
       priceColor: `rgb(${priceRgb.join(', ')})`,
       roadOpacity,
       roadGlowOpacity,
+      textureStyle: {
+        backgroundImage: `url(${cardTexture})`,
+        backgroundSize: '480px 480px',
+        mixBlendMode: 'overlay',
+        opacity: textureOpacity,
+      },
       iconChipStyle: {
         backgroundColor: `rgba(${accentRgb.join(', ')}, 0.16)`,
         color: `rgb(${priceRgb.join(', ')})`,
@@ -199,12 +211,7 @@ export default function ModelPage() {
       },
       style: {
         backgroundColor: `rgb(${bgRgb.join(', ')})`,
-        // Generierte Metall-Oberflaechenstruktur (oberste Ebene, per Blendmodus mit der
-        // Farbe darunter verschmolzen) + der bestehende Eck-Lichtschein-Verlauf darunter -
-        // die Preis-Farbstufe bleibt fuehrend, die Textur liefert nur die Materialoberflaeche.
-        backgroundImage: `url(${cardTexture}), radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bgRgb.join(', ')}) 55%)`,
-        backgroundSize: '480px 480px, cover',
-        backgroundBlendMode: 'overlay, normal',
+        backgroundImage: `radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bgRgb.join(', ')}) 55%)`,
         borderColor: `rgb(${accentRgb.join(', ')})`,
         boxShadow:
           tierT > 0.04
@@ -243,20 +250,29 @@ export default function ModelPage() {
       </div>
 
       {packages.length > 0 && (
-        // Die Paket-Sektion bekommt bewusst eine eigene, immer dunkle Buehne (wie ein
-        // Fahrzeugkonfigurator) statt der hellen/dunklen Seiten-Textur zu folgen - das
-        // ist der Haupthebel fuer den edlen Eindruck, den flache Kacheln nicht liefern.
-        <section className="bg-neutral-950 py-14 sm:py-20">
+        <section className="py-14 sm:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-10 text-center sm:mb-14">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">{t('modelPage.tiersHeading')(packages.length)}</h2>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-neutral-400">{t('modelPage.tiersSubheading')}</p>
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
+                {t('modelPage.tiersHeading')(packages.length)}
+              </h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-neutral-500 dark:text-neutral-400">{t('modelPage.tiersSubheading')}</p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {packages.map((pkg) => {
-                const { style, priceColor, mutedColor, iconChipStyle, accentColor, glowLineStyle, roadOpacity, roadGlowOpacity } =
-                  styleOf(pkg);
+                const {
+                  style,
+                  priceColor,
+                  mutedColor,
+                  iconChipStyle,
+                  accentColor,
+                  glowLineStyle,
+                  roadOpacity,
+                  roadGlowOpacity,
+                  textureStyle,
+                  isDarkCard,
+                } = styleOf(pkg);
 
                 return (
                   <div key={pkg.id} style={style} className="relative flex flex-col overflow-hidden rounded-xl border p-8">
@@ -287,6 +303,11 @@ export default function ModelPage() {
                       />
                     </svg>
 
+                    {/* Metall-Textur als eigene Ebene mit eigener, stufenabhaengiger Deckkraft -
+                        so bleibt die helle Einstiegsstufe wirklich hell statt durch die dunkle
+                        Textur grau anzulaufen. */}
+                    <div className="pointer-events-none absolute inset-0" style={textureStyle} aria-hidden="true" />
+
                     {pkg.is_featured && (
                       <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
                         {t('modelPage.featuredBadge')}
@@ -302,7 +323,7 @@ export default function ModelPage() {
                         </div>
                       )}
 
-                      <h3 className="text-lg font-bold text-white">{pkg.name}</h3>
+                      <h3 className={`text-lg font-bold ${isDarkCard ? 'text-white' : 'text-neutral-900'}`}>{pkg.name}</h3>
                       {pkg.tagline && (
                         <p style={{ color: mutedColor }} className="mt-1 text-sm">
                           {pkg.tagline}
@@ -323,7 +344,7 @@ export default function ModelPage() {
                       <ul className="mb-6 flex-1 space-y-2.5 text-sm">
                         {pkg.products.map((product) => (
                           <li key={product.id} className="flex items-start gap-2.5">
-                            <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
+                            <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: priceColor }} />
                             <span style={{ color: mutedColor }} className="leading-snug">
                               {product.name_override || product.scraped_name || t('modelPage.productLoading')}
                             </span>
@@ -335,7 +356,7 @@ export default function ModelPage() {
                           .filter(Boolean)
                           .map((line, i) => (
                             <li key={`desc-${i}`} className="flex items-start gap-2.5">
-                              <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accentColor }} />
+                              <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: priceColor }} />
                               <span style={{ color: mutedColor }} className="leading-snug">
                                 {line}
                               </span>
