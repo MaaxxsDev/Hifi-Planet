@@ -151,7 +151,7 @@ export default {
     breadcrumbVehicles: 'Fahrzeuge',
     titleSuffix: 'Sound-Pakete',
     empty: 'Für dieses Modell sind noch keine Pakete hinterlegt.',
-    totalPrice: 'Gesamtpreis (ca.)',
+    totalPrice: 'ab ca.',
     productLoading: 'Produkt wird geladen…',
     requestContact: 'Kontakt anfragen',
     featuredBadge: 'Empfohlen',

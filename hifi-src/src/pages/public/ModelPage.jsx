@@ -4,7 +4,6 @@ import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
 import MaintenanceNotice from '../../components/MaintenanceNotice.jsx';
 import MaintenanceBypassBanner from '../../components/MaintenanceBypassBanner.jsx';
-import DynamicIcon from '../../components/DynamicIcon.jsx';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
@@ -23,46 +22,6 @@ const PACKAGE_TEXTURES = {
   'warm-bronze': textureWarmBronze,
 };
 
-// Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
-// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen. Die Karten bleiben durchgehend dunkel
-// (wie eine Fahrzeugkonfigurator-Buehne) - die Preis-Staffelung zeigt sich nicht in
-// Hell/Dunkel, sondern im Farbton: jedes Theme wandert ueber die 6 Stufen durch eine
-// eigene Farbfamilie (z.B. Graphit: kuehles Grau -> Petrol -> Gruen -> Gold), angelehnt
-// an das vom Kunden gezeigte Referenzbild. Jede Stufe hat eine Flaechenfarbe (bg) und
-// eine dazu passende, hellere Akzentfarbe (Rahmen/Leucht-Schatten/Preis/Icon) - nur der
-// "Kontakt anfragen"-Button bleibt ueberall einheitlich markengruen, damit die
-// Kernaktion auf jeder Karte wiedererkennbar bleibt. Zwischen zwei Nachbar-Materialien
-// wird in RGB linear interpoliert (siehe materialRgbAt), sodass JEDES Paket (nicht nur
-// die Materialien selbst) eine eigene Abstufung bekommt. Welches Farbschema verwendet
-// wird, waehlt der Kunde selbst unter Admin -> Einstellungen -> Website
-// ("Paket-Kachel-Design").
-const PACKAGE_THEMES = {
-  graphite: [
-    { bg: [220, 8, 22], accent: [220, 10, 60] },
-    { bg: [195, 18, 20], accent: [195, 35, 58] },
-    { bg: [175, 35, 19], accent: [175, 55, 58] },
-    { bg: [150, 40, 17], accent: [150, 55, 56] },
-    { bg: [120, 38, 15], accent: [120, 55, 55] },
-    { bg: [42, 55, 18], accent: [42, 75, 60] },
-  ],
-  'deep-blue': [
-    { bg: [210, 8, 22], accent: [210, 12, 58] },
-    { bg: [195, 30, 19], accent: [195, 45, 58] },
-    { bg: [210, 45, 17], accent: [210, 60, 58] },
-    { bg: [220, 55, 15], accent: [220, 65, 60] },
-    { bg: [230, 58, 12], accent: [230, 68, 62] },
-    { bg: [240, 62, 10], accent: [240, 72, 65] },
-  ],
-  'warm-bronze': [
-    { bg: [30, 8, 22], accent: [30, 12, 58] },
-    { bg: [38, 35, 20], accent: [38, 55, 60] },
-    { bg: [30, 50, 18], accent: [30, 65, 60] },
-    { bg: [20, 50, 15], accent: [20, 65, 60] },
-    { bg: [10, 48, 13], accent: [10, 62, 60] },
-    { bg: [0, 45, 11], accent: [0, 58, 62] },
-  ],
-};
-
 const hslToRgb = (h, s, l) => {
   s /= 100;
   l /= 100;
@@ -71,30 +30,77 @@ const hslToRgb = (h, s, l) => {
   const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
   return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
 };
-const rgbToHsl = (r, g, b) => {
-  (r /= 255), (g /= 255), (b /= 255);
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  if (max === min) return [0, 0, l * 100];
-  const d = max - min;
-  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-  const h = max === r ? ((g - b) / d + (g < b ? 6 : 0)) * 60 : max === g ? ((b - r) / d + 2) * 60 : ((r - g) / d + 4) * 60;
-  return [h, s * 100, l * 100];
-};
 const mixRgb = (c1, c2, t) => [0, 1, 2].map((i) => c1[i] + (c2[i] - c1[i]) * t);
+// Fuer die Themes ohne eigene Kunden-Referenzfarben wird der Rahmen aus der Flaechenfarbe
+// abgeleitet (etwas heller) statt von Hand 8 weitere Werte zu pflegen - im Referenzdesign
+// liegt der Rahmenton durchgaengig ca. 15-25 Helligkeitsstufen ueber der Flaeche.
+const deriveBorder = (bg) => bg.map((c) => Math.min(c + 18, 255));
+const hslStops = (stops) =>
+  stops.map(({ bg, accent }) => {
+    const bgRgb = hslToRgb(...bg);
+    return { bg: bgRgb, accent: hslToRgb(...accent), border: deriveBorder(bgRgb) };
+  });
+
+// Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
+// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen. Die Karten bleiben durchgehend dunkel
+// (wie eine Fahrzeugkonfigurator-Buehne) - die Preis-Staffelung zeigt sich nicht in
+// Hell/Dunkel, sondern im Farbton. "graphite" uebernimmt die exakten 8 Referenzfarben aus
+// dem vom Kunden gelieferten Kachel-Design (Base/Clear/Drive/Prime/Elite R/Apex/The
+// Statement/Limitless: kuehles Grau -> Petrol -> Gruen -> Gold); die anderen beiden Themes
+// sind eigene Farbfamilien im selben Aufbau. Jede Stufe hat eine Flaechenfarbe (bg), eine
+// Akzentfarbe (Name/Unterstrich/Lichtweg) und eine Rahmenfarbe (border) - nur der "Kontakt
+// anfragen"-Button bleibt ueberall einheitlich markengruen. Zwischen zwei Nachbar-
+// Materialien wird in RGB linear interpoliert (siehe materialRgbAt), sodass JEDES Paket
+// (nicht nur die Materialien selbst) eine eigene Abstufung bekommt, egal ob ein Modell 2
+// oder 12 Pakete hat. Welches Farbschema verwendet wird, waehlt der Kunde selbst unter
+// Admin -> Einstellungen -> Website ("Paket-Kachel-Design").
+const PACKAGE_THEMES = {
+  graphite: [
+    { bg: [28, 28, 28], accent: [182, 182, 182], border: [42, 42, 42] },
+    { bg: [33, 33, 33], accent: [211, 211, 211], border: [46, 46, 46] },
+    { bg: [22, 40, 43], accent: [143, 184, 189], border: [38, 56, 59] },
+    { bg: [18, 41, 22], accent: [111, 191, 115], border: [31, 58, 36] },
+    { bg: [18, 51, 18], accent: [99, 211, 79], border: [32, 74, 28] },
+    { bg: [23, 58, 15], accent: [139, 234, 60], border: [43, 85, 24] },
+    { bg: [51, 39, 13], accent: [217, 168, 60], border: [74, 58, 22] },
+    { bg: [61, 47, 12], accent: [242, 193, 78], border: [90, 71, 24] },
+  ],
+  'deep-blue': hslStops([
+    { bg: [210, 8, 22], accent: [210, 12, 58] },
+    { bg: [195, 30, 19], accent: [195, 45, 58] },
+    { bg: [210, 45, 17], accent: [210, 60, 58] },
+    { bg: [220, 55, 15], accent: [220, 65, 60] },
+    { bg: [230, 58, 12], accent: [230, 68, 62] },
+    { bg: [240, 62, 10], accent: [240, 72, 65] },
+  ]),
+  'warm-bronze': hslStops([
+    { bg: [30, 8, 22], accent: [30, 12, 58] },
+    { bg: [38, 35, 20], accent: [38, 55, 60] },
+    { bg: [30, 50, 18], accent: [30, 65, 60] },
+    { bg: [20, 50, 15], accent: [20, 65, 60] },
+    { bg: [10, 48, 13], accent: [10, 62, 60] },
+    { bg: [0, 45, 11], accent: [0, 58, 62] },
+  ]),
+};
+
 // Findet die zwei Nachbar-Materialien fuer einen Preis-Rang t (0..1) und mischt linear
-// dazwischen - dadurch bekommt jedes Paket eine eigene Abstufung, nicht nur die 6
-// Materialien selbst, egal ob ein Modell 2 oder 12 Pakete hat. Gemischt wird in RGB statt
-// HSL: der Farbton zweier benachbarter Materialien (z.B. Bronze 24° -> Silber 212°) liegt
-// oft weit auseinander, eine HSL-Interpolation liefe dann mitten durch fremde Farbtoene
-// (Gelb/Gruen) statt sauber zwischen den beiden Materialien zu vermitteln.
+// dazwischen - dadurch bekommt jedes Paket eine eigene Abstufung, nicht nur die Materialien
+// selbst. Gemischt wird in RGB statt HSL: der Farbton zweier benachbarter Materialien (z.B.
+// Bronze 24° -> Silber 212°) liegt oft weit auseinander, eine HSL-Interpolation liefe dann
+// mitten durch fremde Farbtoene (Gelb/Gruen) statt sauber zwischen den beiden zu vermitteln.
 const materialRgbAt = (materials, t, key) => {
   const n = materials.length;
   const pos = t * (n - 1);
   const idx = Math.min(Math.floor(pos), n - 2);
   const frac = pos - idx;
-  return mixRgb(hslToRgb(...materials[idx][key]), hslToRgb(...materials[idx + 1][key]), frac);
+  return mixRgb(materials[idx][key], materials[idx + 1][key], frac);
 };
+
+// Feste Preis-/Label-Farbe unabhaengig von der Preisstufe (wie im Referenzdesign) - nur
+// der Name/Unterstrich/Lichtweg wandert farblich mit der Preisstufe, der Preis selbst
+// bleibt auf jeder Karte gleich lesbar in neutralem Hell.
+const PRICE_COLOR = 'rgb(242, 242, 242)';
+const LABEL_COLOR = 'rgb(138, 138, 138)';
 
 export default function ModelPage() {
   const { brandSlug, modelSlug } = useParams();
@@ -151,28 +157,8 @@ export default function ModelPage() {
     const tierT = n <= 1 ? 0 : rank / (n - 1);
 
     const bgRgb = materialRgbAt(MATERIALS, tierT, 'bg').map(Math.round);
-    const accentRgbFloat = materialRgbAt(MATERIALS, tierT, 'accent');
-    const accentRgb = accentRgbFloat.map(Math.round);
-    const bgHsl = rgbToHsl(...bgRgb);
-    const accentHsl = rgbToHsl(...accentRgbFloat);
-    const bgL = bgHsl[2];
-    // Ab hier reicht der Hintergrund nicht mehr zum Kontrastieren mit dunklem Text -
-    // Bronze/Gold-Mitteltoene brauchen (wie die Buttons) helle statt dunkle Schrift.
-    // Diese Entscheidung haengt bewusst an der Flaechenfarbe, nicht am Lichtschein
-    // unten, damit der Text unabhaengig vom Material IMMER gut lesbar bleibt.
-    const isDarkCard = bgL < 60;
-    // Garantiert einen Mindestabstand zur tatsaechlichen Hintergrund-Helligkeit statt
-    // sich auf einen festen Hell/Dunkel-Klassenwechsel zu verlassen - sonst kann ein
-    // Hintergrund GENAU im Grenzbereich (z.B. ein kuehles Mittelgrau nahe der 60%-Schwelle)
-    // eine "eigentlich helle" Textfarbe bekommen, die kaum noch Kontrast zum Hintergrund hat.
-    const contrastingL = (delta) => (isDarkCard ? Math.min(bgL + delta, 92) : Math.max(bgL - delta, 10));
-    // Preis/Icon brauchen den kraeftigsten Kontrast, da sie die Kernaussage der Karte sind.
-    const priceRgb = hslToRgb(accentHsl[0], Math.min(accentHsl[1] + 10, 90), contrastingL(48));
-    // Dezente Texte (Label/Slogan/Liste) bleiben neutral-grau, aber ebenfalls mit
-    // garantiertem Abstand zur Flaeche - kein fixes Tailwind-Grau mehr, das zufaellig auf
-    // gleicher Helligkeit wie der Hintergrund landen und unsichtbar werden koennte.
-    const mutedColor = `rgb(${hslToRgb(0, 0, contrastingL(38)).join(', ')})`;
-    const glowAlpha = (0.1 + tierT * 0.3).toFixed(2);
+    const accentRgb = materialRgbAt(MATERIALS, tierT, 'accent').map(Math.round);
+    const borderRgb = materialRgbAt(MATERIALS, tierT, 'border').map(Math.round);
     // Der "Lichtweg" im Kartenhintergrund ist ein generiertes, fotografisches Glow-Motiv
     // (weisser Lichtstreif auf Schwarz) statt einer duennen Vektorlinie - per CSS-Maske
     // wird die weisse Kurve zur Alphamaske fuer die jeweilige Akzentfarbe, sodass das
@@ -202,16 +188,8 @@ export default function ModelPage() {
     // Textur grau anzulaufen; zur teuersten Stufe hin wird sie praesenter.
     const textureOpacity = (0.05 + tierT * 0.32).toFixed(2);
 
-    // Leichter "Lichtschein" von oben rechts statt flacher Flaeche - kommt von oben
-    // rechts, weil dort nie Text steht (Titel/Preis/Liste sind linksbuendig), damit die
-    // Aufhellung die Lesbarkeit nirgends beeintraechtigt.
-    const highlight = hslToRgb(bgHsl[0], Math.max(bgHsl[1] - 8, 0), Math.min(bgL + 16, 99));
-
     return {
-      isDarkCard,
-      mutedColor,
       accentColor: `rgb(${accentRgb.join(', ')})`,
-      priceColor: `rgb(${priceRgb.join(', ')})`,
       roadOpacity,
       roadGlowOpacity,
       roadMaskStyle,
@@ -221,20 +199,17 @@ export default function ModelPage() {
         mixBlendMode: 'overlay',
         opacity: textureOpacity,
       },
-      // Duenne, gleichbleibende Haarlinie statt dickerem Rahmen - die zunehmende Wertigkeit
-      // zeigt sich in Farbe/Leucht-Schatten, nicht in der Strichstaerke. Wirkt ruhiger/edler.
+      // Duenne Haarlinie unter dem Namen statt dickerem Rahmen - wie im Referenzdesign:
+      // ein 44px breiter Verlauf, der zu beiden Seiten in Transparenz auslaeuft.
       glowLineStyle: {
-        background: `linear-gradient(90deg, transparent, rgba(${accentRgb.join(', ')}, 0.9), transparent)`,
-        boxShadow: `0 0 ${Math.round(6 + tierT * 14)}px rgba(${accentRgb.join(', ')}, ${(0.25 + tierT * 0.45).toFixed(2)})`,
+        background: `linear-gradient(90deg, transparent, rgb(${accentRgb.join(', ')}), transparent)`,
       },
       style: {
-        backgroundColor: `rgb(${bgRgb.join(', ')})`,
-        backgroundImage: `radial-gradient(135% 160% at 88% -20%, rgb(${highlight.join(', ')}) 0%, rgb(${bgRgb.join(', ')}) 55%)`,
-        borderColor: `rgb(${accentRgb.join(', ')})`,
-        boxShadow:
-          tierT > 0.04
-            ? `0 ${Math.round(6 + tierT * 14)}px ${Math.round(20 + tierT * 45)}px -10px rgba(${accentRgb.join(', ')}, ${glowAlpha})`
-            : undefined,
+        // Vertikaler Verlauf wie im Referenzdesign: oben die Materialfarbe der Preisstufe,
+        // darunter schnell in Richtung Schwarz - so bleibt der untere Kartenbereich (Preis)
+        // unabhaengig vom Theme immer gut lesbar dunkel.
+        backgroundImage: `linear-gradient(180deg, rgb(${bgRgb.join(', ')}) 0%, #0b0b0b 55%, #080808 100%)`,
+        borderColor: `rgb(${borderRgb.join(', ')})`,
       },
     };
   };
@@ -297,26 +272,17 @@ export default function ModelPage() {
               }
             >
               {packages.map((pkg) => {
-                const {
-                  style,
-                  priceColor,
-                  mutedColor,
-                  glowLineStyle,
-                  roadOpacity,
-                  roadGlowOpacity,
-                  roadMaskStyle,
-                  textureStyle,
-                  isDarkCard,
-                } = styleOf(pkg);
+                const { style, accentColor, glowLineStyle, roadOpacity, roadGlowOpacity, roadMaskStyle, textureStyle } =
+                  styleOf(pkg);
 
                 return (
                   <div
                     key={pkg.id}
-                    style={style}
+                    style={{ ...style, fontFamily: "'Barlow', sans-serif" }}
                     className={
                       isStripLayout
-                        ? 'relative flex grow shrink basis-[190px] min-w-[190px] max-w-[240px] snap-start flex-col overflow-hidden rounded-xl border p-6 sm:basis-[210px] sm:p-7'
-                        : 'relative flex flex-col overflow-hidden rounded-xl border p-8'
+                        ? 'relative flex min-h-[640px] grow shrink basis-[190px] min-w-[190px] max-w-[240px] snap-start flex-col overflow-hidden rounded-[18px] border sm:basis-[210px]'
+                        : 'relative flex min-h-[640px] flex-col overflow-hidden rounded-[18px] border'
                     }
                   >
                     {/* Abstrakter "Lichtweg" im Hintergrund - ein generiertes Foto-Glow-Motiv
@@ -346,58 +312,39 @@ export default function ModelPage() {
                       </span>
                     )}
 
-                    {/* Eigener Stapelkontext ueber dem Lichtweg-SVG, damit der Text IMMER lesbar
+                    {/* Name + Unterstrich oben, dann Leerraum, der den Lichtweg im Hintergrund
+                        zur Geltung bringt - eigener Stapelkontext, damit der Text IMMER lesbar
                         oben liegt statt vom absolut positionierten Hintergrund verdeckt zu werden. */}
-                    <div className="relative z-10 flex flex-1 flex-col text-center">
-                      <h3 className={`text-lg font-bold uppercase tracking-wide ${isDarkCard ? 'text-white' : 'text-neutral-900'}`}>
+                    <div className="relative z-10 px-5 pt-8 text-center">
+                      <h3
+                        style={{ color: accentColor, fontFamily: "'Barlow Condensed', sans-serif" }}
+                        className="text-2xl font-semibold uppercase tracking-[3px] sm:text-[28px]"
+                      >
                         {pkg.name}
                       </h3>
-                      <div style={glowLineStyle} className="mx-auto mt-3 h-px w-10" />
-                      {pkg.tagline && (
-                        <p style={{ color: mutedColor }} className="mx-auto mt-3 max-w-[16ch] text-sm">
-                          {pkg.tagline}
-                        </p>
-                      )}
+                      <div style={glowLineStyle} className="mx-auto mt-3.5 h-0.5 w-11" />
+                    </div>
 
-                      {/* Leerraum, der den Lichtweg im Hintergrund zur Geltung bringt - erst
-                          darunter folgen Stichpunkte und Preis, ganz wie im Referenzbild. */}
-                      <div className="flex-1" />
+                    <div className="relative z-10 flex-1" />
 
-                      <ul className="mb-4 space-y-2.5 text-left text-sm">
-                        {pkg.products.map((product) => (
-                          <li key={product.id} className="flex items-start gap-2.5">
-                            <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: priceColor }} />
-                            <span style={{ color: mutedColor }} className="leading-snug">
-                              {product.name_override || product.scraped_name || t('modelPage.productLoading')}
-                            </span>
-                          </li>
-                        ))}
-                        {pkg.description
-                          ?.split('\n')
-                          .map((line) => line.trim())
-                          .filter(Boolean)
-                          .map((line, i) => (
-                            <li key={`desc-${i}`} className="flex items-start gap-2.5">
-                              <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: priceColor }} />
-                              <span style={{ color: mutedColor }} className="leading-snug">
-                                {line}
-                              </span>
-                            </li>
-                          ))}
-                      </ul>
-
-                      <div className="mb-4">
-                        <p style={{ color: mutedColor }} className="text-xs uppercase tracking-wide">
-                          {t('modelPage.totalPrice')}
-                        </p>
-                        <p style={{ color: priceColor }} className="text-2xl font-extrabold">
-                          {formatPrice(pkg.total_price)}
-                        </p>
-                      </div>
-
+                    {/* Dunkler Verlauf hinter Label/Preis, damit sie ueber dem Lichtweg-Foto
+                        immer lesbar bleiben - wie im Referenzdesign. */}
+                    <div
+                      className="relative z-10 px-5 pb-7 pt-5 text-center"
+                      style={{ background: 'linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.85) 45%, rgba(8,8,8,0.95) 100%)' }}
+                    >
+                      <p style={{ color: LABEL_COLOR }} className="text-[13px]">
+                        {t('modelPage.totalPrice')}
+                      </p>
+                      <p
+                        style={{ color: PRICE_COLOR, fontFamily: "'Barlow Condensed', sans-serif" }}
+                        className="mt-1 text-[28px] font-semibold tracking-wide sm:text-[30px]"
+                      >
+                        {formatPrice(pkg.total_price)}
+                      </p>
                       <Link
                         to={contactUrl(pkg)}
-                        className="inline-block rounded-md bg-brand-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400"
+                        className="mt-4 inline-block rounded-md bg-brand-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400"
                       >
                         {t('modelPage.requestContact')}
                       </Link>
