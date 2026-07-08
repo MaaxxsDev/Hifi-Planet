@@ -9,12 +9,18 @@ const emptyForm = {
   hero_image_path: '',
   ga_measurement_id: '',
   package_card_theme: 'graphite',
+  package_card_layout: 'strip',
 };
 
 const PACKAGE_CARD_THEMES = [
   { value: 'graphite', label: 'Graphite Green', description: 'Graphit über Bronze/Silber/Gold/Platin bis zur Onyx-Krönung.' },
   { value: 'deep-blue', label: 'Deep Blue Luxury', description: 'Kühles Blau, das sich über Grün zu Gold erwärmt.' },
   { value: 'warm-bronze', label: 'Warm Bronze', description: 'Durchgehend warmes Kupfer/Bronze/Amber bis zum Gold.' },
+];
+
+const PACKAGE_CARD_LAYOUTS = [
+  { value: 'grid', label: 'Raster', description: 'Breite Kacheln, die responsiv in mehrere Zeilen umbrechen.' },
+  { value: 'strip', label: 'Scroll-Band', description: 'Schmale, hochkant Kacheln in einer horizontal scrollbaren Reihe.' },
 ];
 
 export default function WebsiteSettings() {
@@ -42,6 +48,7 @@ export default function WebsiteSettings() {
           hero_image_path: res.hero_image_path || '',
           ga_measurement_id: res.ga_measurement_id || '',
           package_card_theme: res.package_card_theme || 'graphite',
+          package_card_layout: res.package_card_layout || 'strip',
         })
       )
       .finally(() => setLoading(false));
@@ -174,6 +181,36 @@ export default function WebsiteSettings() {
               />
               <p className="font-semibold text-neutral-900 dark:text-white">{theme.label}</p>
               <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{theme.description}</p>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Kachel-Layout</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Bestimmt, wie die Paket-Stufen auf jeder Fahrzeug-Modell-Seite angeordnet werden.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {PACKAGE_CARD_LAYOUTS.map((layout) => (
+            <label
+              key={layout.value}
+              className={`cursor-pointer rounded-lg border p-3 text-sm transition ${
+                form.package_card_layout === layout.value
+                  ? 'border-brand-500 ring-2 ring-brand-500/40'
+                  : 'border-neutral-300 hover:border-neutral-400 dark:border-neutral-700 dark:hover:border-neutral-600'
+              }`}
+            >
+              <input
+                type="radio"
+                name="package_card_layout"
+                value={layout.value}
+                checked={form.package_card_layout === layout.value}
+                onChange={(e) => update('package_card_layout', e.target.value)}
+                className="sr-only"
+              />
+              <p className="font-semibold text-neutral-900 dark:text-white">{layout.label}</p>
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{layout.description}</p>
             </label>
           ))}
         </div>

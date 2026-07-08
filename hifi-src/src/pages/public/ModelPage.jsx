@@ -23,41 +23,42 @@ const PACKAGE_TEXTURES = {
 };
 
 // Material-Stufen statt einfarbigem Verlauf: jede Preisstufe durchlaeuft eine eigene
-// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen - hell/weiss beim Einstieg (passt zum
-// hellen Seitenstil), zunehmend gesaettigter und dunkler zur teuersten Stufe hin, aber
-// NIE bis zu Grau/Schwarz entsaettigt - die oberste Stufe bleibt eine satte, tiefe
-// Farbe (tiefes Gruen/Saphirblau/Bordeaux-Bronze je nach Theme). Jede Stufe hat eine
-// Flaechenfarbe (bg) und eine dazu passende Akzentfarbe (Rahmen/Leucht-Schatten/Preis/
-// Icon) - nur der "Kontakt anfragen"-Button bleibt ueberall einheitlich markengruen,
-// damit die Kernaktion auf jeder Karte wiedererkennbar bleibt. Zwischen zwei Nachbar-
-// Materialien wird in RGB linear interpoliert (siehe materialRgbAt), sodass JEDES Paket
-// (nicht nur die Materialien selbst) eine eigene Abstufung bekommt. Welches Farbschema
-// verwendet wird, waehlt der Kunde selbst unter Admin -> Einstellungen -> Website
+// "Wertigkeit" wie bei Kreditkarten-/Loyalty-Stufen. Die Karten bleiben durchgehend dunkel
+// (wie eine Fahrzeugkonfigurator-Buehne) - die Preis-Staffelung zeigt sich nicht in
+// Hell/Dunkel, sondern im Farbton: jedes Theme wandert ueber die 6 Stufen durch eine
+// eigene Farbfamilie (z.B. Graphit: kuehles Grau -> Petrol -> Gruen -> Gold), angelehnt
+// an das vom Kunden gezeigte Referenzbild. Jede Stufe hat eine Flaechenfarbe (bg) und
+// eine dazu passende, hellere Akzentfarbe (Rahmen/Leucht-Schatten/Preis/Icon) - nur der
+// "Kontakt anfragen"-Button bleibt ueberall einheitlich markengruen, damit die
+// Kernaktion auf jeder Karte wiedererkennbar bleibt. Zwischen zwei Nachbar-Materialien
+// wird in RGB linear interpoliert (siehe materialRgbAt), sodass JEDES Paket (nicht nur
+// die Materialien selbst) eine eigene Abstufung bekommt. Welches Farbschema verwendet
+// wird, waehlt der Kunde selbst unter Admin -> Einstellungen -> Website
 // ("Paket-Kachel-Design").
 const PACKAGE_THEMES = {
   graphite: [
-    { bg: [215, 6, 98], accent: [214, 20, 45] },
-    { bg: [214, 9, 85], accent: [213, 24, 46] },
-    { bg: [213, 11, 65], accent: [211, 28, 48] },
-    { bg: [212, 13, 45], accent: [209, 32, 52] },
-    { bg: [211, 15, 28], accent: [207, 36, 58] },
-    { bg: [210, 17, 15], accent: [205, 40, 64] },
+    { bg: [220, 8, 22], accent: [220, 10, 60] },
+    { bg: [195, 18, 20], accent: [195, 35, 58] },
+    { bg: [175, 35, 19], accent: [175, 55, 58] },
+    { bg: [150, 40, 17], accent: [150, 55, 56] },
+    { bg: [120, 38, 15], accent: [120, 55, 55] },
+    { bg: [42, 55, 18], accent: [42, 75, 60] },
   ],
   'deep-blue': [
-    { bg: [210, 10, 98], accent: [205, 45, 50] },
-    { bg: [212, 30, 85], accent: [205, 48, 52] },
-    { bg: [212, 40, 65], accent: [203, 52, 55] },
-    { bg: [210, 50, 45], accent: [200, 58, 58] },
-    { bg: [208, 58, 28], accent: [198, 62, 62] },
-    { bg: [205, 65, 15], accent: [195, 68, 68] },
+    { bg: [210, 8, 22], accent: [210, 12, 58] },
+    { bg: [195, 30, 19], accent: [195, 45, 58] },
+    { bg: [210, 45, 17], accent: [210, 60, 58] },
+    { bg: [220, 55, 15], accent: [220, 65, 60] },
+    { bg: [230, 58, 12], accent: [230, 68, 62] },
+    { bg: [240, 62, 10], accent: [240, 72, 65] },
   ],
   'warm-bronze': [
-    { bg: [35, 12, 98], accent: [32, 55, 42] },
-    { bg: [36, 32, 85], accent: [30, 58, 44] },
-    { bg: [34, 42, 65], accent: [28, 60, 46] },
-    { bg: [30, 48, 45], accent: [26, 64, 50] },
-    { bg: [26, 54, 28], accent: [24, 68, 54] },
-    { bg: [20, 60, 15], accent: [22, 72, 58] },
+    { bg: [30, 8, 22], accent: [30, 12, 58] },
+    { bg: [38, 35, 20], accent: [38, 55, 60] },
+    { bg: [30, 50, 18], accent: [30, 65, 60] },
+    { bg: [20, 50, 15], accent: [20, 65, 60] },
+    { bg: [10, 48, 13], accent: [10, 62, 60] },
+    { bg: [0, 45, 11], accent: [0, 58, 62] },
   ],
 };
 
@@ -100,9 +101,10 @@ export default function ModelPage() {
   const [error, setError] = useState('');
   const maintenance = useMaintenance();
   const { t, language } = useLanguage();
-  const { package_card_theme: packageCardTheme } = useSiteSettings();
+  const { package_card_theme: packageCardTheme, package_card_layout: packageCardLayout } = useSiteSettings();
   const MATERIALS = PACKAGE_THEMES[packageCardTheme] || PACKAGE_THEMES.graphite;
   const cardTexture = PACKAGE_TEXTURES[packageCardTheme] || PACKAGE_TEXTURES.graphite;
+  const isStripLayout = packageCardLayout !== 'grid';
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -198,11 +200,6 @@ export default function ModelPage() {
         mixBlendMode: 'overlay',
         opacity: textureOpacity,
       },
-      iconChipStyle: {
-        backgroundColor: `rgba(${accentRgb.join(', ')}, 0.16)`,
-        color: `rgb(${priceRgb.join(', ')})`,
-        boxShadow: `inset 0 0 0 1px rgba(${accentRgb.join(', ')}, 0.45)`,
-      },
       // Duenne, gleichbleibende Haarlinie statt dickerem Rahmen - die zunehmende Wertigkeit
       // zeigt sich in Farbe/Leucht-Schatten, nicht in der Strichstaerke. Wirkt ruhiger/edler.
       glowLineStyle: {
@@ -250,22 +247,28 @@ export default function ModelPage() {
       </div>
 
       {packages.length > 0 && (
-        <section className="py-14 sm:py-20">
+        // Die Paket-Sektion bekommt bewusst eine eigene, immer dunkle Buehne (wie ein
+        // Fahrzeugkonfigurator) statt der hellen/dunklen Seiten-Textur zu folgen - das
+        // ist der Haupthebel fuer den edlen Eindruck, den flache Kacheln nicht liefern.
+        <section className="bg-neutral-950 py-14 sm:py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <div className="mb-10 text-center sm:mb-14">
-              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white sm:text-3xl">
-                {t('modelPage.tiersHeading')(packages.length)}
-              </h2>
-              <p className="mx-auto mt-2 max-w-xl text-sm text-neutral-500 dark:text-neutral-400">{t('modelPage.tiersSubheading')}</p>
+              <h2 className="text-2xl font-bold text-white sm:text-3xl">{t('modelPage.tiersHeading')(packages.length)}</h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm text-neutral-400">{t('modelPage.tiersSubheading')}</p>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div
+              className={
+                isStripLayout
+                  ? 'flex items-stretch gap-5 overflow-x-auto pb-2 snap-x snap-mandatory'
+                  : 'grid gap-6 sm:grid-cols-2 xl:grid-cols-3'
+              }
+            >
               {packages.map((pkg) => {
                 const {
                   style,
                   priceColor,
                   mutedColor,
-                  iconChipStyle,
                   accentColor,
                   glowLineStyle,
                   roadOpacity,
@@ -275,7 +278,15 @@ export default function ModelPage() {
                 } = styleOf(pkg);
 
                 return (
-                  <div key={pkg.id} style={style} className="relative flex flex-col overflow-hidden rounded-xl border p-8">
+                  <div
+                    key={pkg.id}
+                    style={style}
+                    className={
+                      isStripLayout
+                        ? 'relative flex w-[190px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border p-6 sm:w-[210px]'
+                        : 'relative flex flex-col overflow-hidden rounded-xl border p-8'
+                    }
+                  >
                     {/* Abstrakter "Lichtweg" im Hintergrund - je teurer die Stufe, desto praesenter/leuchtender.
                         Fixe Aspect-Ratio + "slice" statt "none", damit Strich/Kurve bei jeder Kartenhoehe
                         gleichmaessig aussieht statt verzerrt gestreckt zu werden. */}
@@ -316,32 +327,22 @@ export default function ModelPage() {
 
                     {/* Eigener Stapelkontext ueber dem Lichtweg-SVG, damit der Text IMMER lesbar
                         oben liegt statt vom absolut positionierten Hintergrund verdeckt zu werden. */}
-                    <div className="relative z-10 flex flex-1 flex-col">
-                      {pkg.icon_name && (
-                        <div style={iconChipStyle} className="mb-4 flex h-11 w-11 items-center justify-center rounded-full">
-                          <DynamicIcon name={pkg.icon_name} className="h-6 w-6" />
-                        </div>
-                      )}
-
-                      <h3 className={`text-lg font-bold ${isDarkCard ? 'text-white' : 'text-neutral-900'}`}>{pkg.name}</h3>
+                    <div className="relative z-10 flex flex-1 flex-col text-center">
+                      <h3 className={`text-lg font-bold uppercase tracking-wide ${isDarkCard ? 'text-white' : 'text-neutral-900'}`}>
+                        {pkg.name}
+                      </h3>
+                      <div style={glowLineStyle} className="mx-auto mt-3 h-px w-10" />
                       {pkg.tagline && (
-                        <p style={{ color: mutedColor }} className="mt-1 text-sm">
+                        <p style={{ color: mutedColor }} className="mx-auto mt-3 max-w-[16ch] text-sm">
                           {pkg.tagline}
                         </p>
                       )}
 
-                      <div style={glowLineStyle} className="my-5 h-px w-full" />
+                      {/* Leerraum, der den Lichtweg im Hintergrund zur Geltung bringt - erst
+                          darunter folgen Stichpunkte und Preis, ganz wie im Referenzbild. */}
+                      <div className="flex-1" />
 
-                      <div className="mb-4">
-                        <p style={{ color: mutedColor }} className="text-xs uppercase tracking-wide">
-                          {t('modelPage.totalPrice')}
-                        </p>
-                        <p style={{ color: priceColor }} className="text-2xl font-extrabold">
-                          {formatPrice(pkg.total_price)}
-                        </p>
-                      </div>
-
-                      <ul className="mb-6 flex-1 space-y-2.5 text-sm">
+                      <ul className="mb-4 space-y-2.5 text-left text-sm">
                         {pkg.products.map((product) => (
                           <li key={product.id} className="flex items-start gap-2.5">
                             <DynamicIcon name="check" className="mt-0.5 h-4 w-4 shrink-0" style={{ color: priceColor }} />
@@ -363,6 +364,15 @@ export default function ModelPage() {
                             </li>
                           ))}
                       </ul>
+
+                      <div className="mb-4">
+                        <p style={{ color: mutedColor }} className="text-xs uppercase tracking-wide">
+                          {t('modelPage.totalPrice')}
+                        </p>
+                        <p style={{ color: priceColor }} className="text-2xl font-extrabold">
+                          {formatPrice(pkg.total_price)}
+                        </p>
+                      </div>
 
                       <Link
                         to={contactUrl(pkg)}

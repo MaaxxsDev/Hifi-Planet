@@ -27,6 +27,7 @@ CREATE TABLE app_settings (
   ga_measurement_id VARCHAR(20) NULL,
   ga_property_id VARCHAR(30) NULL,
   package_card_theme VARCHAR(30) NOT NULL DEFAULT 'graphite',
+  package_card_layout VARCHAR(20) NOT NULL DEFAULT 'strip',
   mail_host VARCHAR(255) NULL,
   mail_port INT NULL,
   mail_username VARCHAR(255) NULL,
