@@ -85,6 +85,172 @@ const PRICE_COLOR = '#f2f2f2';
 const LABEL_COLOR = '#8a8a8a';
 const BULLET_COLOR = '#c4c4c4';
 
+// Mehr sichtbare Stichpunkte wuerden das Straßenbild verdraengen - gerade bei den teuren
+// Paketen (die laut Kunde die laengsten Listen haben) soll die Kachel ruhig bleiben. Der
+// Rest steckt hinter einem "+X weitere Leistungen"-Toggle, dessen Zaehler selbst als
+// Wertigkeitssignal wirkt.
+const VISIBLE_BULLETS = 5;
+
+function PackageCard({ pkg, tier, tierT, isStripLayout, bullets, formatPrice, contactUrl, t }) {
+  const [expanded, setExpanded] = useState(false);
+  const hiddenCount = bullets.length - VISIBLE_BULLETS;
+  const shownBullets = expanded ? bullets : bullets.slice(0, VISIBLE_BULLETS);
+
+  // Fuer die Themes ohne eigenes Straßenbild: neutrales Glow-Motiv, per Maske
+  // in die Akzentfarbe eingefaerbt (zwei Ebenen: weicher Halo + scharfe Kontur).
+  const glowMask = tier.img
+    ? null
+    : {
+        backgroundColor: tier.accent,
+        WebkitMaskImage: `url(${roadGlowTexture})`,
+        maskImage: `url(${roadGlowTexture})`,
+        maskMode: 'luminance',
+        WebkitMaskSize: 'cover',
+        maskSize: 'cover',
+        WebkitMaskPosition: 'center',
+        maskPosition: 'center',
+        WebkitMaskRepeat: 'no-repeat',
+        maskRepeat: 'no-repeat',
+      };
+
+  return (
+    <div
+      style={{
+        borderColor: tier.border,
+        background: `linear-gradient(180deg, ${tier.bgTop} 0%, #0b0b0b 55%, #080808 100%)`,
+      }}
+      className={
+        isStripLayout
+          ? 'relative flex min-h-[640px] grow shrink basis-[190px] min-w-[190px] max-w-[240px] snap-start flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40 sm:basis-[210px]'
+          : 'relative flex min-h-[640px] flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40'
+      }
+    >
+      {/* Vollflaechiges Straßen-Glow-Bild der Preisstufe (Referenzdesign). */}
+      {tier.img ? (
+        <img
+          src={tier.img}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <>
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ ...glowMask, opacity: 0.2 + tierT * 0.45, filter: 'blur(18px)' }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ ...glowMask, opacity: 0.55 + tierT * 0.45 }}
+            aria-hidden="true"
+          />
+        </>
+      )}
+
+      {pkg.is_featured && (
+        <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
+          {t('modelPage.featuredBadge')}
+        </span>
+      )}
+
+      {/* Kopf: Name + Trennlinie (exakt Referenz). */}
+      <div className="relative z-10 text-center" style={{ padding: '34px 20px 0' }}>
+        <div
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: '30px',
+            letterSpacing: '3px',
+            fontWeight: 600,
+            color: tier.accent,
+            textTransform: 'uppercase',
+            lineHeight: 1.1,
+          }}
+        >
+          {pkg.name}
+        </div>
+        <div
+          style={{
+            width: '44px',
+            height: '2px',
+            margin: '14px auto 0',
+            background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${tier.accent} 50%, rgba(255,255,255,0) 100%)`,
+          }}
+        />
+      </div>
+
+      {/* Stichpunkte direkt unter dem Kopf, leicht abgedunkelter Hintergrund fuer
+          Lesbarkeit ueber dem Straßenbild - aufgeklappt deckender, da die Liste dann
+          weiter ins helle Bildzentrum hineinreicht. */}
+      {bullets.length > 0 && (
+        <div
+          className="relative z-10"
+          style={{
+            padding: '18px 20px 14px',
+            background: expanded
+              ? 'linear-gradient(180deg, rgba(8,8,8,0.7) 0%, rgba(8,8,8,0.62) 94%, rgba(8,8,8,0) 100%)'
+              : 'linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(8,8,8,0.48) 92%, rgba(8,8,8,0) 100%)',
+          }}
+        >
+          <ul className="space-y-1.5 text-left">
+            {shownBullets.map((line, i) => (
+              <li key={i} className="flex items-start gap-2" style={{ fontSize: '13px', color: BULLET_COLOR }}>
+                <DynamicIcon name="check" className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: tier.accent }} />
+                <span className="leading-snug">{line}</span>
+              </li>
+            ))}
+          </ul>
+          {hiddenCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setExpanded((e) => !e)}
+              className="mt-2.5 flex items-center gap-1 hover:opacity-80"
+              style={{ fontSize: '13px', color: tier.accent }}
+            >
+              {expanded ? t('modelPage.lessBullets') : t('modelPage.moreBullets')(hiddenCount)}
+              <DynamicIcon name={expanded ? 'chevron-up' : 'chevron-down'} className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Freiraum, damit das Straßenbild zur Geltung kommt. */}
+      <div className="relative z-10 flex-1" />
+
+      {/* Preis-Sektion mit dunklem Verlauf (Referenz): "ab ca." + Preis + CTA. */}
+      <div
+        className="relative z-10"
+        style={{
+          padding: '20px 20px 28px',
+          background: 'linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.85) 45%, rgba(8,8,8,0.95) 100%)',
+        }}
+      >
+        <div className="text-center">
+          <div style={{ fontSize: '13px', color: LABEL_COLOR }}>{t('modelPage.totalPrice')}</div>
+          <div
+            style={{
+              marginTop: '4px',
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: '30px',
+              fontWeight: 600,
+              letterSpacing: '1px',
+              color: PRICE_COLOR,
+            }}
+          >
+            {formatPrice(pkg.total_price)}
+          </div>
+          <Link
+            to={contactUrl(pkg)}
+            className="mt-4 inline-block rounded-md bg-brand-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400"
+          >
+            {t('modelPage.requestContact')}
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ModelPage() {
   const { brandSlug, modelSlug } = useParams();
   const [data, setData] = useState(null);
@@ -189,150 +355,26 @@ export default function ModelPage() {
             <div
               className={
                 isStripLayout
-                  ? 'flex items-stretch gap-[18px] overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.3)_transparent] dark:[scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/30 dark:[&::-webkit-scrollbar-thumb]:bg-white/25'
-                  : 'grid gap-[18px] sm:grid-cols-2 xl:grid-cols-3'
+                  ? // items-start statt items-stretch: klappt jemand eine Kachel auf, waechst
+                    // nur DIESE in die Hoehe - die Nachbarn behalten ihre Referenzhoehe.
+                    'flex items-start gap-[18px] overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.3)_transparent] dark:[scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/30 dark:[&::-webkit-scrollbar-thumb]:bg-white/25'
+                  : 'grid items-start gap-[18px] sm:grid-cols-2 xl:grid-cols-3'
               }
             >
               {packages.map((pkg) => {
                 const { tier, tierT } = tierOf(pkg);
-                const bullets = bulletsOf(pkg);
-                // Fuer die Themes ohne eigenes Straßenbild: neutrales Glow-Motiv, per Maske
-                // in die Akzentfarbe eingefaerbt (zwei Ebenen: weicher Halo + scharfe Kontur).
-                const glowMask = tier.img
-                  ? null
-                  : {
-                      backgroundColor: tier.accent,
-                      WebkitMaskImage: `url(${roadGlowTexture})`,
-                      maskImage: `url(${roadGlowTexture})`,
-                      maskMode: 'luminance',
-                      WebkitMaskSize: 'cover',
-                      maskSize: 'cover',
-                      WebkitMaskPosition: 'center',
-                      maskPosition: 'center',
-                      WebkitMaskRepeat: 'no-repeat',
-                      maskRepeat: 'no-repeat',
-                    };
-
                 return (
-                  <div
+                  <PackageCard
                     key={pkg.id}
-                    style={{
-                      borderColor: tier.border,
-                      background: `linear-gradient(180deg, ${tier.bgTop} 0%, #0b0b0b 55%, #080808 100%)`,
-                    }}
-                    className={
-                      isStripLayout
-                        ? 'relative flex min-h-[640px] grow shrink basis-[190px] min-w-[190px] max-w-[240px] snap-start flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40 sm:basis-[210px]'
-                        : 'relative flex min-h-[640px] flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40'
-                    }
-                  >
-                    {/* Vollflaechiges Straßen-Glow-Bild der Preisstufe (Referenzdesign). */}
-                    {tier.img ? (
-                      <img
-                        src={tier.img}
-                        alt=""
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-                      />
-                    ) : (
-                      <>
-                        <div
-                          className="pointer-events-none absolute inset-0"
-                          style={{ ...glowMask, opacity: 0.2 + tierT * 0.45, filter: 'blur(18px)' }}
-                          aria-hidden="true"
-                        />
-                        <div
-                          className="pointer-events-none absolute inset-0"
-                          style={{ ...glowMask, opacity: 0.55 + tierT * 0.45 }}
-                          aria-hidden="true"
-                        />
-                      </>
-                    )}
-
-                    {pkg.is_featured && (
-                      <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
-                        {t('modelPage.featuredBadge')}
-                      </span>
-                    )}
-
-                    {/* Kopf: Name + Trennlinie (exakt Referenz). */}
-                    <div className="relative z-10 text-center" style={{ padding: '34px 20px 0' }}>
-                      <div
-                        style={{
-                          fontFamily: "'Barlow Condensed', sans-serif",
-                          fontSize: '30px',
-                          letterSpacing: '3px',
-                          fontWeight: 600,
-                          color: tier.accent,
-                          textTransform: 'uppercase',
-                          lineHeight: 1.1,
-                        }}
-                      >
-                        {pkg.name}
-                      </div>
-                      <div
-                        style={{
-                          width: '44px',
-                          height: '2px',
-                          margin: '14px auto 0',
-                          background: `linear-gradient(90deg, rgba(255,255,255,0) 0%, ${tier.accent} 50%, rgba(255,255,255,0) 100%)`,
-                        }}
-                      />
-                    </div>
-
-                    {/* Stichpunkte direkt unter dem Kopf (von oben nach unten), leicht
-                        abgedunkelter Hintergrund fuer Lesbarkeit ueber dem Straßenbild. */}
-                    {bullets.length > 0 && (
-                      <ul
-                        className="relative z-10 space-y-2 text-left"
-                        style={{
-                          padding: '18px 20px 14px',
-                          background: 'linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(8,8,8,0.35) 70%, rgba(8,8,8,0) 100%)',
-                        }}
-                      >
-                        {bullets.map((line, i) => (
-                          <li key={i} className="flex items-start gap-2" style={{ fontSize: '13px', color: BULLET_COLOR }}>
-                            <DynamicIcon name="check" className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: tier.accent }} />
-                            <span className="leading-snug">{line}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {/* Freiraum, damit das Straßenbild zur Geltung kommt. */}
-                    <div className="relative z-10 flex-1" />
-
-                    {/* Preis-Sektion mit dunklem Verlauf (Referenz): "ab ca." + Preis + CTA. */}
-                    <div
-                      className="relative z-10"
-                      style={{
-                        padding: '20px 20px 28px',
-                        background: 'linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.85) 45%, rgba(8,8,8,0.95) 100%)',
-                      }}
-                    >
-                      <div className="text-center">
-                        <div style={{ fontSize: '13px', color: LABEL_COLOR }}>{t('modelPage.totalPrice')}</div>
-                        <div
-                          style={{
-                            marginTop: '4px',
-                            fontFamily: "'Barlow Condensed', sans-serif",
-                            fontSize: '30px',
-                            fontWeight: 600,
-                            letterSpacing: '1px',
-                            color: PRICE_COLOR,
-                          }}
-                        >
-                          {formatPrice(pkg.total_price)}
-                        </div>
-                        <Link
-                          to={contactUrl(pkg)}
-                          className="mt-4 inline-block rounded-md bg-brand-500 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/30 hover:bg-brand-400"
-                        >
-                          {t('modelPage.requestContact')}
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
+                    pkg={pkg}
+                    tier={tier}
+                    tierT={tierT}
+                    isStripLayout={isStripLayout}
+                    bullets={bulletsOf(pkg)}
+                    formatPrice={formatPrice}
+                    contactUrl={contactUrl}
+                    t={t}
+                  />
                 );
               })}
             </div>

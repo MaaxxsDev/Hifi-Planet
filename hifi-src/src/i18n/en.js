@@ -155,6 +155,8 @@ export default {
     productLoading: 'Loading product…',
     requestContact: 'Request contact',
     featuredBadge: 'Recommended',
+    moreBullets: (n) => (n === 1 ? '+ 1 more feature' : `+ ${n} more features`),
+    lessBullets: 'Show less',
   },
   leistungen: {
     metaTitle: 'Services',
