@@ -35,3 +35,135 @@ html {
 .dark .grain-band {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ==== Custom Cursor (Orbital-Motiv, siehe components/CustomCursor.jsx) ====
+   Die Klasse hifi-cursor-on setzt NUR die Komponente selbst - und nur auf Geraeten
+   mit echter Maus ohne reduzierte Bewegung. Ohne die Klasse bleibt ueberall der
+   native Cursor (Touch, prefers-reduced-motion, JS-Fehler). */
+html.hifi-cursor-on,
+html.hifi-cursor-on * {
+  cursor: none !important;
+}
+/* Ueber Textfeldern uebernimmt der native Text-Cursor (die Orbit-Teile blenden sich
+   per data-state="text" aus) - Praezision beim Textmarkieren geht vor Show. */
+html.hifi-cursor-on :is(input, textarea, [contenteditable='true']) {
+  cursor: auto !important;
+}
+
+.hifi-cursor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+.hifi-cursor[data-hidden='true'] {
+  opacity: 0;
+}
+
+/* Kern: gefuellter Punkt, folgt der Maus direkt. Weisser Rand + Glow machen ihn auf
+   hellem Papier UND dunklen Kacheln gleichermassen sichtbar. */
+.hifi-cursor__core {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 9999px;
+  background: #7fd44a;
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.9),
+    0 0 10px rgba(127, 212, 74, 0.75);
+  transition:
+    width 0.18s ease,
+    height 0.18s ease,
+    margin 0.18s ease,
+    background-color 0.18s ease,
+    opacity 0.15s ease;
+}
+
+.hifi-cursor__orbit {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Schraege Ellipsenbahn wie der Orbit-Schwung im Logo. */
+.hifi-cursor__ring {
+  position: absolute;
+  width: 38px;
+  height: 15px;
+  margin: -7.5px 0 0 -19px;
+  border: 1px solid rgba(127, 212, 74, 0.5);
+  border-radius: 50%;
+  transform: rotate(-24deg);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Satellit: Position auf der Bahn wird per JS gesetzt (rotierender Punkt). */
+.hifi-cursor__sat {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 9999px;
+  background: #eaffdb;
+  box-shadow: 0 0 6px rgba(139, 234, 60, 0.9);
+}
+
+/* Hover ueber Interaktivem: Kern waechst, Bahn weitet sich und leuchtet auf
+   (Satellit beschleunigt via JS). */
+.hifi-cursor[data-state='hover'] .hifi-cursor__core {
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  background: #8bea3c;
+}
+.hifi-cursor[data-state='hover'] .hifi-cursor__ring {
+  transform: rotate(-24deg) scale(1.45);
+  border-color: rgba(139, 234, 60, 0.9);
+}
+
+/* Ueber Textfeldern: komplett ausblenden, nativer Text-Cursor uebernimmt. */
+.hifi-cursor[data-state='text'] .hifi-cursor__core,
+.hifi-cursor[data-state='text'] .hifi-cursor__orbit {
+  opacity: 0;
+}
+
+/* Gedrueckte Maustaste: Kern "thumpt" wie eine Subwoofer-Membran. */
+.hifi-cursor[data-down='true'] .hifi-cursor__core {
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+}
+
+/* Klick-Puls: einmalig auslaufender Ring am Klickpunkt. */
+.hifi-cursor__pulse {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(139, 234, 60, 0.9);
+  opacity: 0;
+}
+.hifi-cursor__pulse.is-live {
+  animation: hifi-cursor-pulse 0.45s ease-out forwards;
+}
+@keyframes hifi-cursor-pulse {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}

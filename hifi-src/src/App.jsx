@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import CustomCursor from './components/CustomCursor.jsx';
 import SetupGate from './components/SetupGate.jsx';
 import PublicLayout from './components/PublicLayout.jsx';
 import AdminLayout from './components/AdminLayout.jsx';
@@ -48,6 +49,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <CustomCursor />
       <SetupGate>
       <Routes>
       <Route path="/setup" element={<SetupWizard />} />
