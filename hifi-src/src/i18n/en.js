@@ -155,8 +155,6 @@ export default {
     productLoading: 'Loading product…',
     requestContact: 'Request contact',
     featuredBadge: 'Recommended',
-    tiersHeading: (count) => `${count} tiers. One goal: perfect sound.`,
-    tiersSubheading: 'From a solid foundation to an uncompromising masterpiece – find your package.',
   },
   leistungen: {
     metaTitle: 'Services',

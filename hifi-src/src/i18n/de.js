@@ -155,8 +155,6 @@ export default {
     productLoading: 'Produkt wird geladen…',
     requestContact: 'Kontakt anfragen',
     featuredBadge: 'Empfohlen',
-    tiersHeading: (count) => `${count} Stufen. Ein Ziel: perfekter Klang.`,
-    tiersSubheading: 'Von der soliden Basis bis zum kompromisslosen Meisterwerk – finde dein Paket.',
   },
   leistungen: {
     metaTitle: 'Leistungen',
