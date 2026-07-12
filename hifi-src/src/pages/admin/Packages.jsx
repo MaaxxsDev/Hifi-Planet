@@ -12,6 +12,7 @@ const emptyForm = {
   markup_value: 0,
   icon_name: '',
   tagline: '',
+  price_text: '',
   is_featured: false,
   sort_order: 0,
 };
@@ -76,6 +77,7 @@ export default function Packages() {
       markup_value: pkg.markup_value || 0,
       icon_name: pkg.icon_name || '',
       tagline: pkg.tagline || '',
+      price_text: pkg.price_text || '',
       is_featured: !!pkg.is_featured,
       sort_order: pkg.sort_order,
     });
@@ -233,6 +235,16 @@ export default function Packages() {
             placeholder="z. B. Perfekt für den Einstieg"
             className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Preis-Text (optional)</label>
+          <input
+            value={form.price_text}
+            onChange={(e) => setForm({ ...form, price_text: e.target.value })}
+            placeholder='z. B. "Coming soon" oder "Preis auf Anfrage"'
+            className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          />
+          <p className="mt-1 text-xs text-neutral-400">Ersetzt auf der Kachel den berechneten Preis, solange ausgefüllt.</p>
         </div>
         <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
           <input

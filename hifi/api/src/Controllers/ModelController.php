@@ -90,7 +90,7 @@ class ModelController
         }
 
         $pkgStmt = $db->prepare(
-            'SELECT id, name, slug, description, markup_type, markup_value, icon_name, tagline, is_featured, sort_order
+            'SELECT id, name, slug, description, markup_type, markup_value, icon_name, tagline, price_text, is_featured, sort_order
              FROM packages WHERE car_model_id = ? ORDER BY sort_order, name'
         );
         $pkgStmt->execute([$model['id']]);

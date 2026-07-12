@@ -40,7 +40,7 @@ class SiteSettingsController
     }
 
     private const PACKAGE_CARD_THEMES = ['graphite', 'deep-blue', 'warm-bronze'];
-    private const PACKAGE_CARD_LAYOUTS = ['grid', 'strip'];
+    private const PACKAGE_CARD_LAYOUTS = ['grid', 'strip', 'coverflow'];
 
     public static function update(): void
     {

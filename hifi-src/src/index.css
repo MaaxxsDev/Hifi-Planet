@@ -84,25 +84,28 @@ html.hifi-cursor-on :is(input, textarea, [contenteditable='true']) {
     opacity 0.15s ease;
 }
 
+/* Der Orbit (Bahn + Satellit) ist im Normalzustand UNSICHTBAR - Kundenwunsch:
+   Standard ist nur der gruene Punkt, das Orbital-Motiv erscheint erst ueber
+   bedienbaren Flaechen. */
 .hifi-cursor__orbit {
   position: fixed;
   top: 0;
   left: 0;
-  transition: opacity 0.15s ease;
+  opacity: 0;
+  transition: opacity 0.18s ease;
 }
 
-/* Schraege Ellipsenbahn wie der Orbit-Schwung im Logo. */
+/* Schraege Ellipsenbahn wie der Orbit-Schwung im Logo - auf Hover in Weiss,
+   damit sie sich von den markengruenen Buttons abhebt. */
 .hifi-cursor__ring {
   position: absolute;
   width: 38px;
   height: 15px;
   margin: -7.5px 0 0 -19px;
-  border: 1px solid rgba(127, 212, 74, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 50%;
-  transform: rotate(-24deg);
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease;
+  transform: rotate(-24deg) scale(0.6);
+  transition: transform 0.22s ease;
 }
 
 /* Satellit: Position auf der Bahn wird per JS gesetzt (rotierender Punkt). */
@@ -112,21 +115,28 @@ html.hifi-cursor-on :is(input, textarea, [contenteditable='true']) {
   height: 5px;
   margin: -2.5px 0 0 -2.5px;
   border-radius: 9999px;
-  background: #eaffdb;
-  box-shadow: 0 0 6px rgba(139, 234, 60, 0.9);
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
 }
 
-/* Hover ueber Interaktivem: Kern waechst, Bahn weitet sich und leuchtet auf
-   (Satellit beschleunigt via JS). */
+/* Hover ueber Interaktivem: Orbit blendet ein und weitet sich, Kern wechselt auf
+   WEISS (Kontrast zu den gruenen Schaltflaechen - Kundenwunsch), Satellit
+   beschleunigt via JS. Dunkler Aussenrand haelt den weissen Kern auch auf hellen
+   Flaechen sichtbar. */
+.hifi-cursor[data-state='hover'] .hifi-cursor__orbit {
+  opacity: 1;
+}
 .hifi-cursor[data-state='hover'] .hifi-cursor__core {
   width: 16px;
   height: 16px;
   margin: -8px 0 0 -8px;
-  background: #8bea3c;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1.5px rgba(0, 0, 0, 0.35),
+    0 0 12px rgba(255, 255, 255, 0.85);
 }
 .hifi-cursor[data-state='hover'] .hifi-cursor__ring {
   transform: rotate(-24deg) scale(1.45);
-  border-color: rgba(139, 234, 60, 0.9);
 }
 
 /* Ueber Textfeldern: komplett ausblenden, nativer Text-Cursor uebernimmt. */
@@ -151,7 +161,7 @@ html.hifi-cursor-on :is(input, textarea, [contenteditable='true']) {
   height: 12px;
   margin: -6px 0 0 -6px;
   border-radius: 9999px;
-  border: 1.5px solid rgba(139, 234, 60, 0.9);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
   opacity: 0;
 }
 .hifi-cursor__pulse.is-live {

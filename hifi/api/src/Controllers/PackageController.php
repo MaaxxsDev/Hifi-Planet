@@ -23,7 +23,7 @@ class PackageController
     {
         $stmt = Database::connection()->query(
             'SELECT p.id, p.name, p.slug, p.description, p.markup_type, p.markup_value, p.icon_name, p.tagline,
-                    p.is_featured, p.sort_order, p.car_model_id, m.name AS model_name, b.name AS brand_name
+                    p.price_text, p.is_featured, p.sort_order, p.car_model_id, m.name AS model_name, b.name AS brand_name
              FROM packages p
              JOIN car_models m ON m.id = p.car_model_id
              JOIN brands b ON b.id = m.brand_id
@@ -51,8 +51,8 @@ class PackageController
 
         $db = Database::connection();
         $stmt = $db->prepare(
-            'INSERT INTO packages (car_model_id, name, slug, description, markup_type, markup_value, icon_name, tagline, is_featured, sort_order)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO packages (car_model_id, name, slug, description, markup_type, markup_value, icon_name, tagline, price_text, is_featured, sort_order)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $modelId,
@@ -63,6 +63,7 @@ class PackageController
             $markupValue,
             trim($body['icon_name'] ?? '') ?: null,
             trim($body['tagline'] ?? '') ?: null,
+            trim($body['price_text'] ?? '') ?: null,
             !empty($body['is_featured']) ? 1 : 0,
             (int) ($body['sort_order'] ?? 0),
         ]);
@@ -84,7 +85,7 @@ class PackageController
         [$markupType, $markupValue] = self::normalizeMarkup($body);
 
         $stmt = Database::connection()->prepare(
-            'UPDATE packages SET car_model_id = ?, name = ?, slug = ?, description = ?, markup_type = ?, markup_value = ?, icon_name = ?, tagline = ?, is_featured = ?, sort_order = ? WHERE id = ?'
+            'UPDATE packages SET car_model_id = ?, name = ?, slug = ?, description = ?, markup_type = ?, markup_value = ?, icon_name = ?, tagline = ?, price_text = ?, is_featured = ?, sort_order = ? WHERE id = ?'
         );
         $stmt->execute([
             $modelId,
@@ -95,6 +96,7 @@ class PackageController
             $markupValue,
             trim($body['icon_name'] ?? '') ?: null,
             trim($body['tagline'] ?? '') ?: null,
+            trim($body['price_text'] ?? '') ?: null,
             !empty($body['is_featured']) ? 1 : 0,
             (int) ($body['sort_order'] ?? 0),
             $id,

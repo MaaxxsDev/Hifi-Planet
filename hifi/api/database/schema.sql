@@ -151,6 +151,7 @@ CREATE TABLE packages (
   markup_value DECIMAL(10,2) NOT NULL DEFAULT 0,
   icon_name VARCHAR(100) NULL,
   tagline VARCHAR(150) NULL,
+  price_text VARCHAR(100) NULL,
   is_featured TINYINT(1) NOT NULL DEFAULT 0,
   sort_order INT NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

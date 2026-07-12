@@ -21,6 +21,7 @@ const PACKAGE_CARD_THEMES = [
 const PACKAGE_CARD_LAYOUTS = [
   { value: 'grid', label: 'Raster', description: 'Breite Kacheln, die responsiv in mehrere Zeilen umbrechen.' },
   { value: 'strip', label: 'Scroll-Band', description: 'Schmale, hochkant Kacheln in einer horizontal scrollbaren Reihe.' },
+  { value: 'coverflow', label: '3D-Coverflow', description: 'Kacheln drehen sich beim Wischen räumlich – die mittlere steht im Fokus.' },
 ];
 
 export default function WebsiteSettings() {
@@ -191,7 +192,7 @@ export default function WebsiteSettings() {
         <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
           Bestimmt, wie die Paket-Stufen auf jeder Fahrzeug-Modell-Seite angeordnet werden.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
           {PACKAGE_CARD_LAYOUTS.map((layout) => (
             <label
               key={layout.value}

@@ -16,7 +16,7 @@ class SettingsController
     private const TABLE_COLUMNS = [
         'brands' => ['id', 'name', 'slug', 'sort_order', 'created_at', 'updated_at'],
         'car_models' => ['id', 'brand_id', 'name', 'slug', 'sort_order', 'created_at', 'updated_at'],
-        'packages' => ['id', 'car_model_id', 'name', 'slug', 'description', 'markup_type', 'markup_value', 'icon_name', 'tagline', 'is_featured', 'sort_order', 'created_at', 'updated_at'],
+        'packages' => ['id', 'car_model_id', 'name', 'slug', 'description', 'markup_type', 'markup_value', 'icon_name', 'tagline', 'price_text', 'is_featured', 'sort_order', 'created_at', 'updated_at'],
         'package_products' => ['id', 'package_id', 'source_url', 'name_override', 'scraped_name', 'scraped_price', 'scraped_currency', 'scraped_image_url', 'price_updated_at', 'scrape_status', 'scrape_error', 'sort_order', 'created_at', 'updated_at'],
         'package_upgrades' => ['id', 'package_id', 'name', 'description', 'price', 'sort_order', 'created_at', 'updated_at'],
         'services' => ['id', 'icon_name', 'title', 'description', 'image_path', 'cta_label', 'cta_url', 'sort_order', 'created_at', 'updated_at'],

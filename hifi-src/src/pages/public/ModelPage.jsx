@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../../api/client.js';
 import usePageMeta from '../../hooks/usePageMeta.js';
@@ -91,7 +91,7 @@ const BULLET_COLOR = '#c4c4c4';
 // Wertigkeitssignal wirkt.
 const VISIBLE_BULLETS = 5;
 
-function PackageCard({ pkg, tier, tierT, isStripLayout, bullets, formatPrice, contactUrl, t }) {
+function PackageCard({ pkg, tier, tierT, layout, bullets, formatPrice, contactUrl, t }) {
   const [expanded, setExpanded] = useState(false);
   const hiddenCount = bullets.length - VISIBLE_BULLETS;
   const shownBullets = expanded ? bullets : bullets.slice(0, VISIBLE_BULLETS);
@@ -120,9 +120,13 @@ function PackageCard({ pkg, tier, tierT, isStripLayout, bullets, formatPrice, co
         background: `linear-gradient(180deg, ${tier.bgTop} 0%, #0b0b0b 55%, #080808 100%)`,
       }}
       className={
-        isStripLayout
+        layout === 'strip'
           ? 'relative flex min-h-[640px] grow shrink basis-[190px] min-w-[190px] max-w-[240px] snap-start flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40 sm:basis-[210px]'
-          : 'relative flex min-h-[640px] flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40'
+          : layout === 'coverflow'
+            ? // Feste Breite + snap-center: die 3D-Transformation (rotateY/scale/translateZ)
+              // setzt der Scroll-Handler in ModelPage direkt per style.transform.
+              'relative flex min-h-[640px] w-[230px] shrink-0 snap-center flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 will-change-transform dark:shadow-black/40'
+            : 'relative flex min-h-[640px] flex-col overflow-hidden rounded-[18px] border shadow-xl shadow-neutral-900/20 dark:shadow-black/40'
       }
     >
       {/* Vollflaechiges Straßen-Glow-Bild der Preisstufe (Referenzdesign). */}
@@ -226,7 +230,8 @@ function PackageCard({ pkg, tier, tierT, isStripLayout, bullets, formatPrice, co
         }}
       >
         <div className="text-center">
-          <div style={{ fontSize: '13px', color: LABEL_COLOR }}>{t('modelPage.totalPrice')}</div>
+          {/* Optionaler Admin-Freitext (z. B. "Coming soon") ersetzt "ab ca." + Preis. */}
+          {!pkg.price_text && <div style={{ fontSize: '13px', color: LABEL_COLOR }}>{t('modelPage.totalPrice')}</div>}
           <div
             style={{
               marginTop: '4px',
@@ -237,7 +242,7 @@ function PackageCard({ pkg, tier, tierT, isStripLayout, bullets, formatPrice, co
               color: PRICE_COLOR,
             }}
           >
-            {formatPrice(pkg.total_price)}
+            {pkg.price_text || formatPrice(pkg.total_price)}
           </div>
           <Link
             to={contactUrl(pkg)}
@@ -259,7 +264,8 @@ export default function ModelPage() {
   const { t, language } = useLanguage();
   const { package_card_theme: packageCardTheme, package_card_layout: packageCardLayout } = useSiteSettings();
   const TIERS = PACKAGE_THEMES[packageCardTheme] || PACKAGE_THEMES.graphite;
-  const isStripLayout = packageCardLayout !== 'grid';
+  const layout = ['grid', 'strip', 'coverflow'].includes(packageCardLayout) ? packageCardLayout : 'strip';
+  const coverflowRef = useRef(null);
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -270,6 +276,39 @@ export default function ModelPage() {
       .then(setData)
       .catch((e) => setError(e.message));
   }, [brandSlug, modelSlug, maintenance.vehicles.enabled, maintenance.bypass]);
+
+  // 3D-Coverflow: pro Scroll-Frame bekommt jede Karte abhaengig vom Abstand ihrer Mitte
+  // zur Containermitte eine Drehung/Skalierung/Tiefe - die mittlere Karte steht frontal,
+  // die Nachbarn drehen raeumlich weg. rAF-gedrosselt; der ResizeObserver deckt auch
+  // Hoehenaenderungen ab (z. B. wenn eine Karte ihre Stichpunkte aufklappt).
+  useEffect(() => {
+    const el = coverflowRef.current;
+    if (layout !== 'coverflow' || !el) return undefined;
+    let rafId = 0;
+    const apply = () => {
+      rafId = 0;
+      const mid = el.scrollLeft + el.clientWidth / 2;
+      for (const card of el.children) {
+        const center = card.offsetLeft + card.offsetWidth / 2;
+        const d = Math.max(-1, Math.min(1, (center - mid) / (card.offsetWidth * 1.4)));
+        const abs = Math.abs(d);
+        card.style.transform = `rotateY(${(-d * 35).toFixed(2)}deg) scale(${(1 - abs * 0.13).toFixed(3)}) translateZ(${(-abs * 60).toFixed(1)}px)`;
+        card.style.zIndex = String(100 - Math.round(abs * 50));
+      }
+    };
+    const schedule = () => {
+      if (!rafId) rafId = requestAnimationFrame(apply);
+    };
+    apply();
+    el.addEventListener('scroll', schedule, { passive: true });
+    const ro = new ResizeObserver(schedule);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', schedule);
+      ro.disconnect();
+      cancelAnimationFrame(rafId);
+    };
+  }, [layout, data]);
 
   usePageMeta({
     title: data ? t('modelPage.metaTitle')(data.model.brand_name, data.model.name) : t('modelPage.metaTitleFallback'),
@@ -351,14 +390,23 @@ export default function ModelPage() {
         // bleiben dunkel (Referenzdesign), wodurch sie auf heller Flaeche als eigenstaendige
         // "Karten" wirken. Der Scrollbalken-Stil unten passt sich per dark: mit an.
         <section className="py-10 sm:py-14" style={{ fontFamily: "'Barlow', sans-serif" }}>
-          <div className={isStripLayout ? 'mx-auto max-w-[1880px] px-4 sm:px-6' : 'mx-auto max-w-6xl px-4 sm:px-6'}>
+          <div className={layout === 'grid' ? 'mx-auto max-w-6xl px-4 sm:px-6' : 'mx-auto max-w-[1880px] px-4 sm:px-6'}>
             <div
+              ref={layout === 'coverflow' ? coverflowRef : undefined}
               className={
-                isStripLayout
-                  ? // items-start statt items-stretch: klappt jemand eine Kachel auf, waechst
+                layout === 'grid'
+                  ? 'grid items-start gap-[18px] sm:grid-cols-2 xl:grid-cols-3'
+                  : // items-start statt items-stretch: klappt jemand eine Kachel auf, waechst
                     // nur DIESE in die Hoehe - die Nachbarn behalten ihre Referenzhoehe.
                     'flex items-start gap-[18px] overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.3)_transparent] dark:[scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/30 dark:[&::-webkit-scrollbar-thumb]:bg-white/25'
-                  : 'grid items-start gap-[18px] sm:grid-cols-2 xl:grid-cols-3'
+              }
+              style={
+                layout === 'coverflow'
+                  ? // Perspektive fuer die 3D-Drehung; das seitliche Padding erlaubt es,
+                    // auch die erste/letzte Karte in die Mitte zu scrollen (Kartenbreite
+                    // 230px -> halbe Breite 115px). pt schafft Luft fuer die Skalierung.
+                    { perspective: '1200px', paddingLeft: 'calc(50% - 115px)', paddingRight: 'calc(50% - 115px)', paddingTop: '10px' }
+                  : undefined
               }
             >
               {packages.map((pkg) => {
@@ -369,7 +417,7 @@ export default function ModelPage() {
                     pkg={pkg}
                     tier={tier}
                     tierT={tierT}
-                    isStripLayout={isStripLayout}
+                    layout={layout}
                     bullets={bulletsOf(pkg)}
                     formatPrice={formatPrice}
                     contactUrl={contactUrl}
