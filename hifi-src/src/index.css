@@ -27,6 +27,69 @@ html {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ==== Kontaktformular Redesign: Design-Tokens (siehe src/referenz/Kontaktformular
+   Redesign/design_handoff_kontaktformular/README.md) - gescopt auf .kf-page statt
+   global, damit sie den Rest der Seite nicht beeinflussen. Reagiert automatisch auf
+   den bestehenden globalen Dark-Mode-Schalter (.dark-Klasse auf <html>), kein
+   eigener Toggle noetig. */
+.kf-page {
+  --kf-pagebg: linear-gradient(120deg, #eef0ea 0%, #f6f8f3 45%, #fbfcf9 100%);
+  --kf-card: #ffffff;
+  --kf-cardbrd: #e4e8dc;
+  --kf-text: #23271d;
+  --kf-text2: #2a2e24;
+  --kf-muted: #6c7360;
+  --kf-label: #838a72;
+  --kf-field: #fafcf6;
+  --kf-fieldbrd: #dde2d3;
+  --kf-fieldicon: #a7ad9d;
+  --kf-accent: #a4d417;
+  --kf-accent2: #8ec21a;
+  --kf-accentsoft: #f2f8df;
+  --kf-pill: #ffffff;
+  --kf-pillbrd: #dfe4d6;
+  --kf-shadow: 0 24px 60px rgba(60, 70, 40, 0.08);
+  --kf-shadow2: 0 16px 40px rgba(60, 70, 40, 0.06);
+  --kf-divider: #e8ecdf;
+  --kf-topo: #d7dccd;
+  --kf-pkgbg: #f4fbe4;
+  --kf-pkgbrd: #cfe89a;
+  --kf-btntext: #1f2417;
+  --kf-scrim: linear-gradient(90deg, rgba(244, 246, 241, 0.35) 0%, rgba(244, 246, 241, 0.55) 55%, rgba(246, 248, 243, 1) 100%);
+}
+.dark .kf-page {
+  --kf-pagebg: linear-gradient(120deg, #181b0f 0%, #111409 45%, #0a0c06 100%);
+  --kf-card: #14170e;
+  --kf-cardbrd: rgba(168, 225, 12, 0.16);
+  --kf-text: #f3f6ea;
+  --kf-text2: #e8ece0;
+  --kf-muted: #9aa38c;
+  --kf-label: #8f987f;
+  --kf-field: rgba(0, 0, 0, 0.35);
+  --kf-fieldbrd: #2c3323;
+  --kf-fieldicon: #5f6852;
+  --kf-accent: #a8e10c;
+  --kf-accent2: #b6e619;
+  --kf-accentsoft: rgba(168, 225, 12, 0.1);
+  --kf-pill: #14170e;
+  --kf-pillbrd: rgba(168, 225, 12, 0.28);
+  --kf-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --kf-shadow2: 0 16px 40px rgba(0, 0, 0, 0.45);
+  --kf-divider: rgba(168, 225, 12, 0.15);
+  --kf-pkgbg: rgba(168, 225, 12, 0.08);
+  --kf-pkgbrd: rgba(168, 225, 12, 0.4);
+  --kf-btntext: #0f1208;
+}
+.kf-page input::placeholder,
+.kf-page textarea::placeholder {
+  color: var(--kf-fieldicon);
+}
+.kf-page input:focus,
+.kf-page textarea:focus {
+  border-color: var(--kf-accent) !important;
+  box-shadow: 0 0 0 3px rgba(164, 212, 23, 0.2);
+}
+
 .grain-band {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;

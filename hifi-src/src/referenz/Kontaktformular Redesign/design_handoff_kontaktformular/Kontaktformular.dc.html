@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f1f2ef; }
+  :root{
+    --pagebg: linear-gradient(120deg,#eceeea 0%,#f2f3f0 45%,#f8f9f6 100%);
+    --card:#ffffff; --cardbrd:#e4e8dc; --text:#23271d; --text2:#2a2e24;
+    --muted:#6c7360; --label:#838a72; --field:#fafcf6; --fieldbrd:#dde2d3;
+    --fieldicon:#a7ad9d; --accent:#a4d417; --accent2:#8ec21a; --accentsoft:#f2f8df;
+    --pill:#ffffff; --pillbrd:#dfe4d6; --shadow:0 24px 60px rgba(60,70,40,0.08);
+    --shadow2:0 16px 40px rgba(60,70,40,0.06); --divider:#e8ecdf; --topo:#d7dccd;
+    --pkgbg:#f4fbe4; --pkgbrd:#cfe89a; --btntext:#1f2417;
+    --scrim: linear-gradient(90deg, rgba(244,246,241,0.35) 0%, rgba(244,246,241,0.55) 55%, rgba(246,248,243,1) 100%);
+  }
+  [data-theme="dark"]{
+    --pagebg: linear-gradient(120deg,#181b0f 0%,#111409 45%,#0a0c06 100%);
+    --card:#14170e; --cardbrd:rgba(168,225,12,0.16); --text:#f3f6ea; --text2:#e8ece0;
+    --muted:#9aa38c; --label:#8f987f; --field:rgba(0,0,0,0.35); --fieldbrd:#2c3323;
+    --fieldicon:#5f6852; --accent:#a8e10c; --accent2:#b6e619; --accentsoft:rgba(168,225,12,0.1);
+    --pill:#14170e; --pillbrd:rgba(168,225,12,0.28); --shadow:0 24px 60px rgba(0,0,0,0.55);
+    --shadow2:0 16px 40px rgba(0,0,0,0.45); --divider:rgba(168,225,12,0.15); --topo:#2c3320;
+    --pkgbg:rgba(168,225,12,0.08); --pkgbrd:rgba(168,225,12,0.4); --btntext:#0f1208;
+    --scrim: linear-gradient(90deg, rgba(15,18,10,0.35) 0%, rgba(15,18,10,0.6) 55%, rgba(10,12,7,1) 100%);
+  }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { filter: brightness(1.12); }
+  input::placeholder, textarea::placeholder { color: var(--fieldicon); }
+  @media (max-width: 980px){
+    [data-r="main"]{ grid-template-columns:1fr !important; }
+    [data-r="carbg"]{ display:none !important; }
+  }
+  @media (max-width: 900px){
+    [data-r="features"]{ grid-template-columns:1fr 1fr !important; }
+  }
+  @media (max-width: 640px){
+    [data-r="fields"]{ grid-template-columns:1fr !important; }
+    [data-r="features"]{ grid-template-columns:1fr !important; }
+    [data-r="page"]{ padding-left:16px !important; padding-right:16px !important; }
+    [data-r="formcard"]{ padding:22px !important; }
+    [data-r="contactcard"]{ padding:26px 22px !important; }
+    [data-r="feature"]{ border-right:none !important; border-bottom:1px solid var(--divider); }
+    [data-r="h1"]{ font-size:34px !important; }
+    [data-r="nav"]{ padding-top:22px !important; }
+  }
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+<div data-theme="{{ theme }}" data-r="page" style="position: relative; min-height: 100vh; background: var(--pagebg); font-family: 'Barlow', sans-serif; color: var(--text2); padding: 0 40px 40px; overflow: hidden; transition: background .3s ease;">
+
+  <!-- ===== DARK MODE: grunge + paint splatter (client theme) ===== -->
+  <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position: absolute; inset: 0; background-image: url('./assets/grunge.png'); background-size: cover; background-position: center; pointer-events: none;"></div>
+    <div aria-hidden="true" style="position: absolute; right: -4%; top: -8%; width: 46%; height: 122%; background-image: url('./assets/splatter.png'); background-size: contain; background-repeat: no-repeat; background-position: right center; pointer-events: none; filter: drop-shadow(0 0 22px rgba(164,212,23,0.35));"></div>
+    <svg aria-hidden="true" viewBox="0 0 600 1000" preserveAspectRatio="xMaxYMid slice" style="position: absolute; right: 0; top: 0; width: 60%; height: 100%; pointer-events: none;"><path d="M 900 -200 A 720 720 0 0 1 900 1200" fill="none" stroke="rgba(168,225,12,0.5)" stroke-width="1.5"></path><path d="M 860 -160 A 700 700 0 0 1 860 1160" fill="none" stroke="rgba(168,225,12,0.18)" stroke-width="1" stroke-dasharray="2 9"></path></svg>
+  </sc-if>
+
+  <!-- ===== LIGHT MODE car photo + streaks + topo ===== -->
+  <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+  <!-- car photo + wave texture strip (cropped from original mockup), left -->
+  <div data-r="carbg" aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 20%; height: 100%; pointer-events: none; background-image: url('./assets/car-left.png'); background-size: cover; background-position: left center; -webkit-mask-image: linear-gradient(90deg, black 55%, transparent 100%); mask-image: linear-gradient(90deg, black 55%, transparent 100%);"></div>
+  <!-- green light ray (cropped from original mockup), right -->
+  <div aria-hidden="true" style="position: absolute; right: 0; bottom: 0; width: 17%; height: 91%; pointer-events: none; background-image: url('./assets/glow-right.png'); background-size: cover; background-position: right center; -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 45%), linear-gradient(180deg, transparent 0%, black 20%); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent 0%, black 45%), linear-gradient(180deg, transparent 0%, black 20%); mask-composite: intersect;"></div>
+  </sc-if>
+
+  <div style="position: relative; z-index: 1; max-width: 1280px; margin: 0 auto;">
+
+    <!-- top nav -->
+    <div data-r="nav" style="display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 34px; padding-bottom: 22px; border-bottom: 1px solid var(--cardbrd); flex-wrap: wrap;">
+      <div style="display: flex; align-items: baseline; gap: 22px; flex-wrap: wrap;">
+        <div style="font-family: 'Michroma', sans-serif; font-size: 24px; letter-spacing: 4px; color: var(--text);">HIFI <span style="color: var(--accent2);">PLANET</span></div>
+        <div style="font-size: 12px; letter-spacing: 6px; color: var(--label); text-transform: uppercase;">Home of Pure Sound</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="https://wa.me/4915206682940" style="display: flex; align-items: center; gap: 10px; background: var(--pill); border: 1px solid var(--pillbrd); border-radius: 999px; padding: 11px 22px; box-shadow: var(--shadow2); color: var(--text2); font-weight: 600; font-size: 15px;" style-hover="border-color: var(--accent);">
+          <span style="width: 26px; height: 26px; border-radius: 50%; background: var(--accentsoft); display: inline-flex; align-items: center; justify-content: center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="var(--accent2)"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.2 14.8l-.3-.2-2.6.7.7-2.5-.2-.3A8 8 0 0 1 12 4zm4.3 9.9c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1l-.7.9c-.1.1-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.4-.5.2-.4v-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.7.7-.9 1.6-.6 2.7.5 1.7 1.6 3.1 3.4 4.2 1.7 1 2.5 1 3.4.9.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1z"></path></svg></span>
+          +49 1520 6682940
+        </a>
+        <button onClick="{{ toggleTheme }}" aria-label="Modus wechseln" style="width: 46px; height: 46px; flex-shrink: 0; background: var(--pill); border: 1px solid var(--pillbrd); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow2); color: var(--text2);" style-hover="border-color: var(--accent);">
+          <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19"></path></svg></sc-if>
+          <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></sc-if>
+        </button>
+      </div>
+    </div>
+
+    <div data-r="main" style="display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); gap: 40px; align-items: start; margin-top: 46px;">
+
+      <!-- LEFT column -->
+      <div>
+        <div style="font-size: 13px; letter-spacing: 6px; color: var(--accent2); text-transform: uppercase; margin-bottom: 12px; font-weight: 600;">Kontakt</div>
+        <h1 data-r="h1" style="font-family: 'Michroma', sans-serif; font-size: clamp(34px, 5vw, 60px); line-height: 1.08; margin: 0; color: var(--text); text-wrap: balance;">Sprich <span style="color: var(--accent2);">mit</span> uns.</h1>
+        <p style="max-width: 520px; color: var(--muted); font-size: 18px; line-height: 1.55; margin: 20px 0 40px;">Ob Anlage, Einbau oder Klang-Tuning für dein Fahrzeug — schreib uns, wir melden uns schnellstmöglich zurück.</p>
+
+        <!-- form card -->
+        <div data-r="formcard" style="background: var(--card); border: 1px solid var(--cardbrd); border-radius: 14px; padding: 40px; box-shadow: var(--shadow);">
+
+          <!-- package summary -->
+          <sc-if value="{{ hasPackage }}" hint-placeholder-val="{{ true }}">
+            <div style="background: var(--pkgbg); border: 1px solid var(--pkgbrd); border-radius: 12px; padding: 22px 24px; margin-bottom: 30px;">
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); font-weight: 700; margin-bottom: 14px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><path d="m3.3 7 8.7 5 8.7-5M12 22V12"></path></svg>
+                Deine Anfrage bezieht sich auf
+              </div>
+              <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; font-size: 15px;">
+                <span style="color: var(--label);">Marke</span><span style="color: var(--text2); font-weight: 600;">{{ pkgBrand }}</span>
+                <span style="color: var(--label);">Modell</span><span style="color: var(--text2); font-weight: 600;">{{ pkgModel }}</span>
+                <span style="color: var(--label);">Paket</span><span style="color: var(--text2); font-weight: 600;">{{ pkgName }}</span>
+              </div>
+              <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--pkgbrd); display: flex; align-items: baseline; justify-content: space-between;">
+                <span style="font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 600;">Paketpreis</span>
+                <span style="font-family: 'Michroma', sans-serif; font-size: 20px; color: var(--text);">{{ pkgPrice }}</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <h2 style="font-family: 'Michroma', sans-serif; font-size: 20px; margin: 0 0 30px; color: var(--text); letter-spacing: .5px;">Anfrage senden</h2>
+
+          <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+            <div style="border: 1px solid var(--accent); background: var(--accentsoft); border-radius: 10px; padding: 20px 22px; margin-bottom: 26px;">
+              <div style="font-weight: 700; color: var(--accent2); font-size: 16px;">Anfrage gesendet ✓</div>
+              <div style="color: var(--muted); font-size: 14px; margin-top: 5px;">Danke! Wir melden uns innerhalb eines Werktags bei dir.</div>
+            </div>
+          </sc-if>
+
+          <div data-r="fields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+              <label style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--label); font-weight: 600;">Name *</label>
+              <div style="position: relative; display: flex; align-items: center;">
+                <svg style="position: absolute; left: 14px;" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--fieldicon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"></path></svg>
+                <input value="{{ name }}" onChange="{{ setName }}" style="width: 100%; box-sizing: border-box; background: var(--field); border: 1px solid var(--fieldbrd); border-radius: 8px; padding: 14px 16px 14px 42px; color: var(--text2); font-size: 15px; font-family: 'Barlow', sans-serif; outline: none;" style-focus="border-color: var(--accent); box-shadow: 0 0 0 3px rgba(164,212,23,0.2);" placeholder="Max Mustermann">
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+              <label style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--label); font-weight: 600;">E-Mail *</label>
+              <div style="position: relative; display: flex; align-items: center;">
+                <svg style="position: absolute; left: 14px;" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--fieldicon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>
+                <input value="{{ email }}" onChange="{{ setEmail }}" type="email" style="width: 100%; box-sizing: border-box; background: var(--field); border: 1px solid var(--fieldbrd); border-radius: 8px; padding: 14px 16px 14px 42px; color: var(--text2); font-size: 15px; font-family: 'Barlow', sans-serif; outline: none;" style-focus="border-color: var(--accent); box-shadow: 0 0 0 3px rgba(164,212,23,0.2);" placeholder="max@mail.de">
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+              <label style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--label); font-weight: 600;">Telefon</label>
+              <div style="position: relative; display: flex; align-items: center;">
+                <svg style="position: absolute; left: 14px;" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--fieldicon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <input style="width: 100%; box-sizing: border-box; background: var(--field); border: 1px solid var(--fieldbrd); border-radius: 8px; padding: 14px 16px 14px 42px; color: var(--text2); font-size: 15px; font-family: 'Barlow', sans-serif; outline: none;" style-focus="border-color: var(--accent); box-shadow: 0 0 0 3px rgba(164,212,23,0.2);" placeholder="Optional">
+              </div>
+            </div>
+            <sc-if value="{{ showFin }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-direction: column; gap: 9px;">
+                <label style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--label); font-weight: 600;">Fahrgestellnummer (FIN)</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                  <svg style="position: absolute; left: 14px;" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--fieldicon)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 0 1-2-2v-1l2-5a3 3 0 0 1 2.8-2h8.4A3 3 0 0 1 19 9l2 5v1a2 2 0 0 1-2 2M7 17v2M17 17v2"></path><circle cx="7.5" cy="14" r="1"></circle><circle cx="16.5" cy="14" r="1"></circle></svg>
+                  <input style="width: 100%; box-sizing: border-box; background: var(--field); border: 1px solid var(--fieldbrd); border-radius: 8px; padding: 14px 16px 14px 42px; color: var(--text2); font-size: 15px; font-family: 'Barlow', sans-serif; outline: none;" style-focus="border-color: var(--accent); box-shadow: 0 0 0 3px rgba(164,212,23,0.2);" placeholder="Optional – hilft bei der Einschätzung">
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 24px;">
+            <label style="font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--label); font-weight: 600;">Nachricht</label>
+            <textarea rows="5" style="width: 100%; box-sizing: border-box; background: var(--field); border: 1px solid var(--fieldbrd); border-radius: 8px; padding: 14px 16px; color: var(--text2); font-size: 15px; font-family: 'Barlow', sans-serif; outline: none; resize: vertical;" style-focus="border-color: var(--accent); box-shadow: 0 0 0 3px rgba(164,212,23,0.2);" placeholder="Erzähl uns von deinem Projekt – Fahrzeug, Wunschklang, Budget …"></textarea>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 20px; margin-top: 30px; flex-wrap: wrap;">
+            <button onClick="{{ submit }}" style="display: inline-flex; align-items: center; gap: 12px; background: var(--accent); color: var(--btntext); border: none; border-radius: 8px; padding: 16px 34px; font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; font-family: 'Barlow', sans-serif; cursor: pointer; box-shadow: 0 10px 24px rgba(150,200,20,0.32);" style-hover="filter: brightness(1.08); box-shadow: 0 12px 30px rgba(150,200,20,0.45);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"></path></svg>Anfrage senden</button>
+            <div style="font-size: 13px; color: var(--label);">* Pflichtfelder</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT column -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div data-r="contactcard" style="background: var(--card); border: 1px solid var(--cardbrd); border-radius: 14px; padding: 34px 32px; box-shadow: var(--shadow); position: relative; overflow: hidden;">
+          <div style="position: absolute; right: -60px; top: -60px; width: 190px; height: 190px; border: 1px dashed var(--pkgbrd); border-radius: 50%;"></div>
+          <h2 style="font-family: 'Michroma', sans-serif; font-size: 17px; margin: 0 0 28px; color: var(--text); letter-spacing: .5px;">HiFi Planet Amorbach</h2>
+
+          <div style="display: flex; flex-direction: column; gap: 22px;">
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              <div style="width: 44px; height: 44px; flex-shrink: 0; background: var(--accentsoft); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+              <div><div style="font-size: 11px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Telefon</div><a href="tel:093732062390" style="font-size: 16px; font-weight: 600; color: var(--text2);">09373 20 62 390</a></div>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              <div style="width: 44px; height: 44px; flex-shrink: 0; background: var(--accentsoft); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg></div>
+              <div><div style="font-size: 11px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">E-Mail</div><a href="mailto:info@hifi-planet.de" style="font-size: 16px; font-weight: 600; color: var(--text2);">info@hifi-planet.de</a></div>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              <div style="width: 44px; height: 44px; flex-shrink: 0; background: var(--accentsoft); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+              <div><div style="font-size: 11px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">Adresse</div><div style="font-size: 16px; font-weight: 600; color: var(--text2); line-height: 1.4;">Boxbrunner Straße 20a<br>63916 Amorbach</div></div>
+            </div>
+            <sc-if value="{{ showWhatsapp }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; gap: 16px; align-items: flex-start;">
+                <div style="width: 44px; height: 44px; flex-shrink: 0; background: var(--accentsoft); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></div>
+                <div><div style="font-size: 11px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 4px; font-weight: 600;">WhatsApp</div><a href="https://wa.me/4915206682940" style="font-size: 16px; font-weight: 600; color: var(--text2);">+49 1520 6682940</a></div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--divider);">
+            <div style="font-size: 11px; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; margin-bottom: 12px; font-weight: 600;">Öffnungszeiten</div>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 24px; font-size: 15px; color: var(--text2);">
+              <span style="color: var(--label);">Mo–Fr</span><span>9:00 – 18:00 Uhr</span>
+              <span style="color: var(--label);">Sa</span><span>10:00 – 13:00 Uhr</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: var(--card); border: 1px solid var(--cardbrd); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); position: relative;">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Boxbrunner+Str.+20a,+63916+Amorbach" target="_blank" style="position: absolute; top: 14px; left: 14px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; background: var(--pill); border: 1px solid var(--pillbrd); border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--text2); box-shadow: var(--shadow2);" style-hover="border-color: var(--accent);">In Maps öffnen <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg></a>
+          <iframe title="Anfahrt HiFi Planet" src="https://www.google.com/maps?q=Boxbrunner+Str.+20a,+63916+Amorbach&output=embed" style="width: 100%; height: 210px; border: 0; display: block;"></iframe>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Boxbrunner+Str.+20a,+63916+Amorbach" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent2); border-top: 1px solid var(--divider);" style-hover="background: var(--accentsoft);">Route planen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- feature bar -->
+    <div data-r="features" style="margin-top: 40px; background: var(--card); border: 1px solid var(--cardbrd); border-radius: 14px; box-shadow: var(--shadow2); display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; overflow: hidden;">
+      <sc-for list="{{ features }}" as="f" hint-placeholder-count="4">
+        <div data-r="feature" style="display: flex; align-items: center; gap: 16px; padding: 26px 30px; border-right: 1px solid var(--divider);">
+          <div style="width: 46px; height: 46px; flex-shrink: 0; border: 1.5px solid var(--pkgbrd); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent2);" dangerouslySetInnerHTML="{{ f.icon }}"></div>
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: .3px;">{{ f.title }}</div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 2px;">{{ f.sub }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Darstellung&quot;},&quot;showFin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Formular&quot;},&quot;showWhatsapp&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Kontaktdaten&quot;},&quot;pkgBrand&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Paket (leer = ausgeblendet)&quot;},&quot;pkgModel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Paket (leer = ausgeblendet)&quot;},&quot;pkgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Paket (leer = ausgeblendet)&quot;},&quot;pkgPrice&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Paket (leer = ausgeblendet)&quot;}}">
+class Component extends DCLogic {
+  state = { name: "", email: "", sent: false, dark: null };
+  renderVals() {
+    const icon = (p) => ({ __html: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>` });
+    const dark = this.state.dark == null ? (this.props.defaultDark ?? false) : this.state.dark;
+    const brand = this.props.pkgBrand ?? "";
+    return {
+      name: this.state.name,
+      email: this.state.email,
+      sent: this.state.sent,
+      theme: dark ? "dark" : "light",
+      isDark: dark,
+      isLight: !dark,
+      toggleTheme: () => this.setState({ dark: !dark }),
+      setName: (e) => this.setState({ name: e.target.value }),
+      setEmail: (e) => this.setState({ email: e.target.value }),
+      submit: () => this.setState({ sent: true }),
+      showFin: this.props.showFin ?? true,
+      showWhatsapp: this.props.showWhatsapp ?? true,
+      hasPackage: !!brand,
+      pkgBrand: brand,
+      pkgModel: this.props.pkgModel ?? "",
+      pkgName: this.props.pkgName ?? "",
+      pkgPrice: this.props.pkgPrice ?? "",
+      features: [
+        { title: "Premium Klang", sub: "Höchste Qualität", icon: icon('<path d="M4 12v3M8 8v11M12 4v16M16 8v11M20 12v3"></path>') },
+        { title: "Made in Germany", sub: "Präzise Handarbeit", icon: icon('<circle cx="12" cy="12" r="3"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"></path>') },
+        { title: "Individuell", sub: "Maßgeschneiderte Lösungen", icon: icon('<path d="M6 3h12l4 6-10 12L2 9z"></path><path d="M11 3 8 9l4 12 4-12-3-6M2 9h20"></path>') },
+        { title: "Experten Team", sub: "Leidenschaft & Know-how", icon: icon('<path d="M20 6 9 17l-5-5"></path>') },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
