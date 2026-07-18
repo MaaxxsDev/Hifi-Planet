@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { api } from '../api/client.js';
 import ThemeToggle from './ThemeToggle.jsx';
 import logo from '../assets/logo.png';
+import logoDark from '../assets/logo-dark.png';
 
 const ICONS = {
   home: 'M3 11.5 12 4l9 7.5M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9',
@@ -128,8 +129,9 @@ export default function AdminLayout() {
     <div className="flex min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
       <aside className="hidden w-60 shrink-0 border-r border-neutral-200 p-4 dark:border-neutral-800 sm:block">
         <div className="mb-6 flex items-center gap-2 px-3">
-          <span className="rounded-lg px-2 py-1 dark:bg-white">
-            <img src={logo} alt="HifiPlanet" className="h-7 w-auto" />
+          <span className="rounded-lg px-2 py-1">
+            <img src={logo} alt="HifiPlanet" className="h-7 w-auto dark:hidden" />
+            <img src={logoDark} alt="HifiPlanet" className="hidden h-7 w-auto dark:block" />
           </span>
           <span className="text-sm font-semibold text-neutral-500 dark:text-neutral-400">Admin</span>
         </div>
@@ -149,8 +151,9 @@ export default function AdminLayout() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <span className="rounded-lg px-1.5 py-0.5 dark:bg-white">
-                <img src={logo} alt="HifiPlanet" className="h-6 w-auto" />
+              <span className="rounded-lg px-1.5 py-0.5">
+                <img src={logo} alt="HifiPlanet" className="h-6 w-auto dark:hidden" />
+                <img src={logoDark} alt="HifiPlanet" className="hidden h-6 w-auto dark:block" />
               </span>
             </div>
             <p className="hidden text-sm text-neutral-500 dark:text-neutral-400 sm:block">

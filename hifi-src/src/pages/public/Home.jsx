@@ -22,7 +22,7 @@ import youtubeVideo from '../../assets/videos/youtube-hintergrund.mp4';
 const YOUTUBE_URL = 'https://www.youtube.com/@hifiplanet2812';
 const YOUTUBE_VIDEO_ID = 'ostj2mKDVUc';
 
-const brands = ['Focal', 'Helix', 'Ground Zero', 'Mosconi', 'Hifonics', 'Audison'];
+const brands = ['Ground Zero Audio', 'Audison', 'Hertz', 'Helix', 'Brax', 'Gladen', 'Alpine', 'Pioneer', 'Kenwood', 'JVC'];
 
 // Native Pixelmasse der Bilder unten - nur fuer die width/height-Attribute auf <img>,
 // damit der Browser vor dem Laden Platz reserviert (verhindert Layout-Sprung). Die
@@ -43,7 +43,6 @@ export default function Home() {
   const { t, language } = useLanguage();
 
   const stats = t('home.stats');
-  const steps = t('home.steps');
   const galleryAlts = t('home.galleryAlts');
   const gallery = galleryImages.map((img, i) => ({ ...img, alt: galleryAlts[i] }));
   const testimonials = t('home.testimonials');
@@ -191,23 +190,6 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <Reveal>
-          <h2 className="mb-8 text-center text-2xl font-bold text-neutral-900 dark:text-white">{t('home.howItWorks')}</h2>
-        </Reveal>
-        <div className="grid gap-6 sm:grid-cols-3">
-          {steps.map((step, i) => (
-            <Reveal key={step.title} index={i} className="rounded-xl border border-neutral-200 bg-white p-6 text-center dark:border-neutral-800 dark:bg-neutral-900">
-              <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-lg font-bold text-white">
-                {i + 1}
-              </div>
-              <h3 className="mb-1 font-semibold text-neutral-900 dark:text-white">{step.title}</h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-300">{step.text}</p>
-            </Reveal>
-          ))}
         </div>
       </section>
 

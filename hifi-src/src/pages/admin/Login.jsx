@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import logo from '../../assets/logo.png';
+import logoDark from '../../assets/logo-dark.png';
 
 export default function Login() {
   const { user, login, verifyTwoFactor } = useAuth();
@@ -51,7 +52,8 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-neutral-50 px-4 dark:bg-neutral-950">
-      <img src={logo} alt="HifiPlanet" className="h-16 w-auto sm:h-20" />
+      <img src={logo} alt="HifiPlanet" className="h-16 w-auto dark:hidden sm:h-20" />
+      <img src={logoDark} alt="HifiPlanet" className="hidden h-16 w-auto dark:block sm:h-20" />
       {step === 'credentials' ? (
         <form onSubmit={handleCredentials} className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
           <h1 className="mb-6 text-xl font-bold text-neutral-900 dark:text-white">Admin-Login</h1>

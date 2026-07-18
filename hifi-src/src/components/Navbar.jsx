@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useSiteSettings } from '../context/SiteSettingsContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import logo from '../assets/logo.png';
+import logoDark from '../assets/logo-dark.png';
 
 const SHOP_URL = 'https://www.audio4cars.de/';
 
@@ -212,8 +213,11 @@ export default function Navbar() {
           </button>
         </div>
 
-        <Link to="/" className="flex items-center justify-self-center rounded-lg px-2 py-1 dark:bg-white">
-          <img src={logo} alt="HifiPlanet" className="h-14 w-auto sm:h-16" />
+        {/* Im Dark Mode eigene Logo-Variante mit weisser Wortmarke statt weissem
+            Chip hinter dem Logo (Kundenwunsch). */}
+        <Link to="/" className="flex items-center justify-self-center rounded-lg px-2 py-1">
+          <img src={logo} alt="HifiPlanet" className="h-14 w-auto dark:hidden sm:h-16" />
+          <img src={logoDark} alt="HifiPlanet" className="hidden h-14 w-auto dark:block sm:h-16" />
         </Link>
 
         <div className="flex items-center justify-self-end gap-1">

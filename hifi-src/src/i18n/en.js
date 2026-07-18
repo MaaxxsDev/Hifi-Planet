@@ -69,7 +69,7 @@ export default {
     selectVehicle: 'Select vehicle',
     getInTouch: 'Get in touch',
     welcome: 'Welcome to HifiPlanet',
-    heroTitle: 'Audiophile by principle',
+    heroTitle: 'Home of pure Sound',
     heroSubtitle: 'Your car-hifi specialist for custom sound installations. Choose your vehicle, discover the right package and get in touch, no obligation – we take care of the rest.',
     stats: [
       { value: '20+', label: 'years of experience' },
@@ -78,12 +78,6 @@ export default {
       { value: 'International', label: 'recognized car-hifi specialist' },
     ],
     brandsHeading: 'Brands we work with',
-    howItWorks: 'How it works',
-    steps: [
-      { title: 'Choose make & model', text: 'Find your vehicle in just a few clicks.' },
-      { title: 'Discover a sound package', text: 'Matching packages with current prices at a glance.' },
-      { title: 'Get in touch', text: "We'll get back to you shortly with all the details." },
-    ],
     youtubeBadge: 'HifiPlanet presents',
     youtubeTitle: 'The craft behind your sound',
     youtubeText: 'Discover the artistry behind our work',

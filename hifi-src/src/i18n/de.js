@@ -69,7 +69,7 @@ export default {
     selectVehicle: 'Fahrzeug auswählen',
     getInTouch: 'Kontakt aufnehmen',
     welcome: 'Willkommen bei HifiPlanet',
-    heroTitle: 'Audiophil aus Prinzip',
+    heroTitle: 'Home of pure Sound',
     heroSubtitle: 'Dein Car-Hifi Spezialist für individuelle Sound-Umbauten. Wähle dein Fahrzeug, entdecke passende Pakete und frag unverbindlich an – wir kümmern uns um den Rest.',
     stats: [
       { value: '20+', label: 'Jahre Erfahrung' },
@@ -78,12 +78,6 @@ export default {
       { value: 'International', label: 'anerkannter Car-Hifi-Spezialist' },
     ],
     brandsHeading: 'Marken, mit denen wir arbeiten',
-    howItWorks: "So funktioniert's",
-    steps: [
-      { title: 'Marke & Modell wählen', text: 'Finde dein Fahrzeug in wenigen Klicks.' },
-      { title: 'Sound-Paket entdecken', text: 'Passende Pakete inkl. aktueller Preise auf einen Blick.' },
-      { title: 'Unverbindlich anfragen', text: 'Wir melden uns zeitnah mit allen Details bei dir.' },
-    ],
     youtubeBadge: 'HifiPlanet präsentiert',
     youtubeTitle: 'Das Handwerk hinter deinem Sound',
     youtubeText: 'Entdecke die Handwerkskunst hinter unserer Arbeit',
