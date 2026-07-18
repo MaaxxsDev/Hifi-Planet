@@ -9,7 +9,7 @@ import { useCookieConsent } from '../../context/CookieConsentContext.jsx';
 import { User, Mail, Phone, Car, Package, Send, MapPin, ExternalLink } from 'lucide-react';
 import grungeBg from '../../assets/contact/grunge.png';
 import splatterBg from '../../assets/contact/splatter.png';
-import carPhoto from '../../assets/photos/hero-trunk.webp';
+import carPhoto from '../../assets/contact/car-light.png';
 
 const digitsOnly = (value) => (value || '').replace(/[^\d+]/g, '');
 const waHref = (whatsapp) => `https://wa.me/${digitsOnly(whatsapp).replace(/^0/, '49').replace('+', '')}`;
@@ -190,16 +190,24 @@ export default function ContactPage() {
         <path d="M 860 -160 A 700 700 0 0 1 860 1160" fill="none" stroke="rgba(168,225,12,0.18)" strokeWidth="1" strokeDasharray="2 9" />
       </svg>
 
-      {/* Light Mode: Auto-Foto links + gruener Lichtstreifen rechts (ab 981px, s. README) */}
+      {/* Light Mode: Auto-Foto unten links verankert + gruener Lichtstreifen rechts (ab 981px, s. README).
+          Maske uebernimmt die weiche Ausblendung nach oben (kein harter oberer Rand bei
+          voller Hoehe), der Scrim obendrauf das weiche Verlaufen nach rechts in die Seite. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 hidden h-full w-1/5 bg-cover bg-left dark:!hidden min-[981px]:block"
-        style={{
-          backgroundImage: `url(${carPhoto})`,
-          WebkitMaskImage: 'linear-gradient(90deg, black 55%, transparent 100%)',
-          maskImage: 'linear-gradient(90deg, black 55%, transparent 100%)',
-        }}
-      />
+        className="pointer-events-none absolute bottom-0 left-0 hidden h-full w-[34%] dark:!hidden min-[981px]:block"
+      >
+        <div
+          className="h-full w-full bg-cover"
+          style={{
+            backgroundImage: `url(${carPhoto})`,
+            backgroundPosition: 'left bottom',
+            WebkitMaskImage: 'linear-gradient(180deg, transparent 0%, black 40%)',
+            maskImage: 'linear-gradient(180deg, transparent 0%, black 40%)',
+          }}
+        />
+        <div className="absolute inset-0" style={{ background: 'var(--kf-scrim)' }} />
+      </div>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute right-[4%] top-0 hidden h-full w-[26%] rotate-6 dark:!hidden min-[981px]:block"

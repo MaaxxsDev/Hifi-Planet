@@ -99,7 +99,7 @@ Alle Icons: Outline-SVGs, `stroke-width: 2`, `stroke-linecap/linejoin: round` (L
 
 ### Light Mode
 - Seitenverlauf: `linear-gradient(120deg, #eef0ea 0%, #f6f8f3 45%, #fbfcf9 100%)`.
-- Links: Auto-Foto-Streifen, 34% Breite, volle Höhe, `object-fit: cover`, darüber Scrim `linear-gradient(90deg, rgba(244,246,241,0.35), rgba(244,246,241,0.55) 55%, rgba(246,248,243,1))`. Foto: eigenes Asset der Seite verwenden. **≤980px ausblenden.**
+- Links: Auto-Foto-Streifen — **exakt die Datei `assets/car-light.png` verwenden** (Graustufen-Interieur mit Lautsprecher, kein anderes Foto!). Position: unten links verankert (`background-position: left bottom` bzw. `object-position: left bottom`), ca. 34% Viewport-Breite, `object-fit: cover`, `pointer-events: none`. Darüber zwingend der Scrim `linear-gradient(90deg, rgba(244,246,241,0.35), rgba(244,246,241,0.55) 55%, rgba(246,248,243,1))` + weiche Ausblendung nach oben (`mask-image: linear-gradient(180deg, transparent 0%, black 40%)`), sodass das Foto ohne harte Kanten in den hellen Hintergrund ausläuft. **≤980px ausblenden.** Hinweis: Das PNG ist 310×512px (aus dem Design-Mockup extrahiert) — falls ein höher aufgelöstes Original dieses Fotos in den Assets der Website existiert, dieses verwenden, aber dasselbe Motiv.
 - Rechts: grüne „Lichtstreifen"-Gruppe, 42% Breite, um 6° rotiert, aus vier Ebenen: 3px-Linie (`linear-gradient(180deg, transparent, #b6e619 30%, #cfef5a 55%, transparent)`, blur 1px, opacity .85), 90px weicher Schein (blur 26px), zweite dünne Linie (2px, blur 1px), großer radialer Glow (`rgba(207,239,90,0.35)`, blur 20px).
 - Oben links: dezente Topo-Wellenlinien (5 geschwungene Pfade, Stroke `#d7dccd`, 1px, opacity .5, ca. 360×280px).
 
@@ -156,7 +156,7 @@ Als CSS Custom Properties umgesetzt (Prototyp nutzt `:root` + `[data-theme="dark
 ## Assets (beiliegend)
 - `assets/grunge.png` — Dark-Mode Grunge-Hintergrund (1600×1400)
 - `assets/splatter.png` — Dark-Mode Paint-Splatter, transparent (1100×1500)
-- Auto-Foto für den Light Mode: **nicht enthalten** — vorhandenes Bildmaterial der Seite verwenden.
+- `assets/car-light.png` — Auto-Foto Light Mode (Graustufen-Interieur, 310×512, aus dem Mockup extrahiert). **Genau dieses Motiv verwenden**, kein anderes Foto.
 
 ## Dateien
 - `Kontaktformular.dc.html` — Design-Referenz (Prototyp; Template + Inline-Styles; Dark Mode über `data-theme="dark"` toggelbar — im Prototyp per Button, in der Umsetzung über den globalen Theme-Schalter)
