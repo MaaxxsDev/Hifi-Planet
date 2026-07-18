@@ -265,7 +265,9 @@ export default function ModelPage() {
   const { package_card_theme: packageCardTheme, package_card_layout: packageCardLayout } = useSiteSettings();
   const TIERS = PACKAGE_THEMES[packageCardTheme] || PACKAGE_THEMES.graphite;
   const layout = ['grid', 'strip', 'coverflow'].includes(packageCardLayout) ? packageCardLayout : 'strip';
-  const coverflowRef = useRef(null);
+  const scrollerRef = useRef(null);
+  const trackRef = useRef(null);
+  const thumbRef = useRef(null);
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -282,7 +284,7 @@ export default function ModelPage() {
   // die Nachbarn drehen raeumlich weg. rAF-gedrosselt; der ResizeObserver deckt auch
   // Hoehenaenderungen ab (z. B. wenn eine Karte ihre Stichpunkte aufklappt).
   useEffect(() => {
-    const el = coverflowRef.current;
+    const el = scrollerRef.current;
     if (layout !== 'coverflow' || !el) return undefined;
     let rafId = 0;
     const apply = () => {
@@ -307,6 +309,160 @@ export default function ModelPage() {
       el.removeEventListener('scroll', schedule);
       ro.disconnect();
       cancelAnimationFrame(rafId);
+    };
+  }, [layout, data]);
+
+  // Coverflow-Kacheln mit der Maus greifen und ziehen. Nur fuer echte Maus-Pointer -
+  // Touch behaelt das native Wisch-Scrolling mit Momentum. Waehrend des Ziehens wird
+  // das Scroll-Snapping ausgesetzt (es wuerde gegen scrollLeft ankaempfen); beim
+  // Loslassen faehrt die Reihe weich zur naechstgelegenen Karte. Wer gezogen hat,
+  // soll beim Loslassen ueber einem Button nichts ausloesen - der Capture-Click-
+  // Handler schluckt genau diesen einen Klick.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (layout !== 'coverflow' || !el) return undefined;
+    let dragging = false;
+    let moved = 0;
+    let startX = 0;
+    let startScroll = 0;
+
+    const snapToNearest = () => {
+      const mid = el.scrollLeft + el.clientWidth / 2;
+      let best = null;
+      let bestDist = Infinity;
+      for (const card of el.children) {
+        const center = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(center - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = center;
+        }
+      }
+      if (best !== null) el.scrollTo({ left: best - el.clientWidth / 2, behavior: 'smooth' });
+    };
+
+    const onDown = (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      dragging = true;
+      moved = 0;
+      startX = e.clientX;
+      startScroll = el.scrollLeft;
+      el.setPointerCapture(e.pointerId);
+      el.style.scrollSnapType = 'none';
+      el.dataset.dragging = 'true';
+    };
+    const onMove = (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      el.scrollLeft = startScroll - dx;
+    };
+    const onUp = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      el.dataset.dragging = 'false';
+      if (el.hasPointerCapture?.(e.pointerId)) el.releasePointerCapture(e.pointerId);
+      snapToNearest();
+      // Snap erst nach der weichen Fahrt wieder aktivieren, sonst springt der Browser hart.
+      setTimeout(() => {
+        el.style.scrollSnapType = '';
+      }, 450);
+    };
+    const onClickCapture = (e) => {
+      if (moved > 6) {
+        e.preventDefault();
+        e.stopPropagation();
+        moved = 0;
+      }
+    };
+
+    el.addEventListener('pointerdown', onDown);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
+    el.addEventListener('click', onClickCapture, true);
+    return () => {
+      el.removeEventListener('pointerdown', onDown);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onUp);
+      el.removeEventListener('click', onClickCapture, true);
+    };
+  }, [layout, data]);
+
+  // Eigene, zum Design passende Scroll-Leiste unter der Kartenreihe (Strip + Coverflow):
+  // die native Browser-Leiste ist ausgeblendet, stattdessen ein schmaler zentrierter
+  // Track mit markengruenem, leuchtendem Daumen. Daumen ist ziehbar, Klick auf den
+  // Track springt an die Stelle. Bei zu wenig Inhalt (kein Overflow) blendet sie aus.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    const track = trackRef.current;
+    const thumb = thumbRef.current;
+    if (layout === 'grid' || !el || !track || !thumb) return undefined;
+    let rafId = 0;
+
+    const update = () => {
+      rafId = 0;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 1) {
+        track.style.opacity = '0';
+        track.style.pointerEvents = 'none';
+        return;
+      }
+      track.style.opacity = '1';
+      track.style.pointerEvents = 'auto';
+      const trackW = track.clientWidth;
+      const thumbW = Math.max(32, (el.clientWidth / el.scrollWidth) * trackW);
+      thumb.style.width = `${thumbW}px`;
+      thumb.style.transform = `translateX(${((el.scrollLeft / maxScroll) * (trackW - thumbW)).toFixed(1)}px)`;
+    };
+    const schedule = () => {
+      if (!rafId) rafId = requestAnimationFrame(update);
+    };
+    update();
+    el.addEventListener('scroll', schedule, { passive: true });
+    const ro = new ResizeObserver(schedule);
+    ro.observe(el);
+
+    let dragging = false;
+    let grabOffset = 0;
+    const scrollToPointer = (clientX) => {
+      const rect = track.getBoundingClientRect();
+      const thumbW = thumb.clientWidth;
+      const x = Math.min(Math.max(clientX - rect.left - grabOffset, 0), rect.width - thumbW);
+      el.scrollLeft = (x / (rect.width - thumbW)) * (el.scrollWidth - el.clientWidth);
+    };
+    const onDown = (e) => {
+      dragging = true;
+      track.setPointerCapture(e.pointerId);
+      el.style.scrollSnapType = 'none';
+      const tr = thumb.getBoundingClientRect();
+      // Auf dem Daumen: relative Griffposition merken; daneben: Daumen unter den Zeiger springen.
+      grabOffset = e.clientX >= tr.left && e.clientX <= tr.right ? e.clientX - tr.left : thumb.clientWidth / 2;
+      if (!(e.clientX >= tr.left && e.clientX <= tr.right)) scrollToPointer(e.clientX);
+    };
+    const onMove = (e) => {
+      if (dragging) scrollToPointer(e.clientX);
+    };
+    const onUp = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      if (track.hasPointerCapture?.(e.pointerId)) track.releasePointerCapture(e.pointerId);
+      el.style.scrollSnapType = '';
+    };
+    track.addEventListener('pointerdown', onDown);
+    track.addEventListener('pointermove', onMove);
+    track.addEventListener('pointerup', onUp);
+    track.addEventListener('pointercancel', onUp);
+
+    return () => {
+      el.removeEventListener('scroll', schedule);
+      ro.disconnect();
+      cancelAnimationFrame(rafId);
+      track.removeEventListener('pointerdown', onDown);
+      track.removeEventListener('pointermove', onMove);
+      track.removeEventListener('pointerup', onUp);
+      track.removeEventListener('pointercancel', onUp);
     };
   }, [layout, data]);
 
@@ -392,13 +548,15 @@ export default function ModelPage() {
         <section className="py-10 sm:py-14" style={{ fontFamily: "'Barlow', sans-serif" }}>
           <div className={layout === 'grid' ? 'mx-auto max-w-6xl px-4 sm:px-6' : 'mx-auto max-w-[1880px] px-4 sm:px-6'}>
             <div
-              ref={layout === 'coverflow' ? coverflowRef : undefined}
+              ref={layout === 'grid' ? undefined : scrollerRef}
               className={
                 layout === 'grid'
                   ? 'grid items-start gap-[18px] sm:grid-cols-2 xl:grid-cols-3'
                   : // items-start statt items-stretch: klappt jemand eine Kachel auf, waechst
                     // nur DIESE in die Hoehe - die Nachbarn behalten ihre Referenzhoehe.
-                    'flex items-start gap-[18px] overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.3)_transparent] dark:[scrollbar-color:rgba(255,255,255,0.25)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/30 dark:[&::-webkit-scrollbar-thumb]:bg-white/25'
+                    // Die native Scroll-Leiste ist ausgeblendet - darunter sitzt die eigene
+                    // Track/Daumen-Leiste. select-none, damit Drag keinen Text markiert.
+                    'flex select-none items-start gap-[18px] overflow-x-auto pb-3 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
               }
               style={
                 layout === 'coverflow'
@@ -426,6 +584,24 @@ export default function ModelPage() {
                 );
               })}
             </div>
+
+            {/* Eigene Scroll-Leiste: zentrierter Track, markengruener leuchtender Daumen.
+                Ziehbar + klickbar (Logik im Scrollbar-Effekt); blendet aus, wenn alle
+                Karten ohne Scrollen passen. touch-action none fuer sauberes Pointer-Ziehen. */}
+            {layout !== 'grid' && (
+              <div
+                ref={trackRef}
+                className="relative mx-auto mt-5 h-2 w-56 max-w-full cursor-pointer rounded-full bg-neutral-900/10 transition-opacity duration-200 dark:bg-white/10"
+                style={{ touchAction: 'none' }}
+                aria-hidden="true"
+              >
+                <div
+                  ref={thumbRef}
+                  className="absolute left-0 top-0 h-full rounded-full bg-brand-500 shadow-[0_0_10px_rgba(107,166,38,0.7)]"
+                  style={{ width: '48px' }}
+                />
+              </div>
+            )}
           </div>
         </section>
       )}
