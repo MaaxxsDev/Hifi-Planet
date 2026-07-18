@@ -341,23 +341,34 @@ export default function ModelPage() {
       if (best !== null) el.scrollTo({ left: best - el.clientWidth / 2, behavior: 'smooth' });
     };
 
+    // WICHTIG: Pointer-Capture erst ab echter Bewegung (>4px) starten - sofortiges
+    // Capture beim Druecken wuerde auch das Click-Event auf den Container umlenken,
+    // womit normale Klicks auf Buttons/Links in den Karten nie ankaemen.
+    let pending = false;
     const onDown = (e) => {
       if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      dragging = true;
+      pending = true;
+      dragging = false;
       moved = 0;
       startX = e.clientX;
       startScroll = el.scrollLeft;
-      el.setPointerCapture(e.pointerId);
-      el.style.scrollSnapType = 'none';
-      el.dataset.dragging = 'true';
     };
     const onMove = (e) => {
-      if (!dragging) return;
+      if (!pending && !dragging) return;
       const dx = e.clientX - startX;
       moved = Math.max(moved, Math.abs(dx));
+      if (!dragging) {
+        if (moved <= 4) return;
+        dragging = true;
+        pending = false;
+        el.setPointerCapture(e.pointerId);
+        el.style.scrollSnapType = 'none';
+        el.dataset.dragging = 'true';
+      }
       el.scrollLeft = startScroll - dx;
     };
     const onUp = (e) => {
+      pending = false;
       if (!dragging) return;
       dragging = false;
       el.dataset.dragging = 'false';
