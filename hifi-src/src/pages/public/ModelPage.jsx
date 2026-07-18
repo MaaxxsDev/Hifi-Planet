@@ -268,6 +268,7 @@ export default function ModelPage() {
   const scrollerRef = useRef(null);
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
+  const hintPlayedRef = useRef(false);
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -312,92 +313,28 @@ export default function ModelPage() {
     };
   }, [layout, data]);
 
-  // Coverflow-Kacheln mit der Maus greifen und ziehen. Nur fuer echte Maus-Pointer -
-  // Touch behaelt das native Wisch-Scrolling mit Momentum. Waehrend des Ziehens wird
-  // das Scroll-Snapping ausgesetzt (es wuerde gegen scrollLeft ankaempfen); beim
-  // Loslassen faehrt die Reihe weich zur naechstgelegenen Karte. Wer gezogen hat,
-  // soll beim Loslassen ueber einem Button nichts ausloesen - der Capture-Click-
-  // Handler schluckt genau diesen einen Klick.
+  // Kein Karten-Drag per Maus mehr (Kundenfeedback: fuehlte sich in Kombination mit der
+  // 3D-Transformation im Coverflow nicht gut an). Auf dem Desktop navigiert man
+  // stattdessen ueber die eigene Scroll-Leiste unten; Touch-Geraete behalten ohnehin
+  // das native, fluessige Wisch-Scrolling der scroll-snap-Kartenreihe.
+  //
+  // Stattdessen: einmaliger kurzer Wisch-Hinweis beim ersten Laden auf Touch-Geraeten
+  // (Kundenwunsch) - die Reihe faehrt kurz ein Stueck nach rechts und wieder zurueck,
+  // damit sofort klar ist, dass sich die Kacheln wischen lassen. Nur einmal pro
+  // Seitenaufruf, nur auf echten Touch-Geraeten, nicht bei reduzierter Bewegung.
   useEffect(() => {
     const el = scrollerRef.current;
-    if (layout !== 'coverflow' || !el) return undefined;
-    let dragging = false;
-    let moved = 0;
-    let startX = 0;
-    let startScroll = 0;
-
-    const snapToNearest = () => {
-      const mid = el.scrollLeft + el.clientWidth / 2;
-      let best = null;
-      let bestDist = Infinity;
-      for (const card of el.children) {
-        const center = card.offsetLeft + card.offsetWidth / 2;
-        const dist = Math.abs(center - mid);
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = center;
-        }
-      }
-      if (best !== null) el.scrollTo({ left: best - el.clientWidth / 2, behavior: 'smooth' });
-    };
-
-    // WICHTIG: Pointer-Capture erst ab echter Bewegung (>4px) starten - sofortiges
-    // Capture beim Druecken wuerde auch das Click-Event auf den Container umlenken,
-    // womit normale Klicks auf Buttons/Links in den Karten nie ankaemen.
-    let pending = false;
-    const onDown = (e) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      pending = true;
-      dragging = false;
-      moved = 0;
-      startX = e.clientX;
-      startScroll = el.scrollLeft;
-    };
-    const onMove = (e) => {
-      if (!pending && !dragging) return;
-      const dx = e.clientX - startX;
-      moved = Math.max(moved, Math.abs(dx));
-      if (!dragging) {
-        if (moved <= 4) return;
-        dragging = true;
-        pending = false;
-        el.setPointerCapture(e.pointerId);
-        el.style.scrollSnapType = 'none';
-        el.dataset.dragging = 'true';
-      }
-      el.scrollLeft = startScroll - dx;
-    };
-    const onUp = (e) => {
-      pending = false;
-      if (!dragging) return;
-      dragging = false;
-      el.dataset.dragging = 'false';
-      if (el.hasPointerCapture?.(e.pointerId)) el.releasePointerCapture(e.pointerId);
-      snapToNearest();
-      // Snap erst nach der weichen Fahrt wieder aktivieren, sonst springt der Browser hart.
-      setTimeout(() => {
-        el.style.scrollSnapType = '';
-      }, 450);
-    };
-    const onClickCapture = (e) => {
-      if (moved > 6) {
-        e.preventDefault();
-        e.stopPropagation();
-        moved = 0;
-      }
-    };
-
-    el.addEventListener('pointerdown', onDown);
-    el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerup', onUp);
-    el.addEventListener('pointercancel', onUp);
-    el.addEventListener('click', onClickCapture, true);
+    if (layout === 'grid' || !el || hintPlayedRef.current) return undefined;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!isTouch || reducedMotion) return undefined;
+    hintPlayedRef.current = true;
+    const peek = Math.min(el.clientWidth * 0.4, 160);
+    const t1 = setTimeout(() => el.scrollTo({ left: peek, behavior: 'smooth' }), 500);
+    const t2 = setTimeout(() => el.scrollTo({ left: 0, behavior: 'smooth' }), 1250);
     return () => {
-      el.removeEventListener('pointerdown', onDown);
-      el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerup', onUp);
-      el.removeEventListener('pointercancel', onUp);
-      el.removeEventListener('click', onClickCapture, true);
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, [layout, data]);
 
