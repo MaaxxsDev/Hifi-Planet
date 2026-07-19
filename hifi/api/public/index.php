@@ -115,6 +115,7 @@ $router->post('/packages', $perm('packages.manage', fn($p) => PackageController:
 $router->put('/packages/{id}', $perm('packages.manage', fn($p) => PackageController::update($p)));
 $router->delete('/packages/{id}', $perm('packages.manage', fn($p) => PackageController::destroy($p)));
 $router->get('/packages/{id}/products', $perm('packages.manage', fn($p) => PackageController::products($p)));
+$router->post('/models/{id}/copy-packages', $perm('packages.manage', fn($p) => PackageController::copyFromModel($p)));
 
 $router->get('/packages/{id}/upgrades', $maint('vehicles', fn($p) => PackageUpgradeController::index($p)));
 $router->post('/package-upgrades', $perm('packages.manage', fn($p) => PackageUpgradeController::store()));
