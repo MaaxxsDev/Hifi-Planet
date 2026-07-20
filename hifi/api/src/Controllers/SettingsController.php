@@ -26,6 +26,28 @@ class SettingsController
         'gallery_photos' => ['id', 'gallery_project_id', 'image_path', 'caption', 'sort_order', 'created_at', 'updated_at'],
     ];
 
+    // Gruppierung fuer den wahlweisen Import: jede Gruppe wird beim Import als Ganzes
+    // ersetzt oder komplett unangetastet gelassen. Tabellen innerhalb einer Gruppe
+    // haengen per Fremdschluessel voneinander ab (z.B. packages -> car_models), darum
+    // keine feinere Aufteilung - sonst koennten verwaiste/falsch verknuepfte Zeilen
+    // entstehen, wenn z.B. nur "Pakete" ohne die zugehoerigen Modelle importiert wuerden.
+    private const IMPORT_SECTIONS = [
+        'catalog' => ['brands', 'car_models', 'packages', 'package_products', 'package_upgrades'],
+        'services' => ['services'],
+        'faqs' => ['faqs'],
+        'gallery' => ['gallery_brands', 'gallery_projects', 'gallery_photos'],
+    ];
+
+    // Welche Tabellenspalte pro Tabelle einen Bild-Pfad enthaelt - dieselbe Zuordnung
+    // wird sowohl beim Export (Bilder einsammeln) als auch beim Teil-Import (nur die
+    // Bilder der tatsaechlich ausgewaehlten Bereiche wiederherstellen) verwendet.
+    private const IMAGE_COLUMNS = [
+        'services' => 'image_path',
+        'gallery_brands' => 'cover_image_path',
+        'gallery_projects' => 'cover_image_path',
+        'gallery_photos' => 'image_path',
+    ];
+
     // Kein const, da abhängig von der Umgebung (base_path unterscheidet sich
     // zwischen lokalem /hifi und der Root-Domain auf IONOS).
     private static function uploadsUrlPrefix(): string
@@ -43,13 +65,7 @@ class SettingsController
         }
 
         $images = [];
-        $imageColumns = [
-            'services' => 'image_path',
-            'gallery_brands' => 'cover_image_path',
-            'gallery_projects' => 'cover_image_path',
-            'gallery_photos' => 'image_path',
-        ];
-        foreach ($imageColumns as $table => $column) {
+        foreach (self::IMAGE_COLUMNS as $table => $column) {
             foreach ($data[$table] as $row) {
                 self::collectImage($row[$column] ?? null, $images);
             }
@@ -128,6 +144,25 @@ class SettingsController
         $data = $payload['data'];
         $images = is_array($payload['images'] ?? null) ? $payload['images'] : [];
 
+        // Welche Bereiche importiert werden sollen (Formularfeld "sections", JSON-Array
+        // von Schluesseln aus IMPORT_SECTIONS). Ohne Angabe oder mit ungueltigem Inhalt:
+        // wie bisher alles importieren (abwaertskompatibel zu aelteren Aufrufen).
+        $requestedSections = $_POST['sections'] ?? null;
+        if (is_string($requestedSections)) {
+            $requestedSections = json_decode($requestedSections, true);
+        }
+        $sections = is_array($requestedSections)
+            ? array_values(array_intersect(array_keys(self::IMPORT_SECTIONS), $requestedSections))
+            : array_keys(self::IMPORT_SECTIONS);
+        if (!$sections) {
+            Http::error('Kein Bereich zum Importieren ausgewählt', 422);
+        }
+
+        $tables = [];
+        foreach ($sections as $section) {
+            $tables = array_merge($tables, self::IMPORT_SECTIONS[$section]);
+        }
+
         $db = Database::connection();
         $counts = [];
 
@@ -135,13 +170,28 @@ class SettingsController
             $db->beginTransaction();
             $db->exec('SET FOREIGN_KEY_CHECKS=0');
 
-            foreach (self::TABLE_COLUMNS as $table => $allowedColumns) {
+            foreach ($tables as $table) {
                 $rows = is_array($data[$table] ?? null) ? $data[$table] : [];
                 $db->exec("DELETE FROM `$table`");
-                $counts[$table] = self::insertRows($db, $table, $allowedColumns, $rows);
+                $counts[$table] = self::insertRows($db, $table, self::TABLE_COLUMNS[$table], $rows);
             }
 
-            self::restoreImages($images);
+            // Nur Bilder wiederherstellen, die von Zeilen der tatsaechlich importierten
+            // Tabellen referenziert werden - sonst wuerden z.B. Galerie-Bilder auf den
+            // Server geschrieben, obwohl "Bildergalerie" beim Import abgewaehlt war.
+            $wantedPaths = [];
+            foreach (self::IMAGE_COLUMNS as $table => $column) {
+                if (!in_array($table, $tables, true)) {
+                    continue;
+                }
+                foreach (($data[$table] ?? []) as $row) {
+                    if (!empty($row[$column])) {
+                        $wantedPaths[$row[$column]] = true;
+                    }
+                }
+            }
+            $imagesToRestore = array_intersect_key($images, $wantedPaths);
+            self::restoreImages($imagesToRestore);
 
             $db->exec('SET FOREIGN_KEY_CHECKS=1');
             $db->commit();
@@ -151,7 +201,7 @@ class SettingsController
             Http::error('Import fehlgeschlagen, es wurde nichts verändert: ' . $e->getMessage(), 500);
         }
 
-        Http::send(['ok' => true, 'counts' => $counts, 'images_restored' => count($images)]);
+        Http::send(['ok' => true, 'sections' => $sections, 'counts' => $counts, 'images_restored' => count($imagesToRestore)]);
     }
 
     public static function resetServicesToDefaults(): void
