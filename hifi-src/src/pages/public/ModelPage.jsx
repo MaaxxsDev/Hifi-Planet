@@ -351,7 +351,55 @@ export default function ModelPage() {
   useEffect(() => {
     const el = scrollerRef.current;
     if (layout === 'grid' || !el) return undefined;
-    let snapTimer = 0;
+    let idleTimer = 0;
+    let reenableTimer = 0;
+    let burstActive = false;
+    let burstStartIndex = 0;
+    let burstNet = 0;
+
+    const cardCenters = () => [...el.children].map((card) => card.offsetLeft + card.offsetWidth / 2);
+    const nearestIndexAt = (centers, mid) => {
+      let best = 0;
+      let bestDist = Infinity;
+      centers.forEach((center, i) => {
+        const dist = Math.abs(center - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      });
+      return best;
+    };
+
+    // Beim Einrasten nach einer Wheel-Boe NICHT einfach zur naechstgelegenen Karte
+    // (= oft die Startkarte, wenn nur leicht gescrollt wurde - fuehlte sich wie ein
+    // Zurueckspringen an, Kundenfeedback). Stattdessen: landet die naechstgelegene
+    // Karte trotz erkennbarer Scroll-Richtung wieder auf der Startkarte, wird
+    // trotzdem ein Schritt in diese Richtung erzwungen - auch ein leichter Wisch
+    // blaettert also mindestens eine Karte weiter. Bei weiterem Scrollen (die
+    // naechstgelegene Karte liegt schon woanders) gilt weiterhin ganz normal die
+    // naechstgelegene Karte, auch wenn das mehrere Karten weiter ist.
+    const settleBurst = () => {
+      burstActive = false;
+      const centers = cardCenters();
+      if (!centers.length) return;
+      const mid = el.scrollLeft + el.clientWidth / 2;
+      const nearestIdx = nearestIndexAt(centers, mid);
+      let targetIdx = nearestIdx;
+      if (nearestIdx === burstStartIndex && Math.abs(burstNet) > 4) {
+        targetIdx =
+          burstNet > 0 ? Math.min(burstStartIndex + 1, centers.length - 1) : Math.max(burstStartIndex - 1, 0);
+      }
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const target = Math.max(0, Math.min(centers[targetIdx] - el.clientWidth / 2, maxScroll));
+      el.scrollTo({ left: target, behavior: 'smooth' });
+      // Snap erst nach der weichen Fahrt wieder aktivieren, sonst kaempft sie
+      // gegen unser eigenes scrollTo an.
+      clearTimeout(reenableTimer);
+      reenableTimer = setTimeout(() => {
+        el.style.scrollSnapType = '';
+      }, 450);
+    };
 
     const onWheel = (e) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
@@ -362,22 +410,26 @@ export default function ModelPage() {
       if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) return;
 
       e.preventDefault();
-      // Snap waehrend der Wheel-Boe aussetzen (wie beim frueheren Ziehen), sonst
-      // kaempft scroll-snap gegen schnell aufeinanderfolgende Wheel-Ticks. Der
-      // Nachlauf-Timer wird bei jedem Tick verlaengert, rastet also erst kurz
-      // nach dem letzten Tick der Boe wieder ein.
+      if (!burstActive) {
+        burstActive = true;
+        burstNet = 0;
+        burstStartIndex = nearestIndexAt(cardCenters(), el.scrollLeft + el.clientWidth / 2);
+      }
+      burstNet += e.deltaY;
+      // Snap waehrend der Wheel-Boe aussetzen, sonst kaempft sie gegen schnell
+      // aufeinanderfolgende Wheel-Ticks. Der Nachlauf-Timer wird bei jedem Tick
+      // verlaengert, die Boe gilt also erst kurz nach dem letzten Tick als beendet.
       el.style.scrollSnapType = 'none';
       el.scrollLeft += e.deltaY;
-      clearTimeout(snapTimer);
-      snapTimer = setTimeout(() => {
-        el.style.scrollSnapType = '';
-      }, 150);
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(settleBurst, 150);
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => {
       el.removeEventListener('wheel', onWheel);
-      clearTimeout(snapTimer);
+      clearTimeout(idleTimer);
+      clearTimeout(reenableTimer);
     };
   }, [layout, data]);
 
