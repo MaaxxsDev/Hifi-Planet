@@ -45,8 +45,18 @@ export default function Home() {
   const stats = t('home.stats');
   const galleryAlts = t('home.galleryAlts');
   const gallery = galleryImages.map((img, i) => ({ ...img, alt: galleryAlts[i] }));
-  const testimonials = t('home.testimonials');
   const [faqs, setFaqs] = useState([]);
+  // Solange noch keine Google-Rezensionen konfiguriert/erfolgreich abgerufen wurden
+  // (googleReviews === null), zeigt die Seite die festen Beispiel-Texte aus den
+  // Uebersetzungen - danach die echten, im Admin-Bereich zwischengespeicherten Rezensionen.
+  const [googleReviews, setGoogleReviews] = useState(null);
+  const testimonials = googleReviews
+    ? googleReviews.reviews
+        // Manche Google-Rezensionen sind reine Sterne-Bewertungen ohne Text - als
+        // Zitat-Karte ohne Zitat waeren die nur eine leere Huelle.
+        .filter((r) => r.review_text)
+        .map((r) => ({ name: r.author_name, text: r.review_text, rating: r.rating }))
+    : t('home.testimonials');
 
   useEffect(() => {
     api
@@ -61,6 +71,17 @@ export default function Home() {
       })
       .catch(() => {});
   }, [language]);
+
+  useEffect(() => {
+    api
+      .get('/google-reviews')
+      .then((res) => {
+        // Nur uebernehmen, wenn mindestens eine Rezension auch echten Text hat -
+        // sonst bliebe die Zitat-Karten-Liste leer (siehe testimonials-Filter oben).
+        if (res.rating != null && res.reviews.some((r) => r.review_text)) setGoogleReviews(res);
+      })
+      .catch(() => {});
+  }, []);
 
   usePageMeta({
     title: t('home.metaTitle'),
@@ -298,9 +319,11 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal className="mb-10 text-center">
             <div className="mb-2 flex items-center justify-center gap-2">
-              <StarRating className="h-6 w-6" />
+              <StarRating className="h-6 w-6" count={googleReviews ? Math.round(googleReviews.rating) : 5} />
             </div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">{t('home.reviewsRating')}</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+              {googleReviews ? t('home.reviewsRatingDynamic')(googleReviews.rating, googleReviews.rating_count) : t('home.reviewsRating')}
+            </h2>
             <p className="mt-1 text-neutral-600 dark:text-neutral-300">{t('home.reviewsText')}</p>
             <a
               href="https://www.google.com/maps/search/?api=1&query=Hifi+Planet+Amorbach+Boxbrunner+Stra%C3%9Fe+20a"

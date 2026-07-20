@@ -103,6 +103,7 @@ export default {
       'Custom subwoofer installation with LED lighting in the trunk',
     ],
     reviewsRating: 'Rated 5.0 by 181 customers',
+    reviewsRatingDynamic: (rating, count) => `Rated ${rating.toFixed(1)} by ${count} customers`,
     reviewsText: 'Here\'s what our customers say about us.',
     reviewsLink: 'See all reviews on Google →',
     testimonials: [

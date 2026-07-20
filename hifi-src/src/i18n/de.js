@@ -103,6 +103,7 @@ export default {
       'Individueller Subwoofer-Einbau mit LED-Beleuchtung im Kofferraum',
     ],
     reviewsRating: '5,0 von 181 Kunden bewertet',
+    reviewsRatingDynamic: (rating, count) => `${rating.toFixed(1).replace('.', ',')} von ${count} Kunden bewertet`,
     reviewsText: 'Das sagen unsere Kunden über uns.',
     reviewsLink: 'Alle Bewertungen auf Google ansehen →',
     testimonials: [

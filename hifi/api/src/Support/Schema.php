@@ -37,6 +37,12 @@ class Schema
             hero_image_path VARCHAR(255) NULL,
             ga_measurement_id VARCHAR(20) NULL,
             ga_property_id VARCHAR(30) NULL,
+            google_place_id VARCHAR(255) NULL,
+            google_places_api_key VARCHAR(255) NULL,
+            google_rating DECIMAL(2,1) NULL,
+            google_rating_count INT NULL,
+            google_reviews_updated_at DATETIME NULL,
+            google_reviews_error VARCHAR(500) NULL,
             package_card_theme VARCHAR(30) NOT NULL DEFAULT 'graphite',
             package_card_layout VARCHAR(20) NOT NULL DEFAULT 'strip',
             mail_host VARCHAR(255) NULL,
@@ -231,6 +237,22 @@ class Schema
             CONSTRAINT fk_contact_package FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE SET NULL,
             CONSTRAINT fk_contact_product FOREIGN KEY (package_product_id) REFERENCES package_products(id) ON DELETE SET NULL
         ) ENGINE=InnoDB",
+
+        // Reiner Cache der letzten Google-Places-Abfrage (siehe GooglePlacesReviewsFetcher) -
+        // wird bei jedem erfolgreichen Refresh komplett neu befuellt (DELETE + INSERT),
+        // keine eigenen Fremdschluessel-Bezuege von aussen.
+        'google_reviews' => "CREATE TABLE google_reviews (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            google_review_id VARCHAR(255) NULL,
+            author_name VARCHAR(150) NOT NULL,
+            profile_photo_url VARCHAR(500) NULL,
+            rating TINYINT NOT NULL,
+            review_text TEXT NULL,
+            relative_time_description VARCHAR(100) NULL,
+            review_time INT NULL,
+            sort_order INT NOT NULL DEFAULT 0,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB",
     ];
 
     // Erwartete Spalten je Tabelle (ohne Primary Key / Unique / Foreign-Key-Klauseln –
@@ -263,6 +285,12 @@ class Schema
             'hero_image_path' => 'VARCHAR(255) NULL',
             'ga_measurement_id' => 'VARCHAR(20) NULL',
             'ga_property_id' => 'VARCHAR(30) NULL',
+            'google_place_id' => 'VARCHAR(255) NULL',
+            'google_places_api_key' => 'VARCHAR(255) NULL',
+            'google_rating' => 'DECIMAL(2,1) NULL',
+            'google_rating_count' => 'INT NULL',
+            'google_reviews_updated_at' => 'DATETIME NULL',
+            'google_reviews_error' => 'VARCHAR(500) NULL',
             'package_card_theme' => "VARCHAR(30) NOT NULL DEFAULT 'graphite'",
             'package_card_layout' => "VARCHAR(20) NOT NULL DEFAULT 'strip'",
             'mail_host' => 'VARCHAR(255) NULL',
@@ -422,6 +450,18 @@ class Schema
             'package_product_id' => 'INT NULL',
             'selected_upgrades' => 'TEXT NULL',
             'status' => "ENUM('new','in_progress','done') NOT NULL DEFAULT 'new'",
+            'created_at' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+        ],
+        'google_reviews' => [
+            'id' => 'INT AUTO_INCREMENT PRIMARY KEY',
+            'google_review_id' => 'VARCHAR(255) NULL',
+            'author_name' => 'VARCHAR(150) NOT NULL',
+            'profile_photo_url' => 'VARCHAR(500) NULL',
+            'rating' => 'TINYINT NOT NULL',
+            'review_text' => 'TEXT NULL',
+            'relative_time_description' => 'VARCHAR(100) NULL',
+            'review_time' => 'INT NULL',
+            'sort_order' => 'INT NOT NULL DEFAULT 0',
             'created_at' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
         ],
     ];

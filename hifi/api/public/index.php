@@ -18,6 +18,7 @@ use App\Controllers\FaqController;
 use App\Controllers\GalleryBrandController;
 use App\Controllers\GalleryPhotoController;
 use App\Controllers\GalleryProjectController;
+use App\Controllers\GoogleReviewsController;
 use App\Controllers\MailSettingsController;
 use App\Controllers\MaintenanceController;
 use App\Controllers\ModelController;
@@ -161,6 +162,10 @@ $router->post('/faqs', $perm('content.manage', fn($p) => FaqController::store())
 $router->put('/faqs/{id}', $perm('content.manage', fn($p) => FaqController::update($p)));
 $router->delete('/faqs/{id}', $perm('content.manage', fn($p) => FaqController::destroy($p)));
 
+// Nur der zuletzt gecachte Stand - kein Live-Aufruf bei Google pro Seitenbesuch
+// (Aktualisierung laeuft ausschliesslich ueber refresh_google_reviews.php).
+$router->get('/google-reviews', fn($p) => GoogleReviewsController::publicReviews());
+
 $router->get('/admin-users', $perm('users.manage', fn($p) => AdminUserController::index()));
 $router->post('/admin-users', $perm('users.manage', fn($p) => AdminUserController::store()));
 $router->put('/admin-users/{id}', $perm('users.manage', fn($p) => AdminUserController::update($p)));
@@ -191,6 +196,10 @@ $router->post('/settings/mail/test', $perm('settings.manage', fn($p) => MailSett
 
 $router->get('/settings/analytics', $perm('settings.manage', fn($p) => AnalyticsController::show()));
 $router->post('/settings/analytics', $perm('settings.manage', fn($p) => AnalyticsController::update()));
+
+$router->get('/settings/google-reviews', $perm('settings.manage', fn($p) => GoogleReviewsController::show()));
+$router->post('/settings/google-reviews', $perm('settings.manage', fn($p) => GoogleReviewsController::update()));
+$router->post('/settings/google-reviews/refresh', $perm('settings.manage', fn($p) => GoogleReviewsController::refresh()));
 $router->get('/analytics/report', $admin(fn($p) => AnalyticsController::report()));
 
 $router->get('/maintenance', fn($p) => MaintenanceController::status());

@@ -38,6 +38,15 @@ export default function WebsiteSettings() {
   const [gaError, setGaError] = useState('');
   const [gaSaved, setGaSaved] = useState(false);
 
+  const [reviewsPlaceId, setReviewsPlaceId] = useState('');
+  const [reviewsApiKey, setReviewsApiKey] = useState('');
+  const [reviewsHasApiKey, setReviewsHasApiKey] = useState(false);
+  const [reviewsStatus, setReviewsStatus] = useState(null); // { rating, rating_count, updated_at, error }
+  const [reviewsSaveBusy, setReviewsSaveBusy] = useState(false);
+  const [reviewsSaveError, setReviewsSaveError] = useState('');
+  const [reviewsSaved, setReviewsSaved] = useState(false);
+  const [reviewsRefreshBusy, setReviewsRefreshBusy] = useState(false);
+
   useEffect(() => {
     api
       .get('/site-settings')
@@ -57,7 +66,50 @@ export default function WebsiteSettings() {
       setGaPropertyId(res.ga_property_id || '');
       setGaHasCredentials(res.has_credentials);
     });
+    loadReviewsStatus();
   }, []);
+
+  const loadReviewsStatus = () => {
+    api.get('/settings/google-reviews').then((res) => {
+      setReviewsPlaceId(res.place_id || '');
+      setReviewsHasApiKey(res.has_api_key);
+      setReviewsStatus(res);
+    });
+  };
+
+  const handleReviewsSave = async () => {
+    setReviewsSaveBusy(true);
+    setReviewsSaveError('');
+    setReviewsSaved(false);
+    try {
+      const res = await api.post('/settings/google-reviews', {
+        place_id: reviewsPlaceId,
+        api_key: reviewsApiKey,
+      });
+      setReviewsHasApiKey(res.has_api_key);
+      setReviewsStatus(res);
+      setReviewsApiKey('');
+      setReviewsSaved(true);
+    } catch (err) {
+      setReviewsSaveError(err.message);
+    } finally {
+      setReviewsSaveBusy(false);
+    }
+  };
+
+  const handleReviewsRefresh = async () => {
+    setReviewsRefreshBusy(true);
+    setReviewsSaveError('');
+    try {
+      const res = await api.post('/settings/google-reviews/refresh', {});
+      setReviewsStatus(res);
+    } catch (err) {
+      setReviewsSaveError(err.message);
+      loadReviewsStatus(); // Fehler wurde serverseitig auch in app_settings vermerkt - Status nachladen
+    } finally {
+      setReviewsRefreshBusy(false);
+    }
+  };
 
   const handleGaDashboardSave = async () => {
     setGaBusy(true);
@@ -274,6 +326,95 @@ export default function WebsiteSettings() {
             {gaBusy ? 'Speichere…' : 'Dashboard-Anbindung speichern'}
           </button>
         </div>
+      </section>
+
+      <section className="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <h2 className="mb-1 font-semibold text-neutral-900 dark:text-white">Google-Rezensionen</h2>
+        <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Zeigt die echte Google-Bewertung und die aktuellsten Rezensionen auf der Startseite an, statt der
+          fest eingetragenen Beispiel-Texte. Wird einmal täglich automatisch aktualisiert (nie bei einem
+          Seitenbesuch selbst) – die Seite zeigt also immer den letzten erfolgreich abgerufenen Stand.
+        </p>
+        <div className="space-y-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Place-ID</label>
+            <input
+              value={reviewsPlaceId}
+              onChange={(e) => { setReviewsPlaceId(e.target.value); setReviewsSaved(false); }}
+              placeholder="z. B. ChIJN1t_tDeuEmsRUsoyG83frY4"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            />
+            <p className="mt-1 text-xs text-neutral-400">
+              Eindeutige Google-Kennung eures Eintrags – zu finden über den{' '}
+              <a
+                href="https://developers.google.com/maps/documentation/places/web-service/place-id#find-id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-brand-600"
+              >
+                Google Place ID Finder
+              </a>
+              .
+            </p>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              Places-API-Key {reviewsHasApiKey ? '(leer lassen = unverändert)' : ''}
+            </label>
+            <input
+              value={reviewsApiKey}
+              onChange={(e) => { setReviewsApiKey(e.target.value); setReviewsSaved(false); }}
+              placeholder={reviewsHasApiKey ? '••••••••••••••••••••• (bereits hinterlegt)' : 'AIzaSy…'}
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 font-mono text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            />
+            <p className="mt-1 text-xs text-neutral-400">
+              Aus der Google-Cloud-Console, mit aktivierter „Places API (New)“.
+            </p>
+          </div>
+        </div>
+
+        {reviewsSaveError && <p className="mt-3 text-sm text-red-600">{reviewsSaveError}</p>}
+        {reviewsSaved && <p className="mt-3 text-sm text-green-600 dark:text-green-400">Gespeichert.</p>}
+
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={handleReviewsSave}
+            disabled={reviewsSaveBusy}
+            className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50 disabled:opacity-50 dark:border-neutral-700 dark:hover:bg-neutral-800"
+          >
+            {reviewsSaveBusy ? 'Speichere…' : 'Google-Rezensionen-Einstellungen speichern'}
+          </button>
+          <button
+            type="button"
+            onClick={handleReviewsRefresh}
+            disabled={reviewsRefreshBusy || !reviewsPlaceId || !reviewsHasApiKey}
+            className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-50"
+          >
+            {reviewsRefreshBusy ? 'Aktualisiere…' : 'Jetzt aktualisieren'}
+          </button>
+        </div>
+
+        {reviewsStatus && (
+          <div className="mt-4 rounded-md bg-neutral-50 p-3 text-sm dark:bg-neutral-800/50">
+            {reviewsStatus.rating != null ? (
+              <p className="text-neutral-700 dark:text-neutral-300">
+                Aktuell hinterlegt: <strong>{reviewsStatus.rating} ★</strong> ({reviewsStatus.rating_count} Bewertungen)
+                {reviewsStatus.updated_at && (
+                  <> – zuletzt aktualisiert am {new Date(reviewsStatus.updated_at.replace(' ', 'T')).toLocaleString('de-DE')}</>
+                )}
+              </p>
+            ) : (
+              <p className="text-neutral-500 dark:text-neutral-400">
+                Noch keine erfolgreiche Aktualisierung – die Startseite zeigt bis dahin weiter die
+                Beispiel-Rezensionen.
+              </p>
+            )}
+            {reviewsStatus.error && (
+              <p className="mt-1 text-red-600">Letzter Fehler: {reviewsStatus.error}</p>
+            )}
+          </div>
+        )}
       </section>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
