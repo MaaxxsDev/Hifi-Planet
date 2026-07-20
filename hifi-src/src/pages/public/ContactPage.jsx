@@ -229,6 +229,21 @@ export default function ContactPage() {
           style={{ background: 'radial-gradient(circle, rgba(207,239,90,0.35), transparent 70%)' }}
         />
       </div>
+      {/* Light Mode: dezente Topo-Wellenlinien oben links (README "Hintergruende"). */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 360 280"
+        className="pointer-events-none absolute left-0 top-0 block h-[280px] w-[360px] opacity-50 dark:hidden"
+        fill="none"
+        stroke="var(--kf-topo)"
+        strokeWidth="1"
+      >
+        <path d="M -20 40 C 60 10, 140 70, 220 40 S 360 10, 400 50" />
+        <path d="M -20 90 C 70 55, 150 115, 230 85 S 370 60, 400 100" />
+        <path d="M -20 140 C 60 105, 150 165, 235 135 S 365 110, 400 150" />
+        <path d="M -20 190 C 70 155, 145 215, 230 185 S 370 160, 400 200" />
+        <path d="M -20 240 C 60 205, 150 265, 235 235 S 365 210, 400 250" />
+      </svg>
 
       <div className="relative z-10 mx-auto max-w-[1280px] pt-10 sm:pt-14">
         {/* Hero */}
@@ -553,15 +568,20 @@ export default function ContactPage() {
                 </a>
               )}
               <ExternalEmbed name={t('contactPage.mapEmbedName')} className="h-[210px] w-full">
-                <iframe
-                  title="HifiPlanet Amorbach – Standort"
-                  src={`https://www.google.com/maps?q=${SHOP_ADDRESS_ENCODED}&output=embed`}
-                  width="100%"
-                  height="210"
-                  style={{ border: 0, display: 'block' }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+                {/* iframe hoeher als der sichtbare Ausschnitt + negativer margin-top:
+                    schneidet Googles eigenes Overlay (oben links) weg, damit nur unser
+                    "In Maps oeffnen"-Chip zu sehen ist - wie im Prototyp. */}
+                <div className="h-[210px] overflow-hidden">
+                  <iframe
+                    title="HifiPlanet Amorbach – Standort"
+                    src={`https://www.google.com/maps?q=${SHOP_ADDRESS_ENCODED}&output=embed`}
+                    width="100%"
+                    height="280"
+                    style={{ border: 0, display: 'block', marginTop: '-70px' }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
               </ExternalEmbed>
               <a
                 href={DIRECTIONS_URL}
