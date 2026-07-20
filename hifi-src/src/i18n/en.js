@@ -151,6 +151,7 @@ export default {
     featuredBadge: 'Recommended',
     moreBullets: (n) => (n === 1 ? '+ 1 more feature' : `+ ${n} more features`),
     lessBullets: 'Show less',
+    wheelHint: 'Scroll to browse',
   },
   leistungen: {
     metaTitle: 'Services',

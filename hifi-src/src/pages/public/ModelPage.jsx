@@ -5,6 +5,7 @@ import usePageMeta from '../../hooks/usePageMeta.js';
 import MaintenanceNotice from '../../components/MaintenanceNotice.jsx';
 import MaintenanceBypassBanner from '../../components/MaintenanceBypassBanner.jsx';
 import DynamicIcon from '../../components/DynamicIcon.jsx';
+import { ChevronLeft, ChevronRight, Mouse } from 'lucide-react';
 import { useMaintenance } from '../../context/MaintenanceContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
@@ -271,6 +272,7 @@ export default function ModelPage() {
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
   const hintPlayedRef = useRef(false);
+  const [wheelHintVisible, setWheelHintVisible] = useState(false);
   const formatPrice = (value) =>
     new Intl.NumberFormat(language === 'de' ? 'de-DE' : 'en-US', { style: 'currency', currency: 'EUR' }).format(value);
 
@@ -321,24 +323,30 @@ export default function ModelPage() {
   // Scroll-Leiste; Touch-Geraete behalten ohnehin das native, fluessige
   // Wisch-Scrolling der scroll-snap-Kartenreihe.
   //
-  // Stattdessen: einmaliger kurzer Wisch-Hinweis beim ersten Laden auf Touch-Geraeten
-  // (Kundenwunsch) - die Reihe faehrt kurz ein Stueck nach rechts und wieder zurueck,
-  // damit sofort klar ist, dass sich die Kacheln wischen lassen. Nur einmal pro
-  // Seitenaufruf, nur auf echten Touch-Geraeten, nicht bei reduzierter Bewegung.
+  // Stattdessen: einmaliger kurzer Wisch-Hinweis beim ersten Laden (Kundenwunsch) -
+  // die Reihe faehrt kurz ein Stueck nach rechts und wieder zurueck, damit sofort
+  // klar ist, dass sich die Kacheln wischen lassen. Nur einmal pro Seitenaufruf,
+  // nicht bei reduzierter Bewegung. Auf Touch-Geraeten reicht die Bewegung allein
+  // (Wischen ist selbsterklaerend); auf Geraeten mit Maus blendet zusaetzlich kurz
+  // ein Mausrad-Icon mit Pfeilen ein, weil die Ausweich-Bewegung allein offen liesse,
+  // WIE man scrollt (Ziehen mit der Maus gibt es seit Kundenfeedback nicht mehr).
   useEffect(() => {
     const el = scrollerRef.current;
     if (layout === 'grid' || !el || hintPlayedRef.current) return undefined;
     const isTouch = window.matchMedia('(pointer: coarse)').matches;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!isTouch || reducedMotion) return undefined;
+    if (reducedMotion) return undefined;
     hintPlayedRef.current = true;
     const peek = Math.min(el.clientWidth * 0.4, 160);
-    const t1 = setTimeout(() => el.scrollTo({ left: peek, behavior: 'smooth' }), 500);
-    const t2 = setTimeout(() => el.scrollTo({ left: 0, behavior: 'smooth' }), 1250);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    const timers = [
+      setTimeout(() => el.scrollTo({ left: peek, behavior: 'smooth' }), 500),
+      setTimeout(() => el.scrollTo({ left: 0, behavior: 'smooth' }), 1250),
+    ];
+    if (!isTouch) {
+      timers.push(setTimeout(() => setWheelHintVisible(true), 450));
+      timers.push(setTimeout(() => setWheelHintVisible(false), 1700));
+    }
+    return () => timers.forEach(clearTimeout);
   }, [layout, data]);
 
   // Mausrad ueber der Kartenreihe scrollt horizontal (Kundenfeedback: die Scroll-
@@ -589,7 +597,7 @@ export default function ModelPage() {
         // bleiben dunkel (Referenzdesign), wodurch sie auf heller Flaeche als eigenstaendige
         // "Karten" wirken. Der Scrollbalken-Stil unten passt sich per dark: mit an.
         <section className="py-10 sm:py-14" style={{ fontFamily: "'Barlow', sans-serif" }}>
-          <div className={layout === 'grid' ? 'mx-auto max-w-6xl px-4 sm:px-6' : 'mx-auto max-w-[1880px] px-4 sm:px-6'}>
+          <div className={layout === 'grid' ? 'mx-auto max-w-6xl px-4 sm:px-6' : 'relative mx-auto max-w-[1880px] px-4 sm:px-6'}>
             <div
               ref={layout === 'grid' ? undefined : scrollerRef}
               className={
@@ -627,6 +635,25 @@ export default function ModelPage() {
                 );
               })}
             </div>
+
+            {/* Mausrad-Hinweis: einmaliger, kurz ein- und ausblendender Pill mittig ueber
+                der Reihe, zeitlich an die Ausweich-Bewegung oben gekoppelt (Hint-Effekt).
+                z-[200] haelt ihn ueber den Coverflow-Karten (die bis z-index 100 reichen). */}
+            {layout !== 'grid' && (
+              <div
+                className={`pointer-events-none absolute inset-x-0 top-1/2 z-[200] flex -translate-y-1/2 justify-center transition-opacity duration-300 ${
+                  wheelHintVisible ? 'opacity-100' : 'opacity-0'
+                }`}
+                aria-hidden="true"
+              >
+                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-neutral-900/85 px-4 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-sm">
+                  <ChevronLeft className="h-3.5 w-3.5 text-brand-400" />
+                  <Mouse className="h-4 w-4 text-brand-400" />
+                  <ChevronRight className="h-3.5 w-3.5 text-brand-400" />
+                  <span>{t('modelPage.wheelHint')}</span>
+                </div>
+              </div>
+            )}
 
             {/* Eigene Scroll-Leiste: zentrierter Track, markengruener leuchtender Daumen.
                 Ziehbar + klickbar (Logik im Scrollbar-Effekt); blendet aus, wenn alle

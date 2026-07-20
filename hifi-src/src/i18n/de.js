@@ -151,6 +151,7 @@ export default {
     featuredBadge: 'Empfohlen',
     moreBullets: (n) => (n === 1 ? '+ 1 weitere Leistung' : `+ ${n} weitere Leistungen`),
     lessBullets: 'Weniger anzeigen',
+    wheelHint: 'Mit dem Mausrad blättern',
   },
   leistungen: {
     metaTitle: 'Leistungen',
