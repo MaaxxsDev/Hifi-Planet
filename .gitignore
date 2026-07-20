@@ -6,19 +6,18 @@
 !/hifi-src/
 !/.gitignore
 !/.github/
+!/DEPLOY.md
 
-# Von Composer/NPM regenerierbare Abhängigkeiten
-/hifi/api/vendor/
+# Von NPM regenerierbare Abhängigkeiten. Der Composer-vendor von hifi/api wird
+# dagegen BEWUSST versioniert: das Kunden-Hosting (All-Inkl) hat keine
+# CI-Anbindung, deshalb muss main das komplett deploybare hifi/ enthalten.
 /hifi-src/node_modules/
 
-# Vite-Build-Output (wird per "npm run build" in hifi-src erzeugt und landet laut
-# vite.config.js direkt in hifi/). Da emptyOutDir:false ist, sammeln sich hier über
-# viele Builds hinweg tausende alte, umbenannte Chunk-Dateien an (u.a. durch das
-# Code-Splitting der ~1600 Lucide-Icons im IconPicker) - das gehört nicht ins Repo.
-/hifi/assets/
-/hifi/index.html
-/hifi/favicon.png
-/hifi/robots.txt
+# Der Vite-Build-Output (hifi/index.html + hifi/assets/) wird ebenfalls BEWUSST
+# versioniert - gleicher Grund: main ist der einzige Branch und zugleich das
+# Deploy-Artefakt (siehe DEPLOY.md). Vor jedem Commit lokal "npm run build"
+# ausführen; das prebuild-Script in hifi-src/package.json räumt assets/ vorher
+# leer, damit sich keine veralteten Hash-Chunks ansammeln.
 
 # Umgebungsspezifische DB-Zugangsdaten (wird vom Admin-Panel automatisch neu geschrieben,
 # unterscheidet sich zwischen Dev-/Live-Umgebung und gehört daher nicht ins Repo)
