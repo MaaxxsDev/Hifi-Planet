@@ -55,7 +55,7 @@ export default function Home() {
         // Manche Google-Rezensionen sind reine Sterne-Bewertungen ohne Text - als
         // Zitat-Karte ohne Zitat waeren die nur eine leere Huelle.
         .filter((r) => r.review_text)
-        .map((r) => ({ name: r.author_name, text: r.review_text, rating: r.rating }))
+        .map((r) => ({ name: r.author_name, text: r.review_text, rating: r.rating, photo: r.profile_photo_url }))
     : t('home.testimonials');
 
   useEffect(() => {

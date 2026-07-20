@@ -123,10 +123,33 @@ export default function TestimonialSlider({ testimonials }) {
       <div ref={trackRef} className="marquee-track flex w-max gap-5">
         {track.map((t, i) => (
           <div key={`${t.name}-${i}`} className="w-64 shrink-0 sm:w-72 lg:w-80">
-            <div className="flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-              <StarRating className="mb-3 h-4 w-4" count={t.rating || 5} />
-              <p className="mb-4 flex-1 text-sm text-neutral-600 dark:text-neutral-300">„{t.text}"</p>
-              <p className="text-sm font-semibold text-neutral-900 dark:text-white">{t.name}</p>
+            <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+              {/* Grosses dekoratives Anfuehrungszeichen hinter dem Text - rein optisch,
+                  gedeckt genug um nicht mit dem Text zu konkurrieren. */}
+              <svg aria-hidden="true" viewBox="0 0 32 24" className="absolute -right-1 -top-1 h-16 w-16 text-brand-500/10 dark:text-brand-400/10">
+                <path
+                  fill="currentColor"
+                  d="M9.4 0C4.4 3.5 1 9.1 1 15.3 1 20.6 4.3 24 8.4 24c3.8 0 6.6-3 6.6-6.6 0-3.4-2.4-5.9-5.4-5.9-.6 0-1.4.1-1.6.2C8.5 8.5 11.6 4.6 14.6 2.6L9.4 0zm16.5 0c-4.8 3.5-8.3 9.1-8.3 15.3 0 5.3 3.3 8.6 7.5 8.6 3.7 0 6.6-3 6.6-6.6 0-3.4-2.5-5.9-5.4-5.9-.6 0-1.4.1-1.6.2.5-3.3 3.6-7.1 6.7-9.1L25.9 0z"
+                />
+              </svg>
+
+              {/* Feste Zeilenobergrenze statt unbegrenztem Text - eine einzelne lange
+                  Google-Rezension soll nicht mehr die ganze Kartenreihe (per Flex-Stretch)
+                  auf ihre Hoehe aufblaehen und kurze Kacheln riesig leer wirken lassen. */}
+              <StarRating className="relative z-10 mb-3 h-4 w-4" count={t.rating || 5} />
+              <p className="relative z-10 mb-4 line-clamp-6 flex-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
+                „{t.text}"
+              </p>
+              <div className="relative z-10 mt-auto flex items-center gap-3">
+                {t.photo ? (
+                  <img src={t.photo} alt="" referrerPolicy="no-referrer" className="h-9 w-9 shrink-0 rounded-full object-cover" />
+                ) : (
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
+                    {t.name.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <p className="text-sm font-semibold text-neutral-900 dark:text-white">{t.name}</p>
+              </div>
             </div>
           </div>
         ))}
