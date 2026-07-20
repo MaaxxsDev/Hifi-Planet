@@ -152,8 +152,10 @@ function PackageCard({ pkg, tier, tierT, layout, bullets, formatPrice, contactUr
         </>
       )}
 
+      {/* top-2 statt -top-3: die Karte hat overflow-hidden (runde Ecken + Straßenbild),
+          ein halb herausragender Badge wuerde oben abgeschnitten. */}
       {pkg.is_featured && (
-        <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
+        <span className="absolute top-2 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
           {t('modelPage.featuredBadge')}
         </span>
       )}

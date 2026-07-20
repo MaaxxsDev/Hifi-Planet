@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client.js';
-import IconPicker from '../../components/IconPicker.jsx';
-import DynamicIcon from '../../components/DynamicIcon.jsx';
 import { PACKAGE_TIERS, tierSortOrder } from '../../constants/packageTiers.js';
 
 const inputCls =
@@ -338,7 +336,6 @@ export default function Packages() {
                 <td className="px-4 py-2">{pkg.brand_name} {pkg.model_name}</td>
                 <td className="px-4 py-2 font-medium text-neutral-800 dark:text-neutral-100">
                   <span className="inline-flex items-center gap-1.5">
-                    {pkg.icon_name && <DynamicIcon name={pkg.icon_name} className="h-4 w-4 text-brand-600 dark:text-brand-400" />}
                     {pkg.name}
                     {pkg.is_featured && (
                       <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900/40 dark:text-brand-400">
@@ -474,8 +471,7 @@ export default function Packages() {
                         onChange={(e) => toggleRow(row.key, e.target.checked)}
                         className="h-5 w-5 rounded border-neutral-300 text-brand-600 focus:ring-brand-500 disabled:opacity-60"
                       />
-                      <span className="inline-flex items-center gap-1.5 font-semibold text-neutral-900 dark:text-white">
-                        {row.form.icon_name && <DynamicIcon name={row.form.icon_name} className="h-4 w-4 text-brand-600 dark:text-brand-400" />}
+                      <span className="font-semibold text-neutral-900 dark:text-white">
                         {row.tierName ?? row.existing.name}
                       </span>
                     </label>
@@ -548,24 +544,14 @@ export default function Packages() {
                         </p>
                       </div>
 
+                      {/* icon_name/tagline bleiben im Form-State und Payload erhalten (Bestandsdaten
+                          nicht wegwischen), sind aber nicht mehr konfigurierbar - das Frontend
+                          zeigt beides auf den Kacheln nicht mehr an. */}
                       <details className="rounded-lg border border-neutral-200 dark:border-neutral-800">
                         <summary className="cursor-pointer select-none px-3 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-300">
-                          Weitere Optionen (Icon, Slogan, Preis-Text, Sortierung)
+                          Weitere Optionen (Preis-Text, Empfohlen, Sortierung)
                         </summary>
                         <div className="space-y-4 border-t border-neutral-200 p-3 dark:border-neutral-800">
-                          <div>
-                            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Icon (optional)</label>
-                            <IconPicker value={row.form.icon_name} onChange={(name) => updateRowForm(row.key, { icon_name: name })} />
-                          </div>
-                          <div>
-                            <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kurzer Slogan (optional)</label>
-                            <input
-                              value={row.form.tagline}
-                              onChange={(e) => updateRowForm(row.key, { tagline: e.target.value })}
-                              placeholder="z. B. Perfekt für den Einstieg"
-                              className={inputCls}
-                            />
-                          </div>
                           <div>
                             <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">Preis-Text (optional)</label>
                             <input
