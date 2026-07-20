@@ -196,7 +196,7 @@ export default {
     requiredHint: '* Required fields',
     sending: 'Sending…',
     submit: 'Send inquiry',
-    cardTitle: 'HifiPlanet Amorbach',
+    cardTitle: 'HiFi Planet Amorbach',
     address: 'Address',
     phone: 'Phone',
     email: 'Email',

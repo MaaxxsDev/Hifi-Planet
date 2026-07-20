@@ -196,7 +196,7 @@ export default {
     requiredHint: '* Pflichtfelder',
     sending: 'Wird gesendet…',
     submit: 'Anfrage senden',
-    cardTitle: 'HifiPlanet Amorbach',
+    cardTitle: 'HiFi Planet Amorbach',
     address: 'Adresse',
     phone: 'Telefon',
     email: 'E-Mail',

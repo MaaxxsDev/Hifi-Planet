@@ -166,7 +166,7 @@ export default function ContactPage() {
   return (
     <div
       className="kf-page kontakt-sektion relative w-full overflow-hidden px-4 pb-10 sm:px-10"
-      style={{ color: 'var(--kf-text2)' }}
+      style={{ color: 'var(--kf-text2)', fontFamily: "'Barlow', sans-serif" }}
     >
       <div className="relative z-10 mx-auto max-w-[1280px] pt-10 sm:pt-14">
         {/* Hero */}
@@ -491,16 +491,17 @@ export default function ContactPage() {
                 </a>
               )}
               <ExternalEmbed name={t('contactPage.mapEmbedName')} className="h-[210px] w-full">
-                {/* iframe hoeher als der sichtbare Ausschnitt + negativer margin-top:
-                    schneidet Googles eigenes Overlay (oben links) weg, damit nur unser
-                    "In Maps oeffnen"-Chip zu sehen ist - wie im Prototyp. */}
+                {/* iframe hoeher als der sichtbare 210px-Ausschnitt + negativer margin-top:
+                    schneidet Googles Info-Overlay (oben links) komplett und die untere
+                    Attributionszeile bis auf den Rand an - wie im Prototyp fuellt die
+                    Karte so buendig bis zur "Route planen"-Leiste. */}
                 <div className="h-[210px] overflow-hidden">
                   <iframe
                     title="HifiPlanet Amorbach – Standort"
                     src={`https://www.google.com/maps?q=${SHOP_ADDRESS_ENCODED}&output=embed`}
                     width="100%"
-                    height="280"
-                    style={{ border: 0, display: 'block', marginTop: '-70px' }}
+                    height="290"
+                    style={{ border: 0, display: 'block', marginTop: '-60px' }}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />
