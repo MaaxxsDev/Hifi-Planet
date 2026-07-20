@@ -97,6 +97,26 @@ Alle Icons: Outline-SVGs, `stroke-width: 2`, `stroke-linecap/linejoin: round` (L
 
 ## Hintergründe (Seitenebene, hinter den Karten)
 
+**⚠️ EMPFOHLENER WEG: Fertig gebackene Hintergrundbilder verwenden — NICHT selbst komponieren.**
+Die kompletten Hintergründe liegen als je EIN Bild bei:
+
+- Light: `assets/bg-light.png` (2560×1440 — Verlauf + Auto-Foto + Wellenlinien + grüner Lichtstreifen, alles enthalten)
+- Dark: `assets/bg-dark.png` (2560×1440 — Grunge-Textur + Paint-Splatter + Kreisbogen, alles enthalten)
+
+Umsetzung auf der Sektion:
+```css
+.kontakt-sektion {
+  position: relative;
+  background-image: url('assets/bg-light.png');
+  background-size: cover;
+  background-position: center;
+}
+[data-theme="dark"] .kontakt-sektion { background-image: url('assets/bg-dark.png'); }
+```
+Keine weiteren Hintergrund-Ebenen, keine eigenen Verläufe, keine Filter, kein zusätzliches Foto. Fertig.
+
+Die folgenden Abschnitte beschreiben nur, WIE diese Bilder aufgebaut sind (Referenz, falls einzelne Ebenen nativ nachgebaut werden sollen — standardmäßig überspringen):
+
 ### Light Mode
 - Seitenverlauf: `linear-gradient(120deg, #eef0ea 0%, #f6f8f3 45%, #fbfcf9 100%)`.
 - Links: Auto-Foto-Streifen — **exakt die Datei `assets/car-light.png` verwenden** (Graustufen-Interieur mit Lautsprecher, kein anderes Foto!). Position: unten links verankert (`background-position: left bottom` bzw. `object-position: left bottom`), ca. 34% Viewport-Breite, `object-fit: cover`, `pointer-events: none`. Darüber zwingend der Scrim `linear-gradient(90deg, rgba(244,246,241,0.35), rgba(244,246,241,0.55) 55%, rgba(246,248,243,1))` + weiche Ausblendung nach oben (`mask-image: linear-gradient(180deg, transparent 0%, black 40%)`), sodass das Foto ohne harte Kanten in den hellen Hintergrund ausläuft. **≤980px ausblenden.** Hinweis: Das PNG ist 310×512px (aus dem Design-Mockup extrahiert) — falls ein höher aufgelöstes Original dieses Fotos in den Assets der Website existiert, dieses verwenden, aber dasselbe Motiv.
@@ -154,9 +174,9 @@ Als CSS Custom Properties umgesetzt (Prototyp nutzt `:root` + `[data-theme="dark
 - Theme — vom globalen Umschalter der Seite, kein lokaler State.
 
 ## Assets (beiliegend)
-- `assets/grunge.png` — Dark-Mode Grunge-Hintergrund (1600×1400)
-- `assets/splatter.png` — Dark-Mode Paint-Splatter, transparent (1100×1500)
-- `assets/car-light.png` — Auto-Foto Light Mode (Graustufen-Interieur, 310×512, aus dem Mockup extrahiert). **Genau dieses Motiv verwenden**, kein anderes Foto.
+- `assets/bg-light.png` — **kompletter Light-Mode-Hintergrund** (2560×1440) — als `background-image` verwenden
+- `assets/bg-dark.png` — **kompletter Dark-Mode-Hintergrund** (2560×1440) — als `background-image` verwenden
+- `assets/grunge.png`, `assets/splatter.png`, `assets/car-light.png` — Einzelebenen (nur Referenz, normal nicht nötig)
 
 ## Dateien
 - `Kontaktformular.dc.html` — Design-Referenz (Prototyp; Template + Inline-Styles; Dark Mode über `data-theme="dark"` toggelbar — im Prototyp per Button, in der Umsetzung über den globalen Theme-Schalter)

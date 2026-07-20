@@ -7,9 +7,8 @@ import { useSiteSettings } from '../../context/SiteSettingsContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { useCookieConsent } from '../../context/CookieConsentContext.jsx';
 import { User, Mail, Phone, Car, Package, Send, MapPin, ExternalLink } from 'lucide-react';
-import grungeBg from '../../assets/contact/grunge.png';
-import splatterBg from '../../assets/contact/splatter.png';
-import carPhoto from '../../assets/contact/car-light.png';
+// Die Sektions-Hintergruende (bg-light.png / bg-dark.png) kommen als fertig
+// gebackene Einzelbilder ueber die CSS-Klasse .kontakt-sektion (index.css).
 
 const digitsOnly = (value) => (value || '').replace(/[^\d+]/g, '');
 const waHref = (whatsapp) => `https://wa.me/${digitsOnly(whatsapp).replace(/^0/, '49').replace('+', '')}`;
@@ -166,78 +165,9 @@ export default function ContactPage() {
 
   return (
     <div
-      className="kf-page relative w-full overflow-hidden px-4 pb-10 sm:px-10"
-      style={{ background: 'var(--kf-pagebg)', color: 'var(--kf-text2)' }}
+      className="kf-page kontakt-sektion relative w-full overflow-hidden px-4 pb-10 sm:px-10"
+      style={{ color: 'var(--kf-text2)' }}
     >
-      {/* Dark Mode: Grunge-Textur + Splatter + Bogen (Assets aus dem Handoff) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 hidden bg-cover bg-center dark:block"
-        style={{ backgroundImage: `url(${grungeBg})` }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-[4%] -top-[8%] hidden h-[122%] w-[46%] bg-contain bg-right bg-no-repeat dark:block"
-        style={{ backgroundImage: `url(${splatterBg})`, filter: 'drop-shadow(0 0 22px rgba(164,212,23,0.35))' }}
-      />
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 600 1000"
-        preserveAspectRatio="xMaxYMid slice"
-        className="pointer-events-none absolute right-0 top-0 hidden h-full w-[60%] dark:block"
-      >
-        <path d="M 900 -200 A 720 720 0 0 1 900 1200" fill="none" stroke="rgba(168,225,12,0.5)" strokeWidth="1.5" />
-        <path d="M 860 -160 A 700 700 0 0 1 860 1160" fill="none" stroke="rgba(168,225,12,0.18)" strokeWidth="1" strokeDasharray="2 9" />
-      </svg>
-
-      {/* Light Mode: Auto-Foto unten links in NATUERLICHER Groesse (310x512-Asset,
-          Breite per clamp ~460px gedeckelt, siehe .kontakt-bg-foto in index.css) -
-          nicht auf Sektionsgroesse strecken. Ab 981px, im Dark Mode aus. */}
-      <img
-        src={carPhoto}
-        alt=""
-        aria-hidden="true"
-        className="kontakt-bg-foto hidden dark:!hidden min-[981px]:block"
-      />
-      {/* Gruene Lichtstreifen-Gruppe rechts: volle Sektionshoehe, 42% Breite,
-          6 Grad rotiert, vier Ebenen (README "Hintergruende -> Light Mode"). */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-0 hidden h-full w-[42%] rotate-6 dark:!hidden min-[981px]:block"
-      >
-        <div
-          className="absolute right-1/2 top-0 h-full w-[3px] opacity-[0.85] blur-[1px]"
-          style={{ background: 'linear-gradient(180deg, transparent, #b6e619 30%, #cfef5a 55%, transparent)' }}
-        />
-        <div
-          className="absolute right-1/2 top-0 h-full w-[90px] translate-x-1/2 opacity-70 blur-[26px]"
-          style={{ background: 'linear-gradient(180deg, transparent, #cfef5a 40%, transparent)' }}
-        />
-        <div
-          className="absolute right-[40%] top-0 h-full w-[2px] opacity-60 blur-[1px]"
-          style={{ background: 'linear-gradient(180deg, transparent, #b6e619 35%, transparent)' }}
-        />
-        <div
-          className="absolute right-1/2 top-1/3 h-[420px] w-[420px] translate-x-1/2 rounded-full opacity-70 blur-[20px]"
-          style={{ background: 'radial-gradient(circle, rgba(207,239,90,0.35), transparent 70%)' }}
-        />
-      </div>
-      {/* Light Mode: dezente Topo-Wellenlinien oben links (README "Hintergruende"). */}
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 360 280"
-        className="pointer-events-none absolute left-0 top-0 block h-[280px] w-[360px] opacity-50 dark:hidden"
-        fill="none"
-        stroke="var(--kf-topo)"
-        strokeWidth="1"
-      >
-        <path d="M -20 40 C 60 10, 140 70, 220 40 S 360 10, 400 50" />
-        <path d="M -20 90 C 70 55, 150 115, 230 85 S 370 60, 400 100" />
-        <path d="M -20 140 C 60 105, 150 165, 235 135 S 365 110, 400 150" />
-        <path d="M -20 190 C 70 155, 145 215, 230 185 S 370 160, 400 200" />
-        <path d="M -20 240 C 60 205, 150 265, 235 235 S 365 210, 400 250" />
-      </svg>
-
       <div className="relative z-10 mx-auto max-w-[1280px] pt-10 sm:pt-14">
         {/* Hero */}
         <div
