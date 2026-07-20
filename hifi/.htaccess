@@ -22,6 +22,34 @@ RewriteBase /
 # Upload mit "Methode nicht erlaubt" fehlschlägt.
 DirectorySlash Off
 
+# Groessere Upload-/POST-Limits fuer den Daten-Export/-Import im Admin-Bereich
+# (der Export bettet die Bildergalerie als Base64 direkt in die JSON-Datei ein,
+# das kann schnell 40+ MB werden - PHPs Standard-Limits liegen oft niedriger).
+# Nur relevant, wenn PHP als Apache-Modul laeuft (mod_php) - die IfModule-Pruefung
+# sorgt dafuer, dass dieser Block auf FastCGI/PHP-FPM-Hosting (dort greift
+# stattdessen api/public/.user.ini) folgenlos uebersprungen wird, statt einen
+# "Invalid command"-Fehler fuer die ganze Seite auszuloesen.
+<IfModule mod_php.c>
+  php_value upload_max_filesize 200M
+  php_value post_max_size 200M
+  php_value memory_limit 512M
+</IfModule>
+<IfModule php_module>
+  php_value upload_max_filesize 200M
+  php_value post_max_size 200M
+  php_value memory_limit 512M
+</IfModule>
+<IfModule php7_module>
+  php_value upload_max_filesize 200M
+  php_value post_max_size 200M
+  php_value memory_limit 512M
+</IfModule>
+<IfModule php8_module>
+  php_value upload_max_filesize 200M
+  php_value post_max_size 200M
+  php_value memory_limit 512M
+</IfModule>
+
 # API-Requests an den PHP-Front-Controller weiterleiten
 RewriteCond %{REQUEST_URI} ^/api/
 RewriteCond %{REQUEST_FILENAME} !-f

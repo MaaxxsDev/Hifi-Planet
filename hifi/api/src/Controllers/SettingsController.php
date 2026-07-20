@@ -70,11 +70,53 @@ class SettingsController
         exit;
     }
 
+    /** Wandelt eine php.ini-Groessenangabe ("200M", "1G", "512K") in Bytes um. */
+    private static function iniBytes(string $value): int
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return 0;
+        }
+        $num = (float) $value;
+        return match (strtolower(substr($value, -1))) {
+            'g' => (int) ($num * 1024 * 1024 * 1024),
+            'm' => (int) ($num * 1024 * 1024),
+            'k' => (int) ($num * 1024),
+            default => (int) $value,
+        };
+    }
+
     public static function importData(): void
     {
-        if (!empty($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+        if (!empty($_FILES['file'])) {
+            $uploadError = $_FILES['file']['error'];
+            if ($uploadError === UPLOAD_ERR_INI_SIZE || $uploadError === UPLOAD_ERR_FORM_SIZE) {
+                Http::error(
+                    'Die Datei überschreitet das Upload-Limit dieses Servers (aktuell ' . ini_get('upload_max_filesize') .
+                    '). Bitte den Hosting-Anbieter um ein höheres PHP-Upload-Limit bitten.',
+                    422
+                );
+            }
+            if ($uploadError !== UPLOAD_ERR_OK) {
+                Http::error('Datei-Upload fehlgeschlagen (Fehlercode ' . $uploadError . ').', 422);
+            }
             $raw = file_get_contents($_FILES['file']['tmp_name']);
         } else {
+            // Ein Upload, der post_max_size ueberschreitet, wird von PHP nicht in $_FILES
+            // aufgenommen - der rohe Body ist ueber php://input aber trotzdem da (nur eben
+            // noch als unverarbeitetes Multipart-Gemisch, kein gueltiges JSON). Deshalb direkt
+            // Content-Length gegen das konfigurierte Limit pruefen, statt block auf einen
+            // (nicht garantiert leeren) Body zu vertrauen - sonst landet eine zu grosse, aber
+            // eigentlich intakte Export-Datei im irrefuehrenden generischen "ungueltige Datei"-Fehler.
+            $contentLength = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
+            $maxPost = self::iniBytes((string) ini_get('post_max_size'));
+            if ($maxPost > 0 && $contentLength > $maxPost) {
+                Http::error(
+                    'Die Datei überschreitet das Größen-Limit dieses Servers (aktuell ' . ini_get('post_max_size') .
+                    '). Bitte den Hosting-Anbieter um ein höheres PHP-Upload-Limit (post_max_size) bitten.',
+                    422
+                );
+            }
             $raw = file_get_contents('php://input');
         }
 
