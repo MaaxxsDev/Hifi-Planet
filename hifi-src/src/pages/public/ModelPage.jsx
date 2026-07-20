@@ -317,8 +317,9 @@ export default function ModelPage() {
 
   // Kein Karten-Drag per Maus mehr (Kundenfeedback: fuehlte sich in Kombination mit der
   // 3D-Transformation im Coverflow nicht gut an). Auf dem Desktop navigiert man
-  // stattdessen ueber die eigene Scroll-Leiste unten; Touch-Geraete behalten ohnehin
-  // das native, fluessige Wisch-Scrolling der scroll-snap-Kartenreihe.
+  // stattdessen per Mausrad (siehe Effect weiter unten) oder ueber die eigene
+  // Scroll-Leiste; Touch-Geraete behalten ohnehin das native, fluessige
+  // Wisch-Scrolling der scroll-snap-Kartenreihe.
   //
   // Stattdessen: einmaliger kurzer Wisch-Hinweis beim ersten Laden auf Touch-Geraeten
   // (Kundenwunsch) - die Reihe faehrt kurz ein Stueck nach rechts und wieder zurueck,
@@ -337,6 +338,46 @@ export default function ModelPage() {
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+    };
+  }, [layout, data]);
+
+  // Mausrad ueber der Kartenreihe scrollt horizontal (Kundenfeedback: die Scroll-
+  // Leiste allein war als einzige Desktop-Bedienung zu fummelig). Steht man an der
+  // ersten/letzten Karte und "scrollt" in Richtung des Randes hinaus, wird NICHT
+  // abgefangen (kein preventDefault) - der Browser scrollt dann ganz normal die
+  // Seite weiter, genau wie es heute schon passiert, wenn die Kartenreihe keinen
+  // Overflow hat. Reines horizontales Wheel/Trackpad-Sideswipe (deltaX) faellt
+  // schon nativ auf den Container und wird hier nicht angefasst.
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (layout === 'grid' || !el) return undefined;
+    let snapTimer = 0;
+
+    const onWheel = (e) => {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 1) return;
+      const atStart = el.scrollLeft <= 1;
+      const atEnd = el.scrollLeft >= maxScroll - 1;
+      if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) return;
+
+      e.preventDefault();
+      // Snap waehrend der Wheel-Boe aussetzen (wie beim frueheren Ziehen), sonst
+      // kaempft scroll-snap gegen schnell aufeinanderfolgende Wheel-Ticks. Der
+      // Nachlauf-Timer wird bei jedem Tick verlaengert, rastet also erst kurz
+      // nach dem letzten Tick der Boe wieder ein.
+      el.style.scrollSnapType = 'none';
+      el.scrollLeft += e.deltaY;
+      clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => {
+        el.style.scrollSnapType = '';
+      }, 150);
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      clearTimeout(snapTimer);
     };
   }, [layout, data]);
 
