@@ -190,30 +190,23 @@ export default function ContactPage() {
         <path d="M 860 -160 A 700 700 0 0 1 860 1160" fill="none" stroke="rgba(168,225,12,0.18)" strokeWidth="1" strokeDasharray="2 9" />
       </svg>
 
-      {/* Light Mode: Auto-Foto unten links verankert + gruener Lichtstreifen rechts (ab 981px, s. README).
-          Maske uebernimmt die weiche Ausblendung nach oben (kein harter oberer Rand bei
-          voller Hoehe), der Scrim obendrauf das weiche Verlaufen nach rechts in die Seite. */}
+      {/* Light Mode: Auto-Foto unten links in NATUERLICHER Groesse (310x512-Asset,
+          Breite per clamp ~460px gedeckelt, siehe .kontakt-bg-foto in index.css) -
+          nicht auf Sektionsgroesse strecken. Ab 981px, im Dark Mode aus. */}
+      <img
+        src={carPhoto}
+        alt=""
+        aria-hidden="true"
+        className="kontakt-bg-foto hidden dark:!hidden min-[981px]:block"
+      />
+      {/* Gruene Lichtstreifen-Gruppe rechts: volle Sektionshoehe, 42% Breite,
+          6 Grad rotiert, vier Ebenen (README "Hintergruende -> Light Mode"). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-0 hidden h-full w-[34%] dark:!hidden min-[981px]:block"
+        className="pointer-events-none absolute right-0 top-0 hidden h-full w-[42%] rotate-6 dark:!hidden min-[981px]:block"
       >
         <div
-          className="h-full w-full bg-cover"
-          style={{
-            backgroundImage: `url(${carPhoto})`,
-            backgroundPosition: 'left bottom',
-            WebkitMaskImage: 'linear-gradient(180deg, transparent 0%, black 40%)',
-            maskImage: 'linear-gradient(180deg, transparent 0%, black 40%)',
-          }}
-        />
-        <div className="absolute inset-0" style={{ background: 'var(--kf-scrim)' }} />
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-[4%] top-0 hidden h-full w-[26%] rotate-6 dark:!hidden min-[981px]:block"
-      >
-        <div
-          className="absolute right-1/2 top-0 h-full w-[3px] opacity-80 blur-[1px]"
+          className="absolute right-1/2 top-0 h-full w-[3px] opacity-[0.85] blur-[1px]"
           style={{ background: 'linear-gradient(180deg, transparent, #b6e619 30%, #cfef5a 55%, transparent)' }}
         />
         <div
@@ -225,7 +218,7 @@ export default function ContactPage() {
           style={{ background: 'linear-gradient(180deg, transparent, #b6e619 35%, transparent)' }}
         />
         <div
-          className="absolute right-1/2 top-1/3 h-[420px] w-[420px] translate-x-1/2 rounded-full opacity-70 blur-[40px]"
+          className="absolute right-1/2 top-1/3 h-[420px] w-[420px] translate-x-1/2 rounded-full opacity-70 blur-[20px]"
           style={{ background: 'radial-gradient(circle, rgba(207,239,90,0.35), transparent 70%)' }}
         />
       </div>
