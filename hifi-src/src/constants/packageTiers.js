@@ -8,7 +8,7 @@ export const PACKAGE_TIERS = [
   'Clear',
   'Drive',
   'Prime',
-  'Elite R',
+  'Elite',
   'Apex',
   'The Statement',
   'Limitless',

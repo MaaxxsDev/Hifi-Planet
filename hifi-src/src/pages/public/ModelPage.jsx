@@ -42,7 +42,7 @@ const gen = (rows) =>
   }));
 
 // "graphite" = exakt die 8 Referenz-Kacheln (Farben + Straßenbild) aus Kacheln.html:
-// Base / Clear / Drive / Prime / Elite R / Apex / The Statement / Limitless. Jede Stufe
+// Base / Clear / Drive / Prime / Elite / Apex / The Statement / Limitless. Jede Stufe
 // hat eine Flaechenfarbe oben im Verlauf (bgTop), eine Rahmenfarbe (border) und eine
 // Akzentfarbe (Name + Trennlinie). Welche Stufe ein Paket bekommt, ergibt sich aus seinem
 // Preis-Rang (siehe tierOf). Die beiden anderen Themes sind eigene Farbfamilien im selben
